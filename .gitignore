@@ -1,0 +1,17 @@
+node_modules/
+.next/
+.data/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+
+# secrets: never commit
+.env
+.env.*
+!.env.example
+*.pem
+
+# licensed fonts (see docs/FONTS.md)
+public/fonts/licensed/
+
+.claude/

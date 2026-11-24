@@ -1,0 +1,21 @@
+@import "@fontsource/ibm-plex-sans-arabic/300.css";
+@import "@fontsource/ibm-plex-sans-arabic/400.css";
+@import "@fontsource/ibm-plex-sans-arabic/500.css";
+@import "@fontsource/ibm-plex-sans-arabic/700.css";
+
+/*
+ * TD / TS are the display families named in the design. The design uses Thmanyah, whose licence does not
+ * allow hosting the files here, so open (OFL) families stand in. See docs/FONTS.md.
+ */
+@font-face{font-family:TD;font-weight:700;font-display:swap;src:url("@fontsource/markazi-text/files/markazi-text-arabic-700-normal.woff2") format("woff2");size-adjust:118%;unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF,U+200C-200E}
+@font-face{font-family:TD;font-weight:700;font-display:swap;src:url("@fontsource/markazi-text/files/markazi-text-latin-700-normal.woff2") format("woff2");size-adjust:118%;unicode-range:U+0000-00FF,U+2000-200B,U+2010-206F,U+20AC,U+2122}
+@font-face{font-family:TS;font-weight:400;font-display:swap;src:url("@fontsource/ibm-plex-sans-arabic/files/ibm-plex-sans-arabic-arabic-400-normal.woff2") format("woff2");unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF,U+200C-200E}
+@font-face{font-family:TS;font-weight:500;font-display:swap;src:url("@fontsource/ibm-plex-sans-arabic/files/ibm-plex-sans-arabic-arabic-500-normal.woff2") format("woff2");unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF,U+200C-200E}
+@font-face{font-family:TS;font-weight:700;font-display:swap;src:url("@fontsource/ibm-plex-sans-arabic/files/ibm-plex-sans-arabic-arabic-700-normal.woff2") format("woff2");unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF,U+200C-200E}
+
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:'IBM Plex Sans Arabic',system-ui,sans-serif}
+button,a{-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:3px solid #0E97AE;outline-offset:2px}
+button[disabled]{cursor:not-allowed;opacity:.65}
+@media print{@page{margin:10mm}.side,.bnav,.tourb,.fqbw,.fqw,.noprint{display:none !important}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
