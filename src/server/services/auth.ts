@@ -1,11 +1,12 @@
 import 'server-only';
 import { and, desc, eq, gt, isNull, ne } from 'drizzle-orm';
-import { FREE_CREDITS } from '@/lib/constants';
 import { db, creditLedger, creditLots, memberships, orgInvites, orgs, otps, rateLimits, sessions, staff, users, type DB } from '../db';
-import { digits, hashPassword, hmac, safeEqual, token, verifyPassword } from '../lib/crypto';
+import { decrypt, digits, encrypt, hashPassword, hmac, safeEqual, token, verifyPassword } from '../lib/crypto';
 import { AppError, audit, bad, clearLimit, hit, limit } from '../lib/core';
 import { send } from '../lib/mail';
-import { deviceTrusted, startStaffSession, startUserSession, trustDevice } from '../lib/session';
+import { checkTotp, newSecret, totpUri } from '../lib/totp';
+import { pricing } from './pricing';
+import { deviceTrusted, endSession, getStaff, startStaffSession, startUserSession, trustDevice } from '../lib/session';
 
 type Meta = { ip: string; device: string };
 const OTP_MIN = 10;
@@ -59,9 +60,10 @@ async function mailCode(email: string, code: string, title: string, line: string
 export async function createOrg(tx: DB, userId: string, name: string, email: string, free: boolean) {
   const [org] = await tx.insert(orgs).values({ name, contactEmail: email, reportToken: token(24) }).returning();
   await tx.insert(memberships).values({ orgId: org!.id, userId, role: 'owner' });
-  if (free) {
-    const [lot] = await tx.insert(creditLots).values({ orgId: org!.id, kind: 'free', channel: 'self', total: FREE_CREDITS }).returning();
-    await tx.insert(creditLedger).values({ orgId: org!.id, lotId: lot!.id, delta: FREE_CREDITS, reason: 'رصيد مجاني للتجربة' });
+  const credits = free ? (await pricing(tx)).free : 0;
+  if (credits) {
+    const [lot] = await tx.insert(creditLots).values({ orgId: org!.id, kind: 'free', channel: 'self', total: credits }).returning();
+    await tx.insert(creditLedger).values({ orgId: org!.id, lotId: lot!.id, delta: credits, reason: 'رصيد مجاني للتجربة' });
   }
   return org!;
 }
@@ -192,7 +194,7 @@ export async function changePassword(user: { id: string; email: string; password
   await send({ to: user.email, subject: 'تغيّرت كلمة مرورك', title: 'تغيّرت كلمة مرورك', lines: ['غيّرت كلمة مرور حسابك وسجّلنا خروج باقي الأجهزة. لو ما كنت أنت، راسلنا فورًا على hayyakinfo@gmail.com'] });
 }
 
-/* ---------- Studio: email code only, five wrong tries lock the account for an hour ---------- */
+/* ---------- Studio: an email code, then a code from an authenticator app. Five wrong tries lock it for an hour ---------- */
 
 export async function studioStart(emailRaw: string, m: Meta) {
   const email = cleanEmail(emailRaw);
@@ -221,9 +223,56 @@ export async function studioVerify(emailRaw: string, code: string, m: Meta) {
   }
   const [s] = await d.select().from(staff).where(and(eq(staff.id, staffId), ne(staff.status, 'disabled')));
   if (!s) throw WRONG_CODE();
-  await d.update(staff).set({ status: 'active', lastLoginAt: new Date() }).where(eq(staff.id, s.id));
   await clearLimit(lockKey);
-  await startStaffSession(s.id, m);
-  await audit({ type: 'staff', id: s.id, name: s.name, ip: m.ip }, 'دخل الاستوديو');
-  return { name: s.name };
+  await startStaffSession(s.id, m, 'mfa');
+  if (s.totpAt) return { next: 'code' as const };
+  // First sign-in: the same secret is shown until it is confirmed, so a reload does not break the scan.
+  const secret = s.totpSecret ? decrypt(s.totpSecret) : newSecret();
+  if (!s.totpSecret) await d.update(staff).set({ totpSecret: encrypt(secret) }).where(eq(staff.id, s.id));
+  return { next: 'setup' as const, secret, uri: totpUri(secret, s.email) };
+}
+
+const RECOVERY = 8;
+const cleanRecovery = (c: string) => c.toLowerCase().replace(/[^a-z0-9]/g, '');
+export async function studioMfa(code: string, m: Meta) {
+  const me = await getStaff('mfa');
+  if (!me) throw new AppError(401, 'انتهى الوقت، ابدأ الدخول من جديد', 'signed_out');
+  const d = await db();
+  const key = `studio:mfa:${me.staff.id}`;
+  const [lock] = await d.select().from(rateLimits).where(and(eq(rateLimits.key, key), gt(rateLimits.resetAt, new Date())));
+  if (lock && lock.count >= 5) throw new AppError(429, 'انقفل الدخول ساعة بسبب محاولات غلط كثيرة', 'locked');
+  const r = await d.transaction(async (tx) => {
+    const [s] = await tx.select().from(staff).where(eq(staff.id, me.staff.id)).for('update');
+    if (!s || s.status === 'disabled' || !s.totpSecret) return null;
+    const step = checkTotp(decrypt(s.totpSecret), code.replace(/\s/g, ''), s.totpStep);
+    const first = !s.totpAt;
+    let recovery = s.recovery;
+    if (!step) {
+      const h = hmac(`recovery:${s.id}:${cleanRecovery(code)}`);
+      if (first || !recovery.includes(h)) return null;
+      recovery = recovery.filter((x) => x !== h); // each one works once
+    }
+    const codes = first ? Array.from({ length: RECOVERY }, () => token(10)) : [];
+    if (first) recovery = codes.map((c) => hmac(`recovery:${s.id}:${c}`));
+    await tx.update(staff).set({ status: 'active', lastLoginAt: new Date(), totpAt: s.totpAt ?? new Date(), totpStep: step || s.totpStep, recovery }).where(eq(staff.id, s.id));
+    return { s, codes: codes.map((c) => `${c.slice(0, 5)}-${c.slice(5)}`), byRecovery: !step, left: recovery.length };
+  });
+  if (!r) {
+    await hit(key, 5, 3600);
+    await audit({ type: 'staff', id: me.staff.id, name: me.staff.name, ip: m.ip }, 'رمز تطبيق التحقق غلط');
+    throw WRONG_CODE();
+  }
+  await clearLimit(key);
+  await endSession('staff'); // the short pass is thrown away and a new session starts
+  await startStaffSession(r.s.id, m, 'full');
+  await audit({ type: 'staff', id: r.s.id, name: r.s.name, ip: m.ip }, r.byRecovery ? 'دخل الاستوديو برمز احتياطي' : 'دخل الاستوديو');
+  await send({ to: r.s.email, subject: 'دخول جديد لاستوديو حيّــاك', title: 'دخول جديد للاستوديو', lines: [`دخل حسابك من ${m.device || 'جهاز غير معروف'} (${m.ip}).`, ...(r.byRecovery ? [`الدخول كان برمز احتياطي، وباقي لك ${r.left}.`] : []), 'لو ما كنت أنت، كلّم المؤسسين فورًا عشان يوقفون حسابك.'] });
+  return { name: r.s.name, codes: r.codes };
+}
+
+/** Clears a lost authenticator. The person sets up a new one at the next sign-in. */
+export async function resetTotp(staffId: string) {
+  const d = await db();
+  await d.update(staff).set({ totpSecret: '', totpAt: null, totpStep: 0, recovery: [] }).where(eq(staff.id, staffId));
+  await d.delete(sessions).where(eq(sessions.staffId, staffId));
 }

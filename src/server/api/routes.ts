@@ -1,12 +1,13 @@
 import 'server-only';
 import { cookies } from 'next/headers';
 import { and, eq, ne, sql } from 'drizzle-orm';
-import { CHANNEL_NAMES, MAX_GUESTS, PACKS, PATTERNS, SEAL_NAMES, packPrice } from '@/lib/constants';
+import { MAX_GUESTS, PATTERNS, SEAL_NAMES } from '@/lib/constants';
 import { db, customDesigns, customRequests, guests, invitations, memberships, orders, orgInvites, orgs, sessions, users, type DB, type OrgRole } from '../db';
 import { safeEqual } from '../lib/crypto';
 import { AppError, appUrl, audit, bad, limit, notFound } from '../lib/core';
 import { send } from '../lib/mail';
-import { endSession, needRole } from '../lib/session';
+import { can, endSession, needRole, type StaffCtx } from '../lib/session';
+import { analytics } from '../services/analytics';
 import * as auth from '../services/auth';
 import * as inv from '../services/invitations';
 import * as att from '../services/attendance';
@@ -14,6 +15,7 @@ import * as guest from '../services/guest';
 import * as st from '../services/studio';
 import * as assets from '../services/assets';
 import { balance } from '../services/credit';
+import * as price from '../services/pricing';
 import { guestRows, personalLinks } from '../services/screens';
 import { tick } from '../services/scheduler';
 import { email, hex, httpsUrl, optEmail, phone, pub, readForm, str, studio, uid, user, uuid, z, type PublicReq } from './router';
@@ -173,24 +175,14 @@ user('POST', '/invitations/:id/certificate/issue', { role: 'manager' }, async (c
 user('POST', '/invitations/:id/names/:rid', { role: 'manager', body: z.object({ ok: z.boolean() }) }, async (c) => { await att.decideName(c.me.org.id, uuid(c.params.id), uuid(c.params.rid), c.body.ok); });
 
 /* ---------- credit orders and customisation requests ---------- */
-user('POST', '/orders', { role: 'manager', body: z.object({ count: z.number().int(), channel: z.enum(['self', 'email', 'whatsapp']), services: z.array(uid).max(10), contact: z.object({ name: str(80), email: optEmail, phone }) }) }, async (c) => {
+// Prices come from the server. Whatever the browser shows or sends is never used.
+const orderBody = { count: z.number().int().min(1).max(MAX_GUESTS), channel: z.enum(['self', 'email', 'whatsapp']), services: z.array(uid).max(10), code: str(24).optional() };
+pub('GET', '/pricing', { rate: [120, 60] }, async () => price.publicPricing());
+user('POST', '/orders/quote', { role: 'manager', body: z.object(orderBody) }, async (c) => price.quoteFor(c.me.org.id, { ...c.body, code: c.body.code || '' }, c.ip));
+user('POST', '/orders', { role: 'manager', body: z.object({ ...orderBody, contact: z.object({ name: str(80), email: optEmail, phone }) }) }, async (c) => {
   await limit(`order:${c.me.org.id}`, 10, 86400);
-  // Prices come from the server. Whatever the browser shows or sends is never used.
-  const price = packPrice(c.body.count, c.body.channel);
-  if (price === null || !PACKS.some((p) => p[0] === c.body.count)) throw bad('الحزمة غير متاحة');
-  const svc = (await st.serviceList(true)).filter((s) => c.body.services.includes(s.id));
-  const items = [{ k: `${c.body.count} دعوة`, v: `${price} ر.س`, price: price as number | null }, { k: 'الإرسال', v: CHANNEL_NAMES[c.body.channel]!, price: null }, ...svc.map((s) => ({ k: s.name, v: s.price === null ? 'حسب الطلب' : `${s.price} ر.س`, price: s.price }))];
-  const total = items.reduce((a, i) => a + (i.price || 0), 0);
-  const d = await db();
-  const o = await d.transaction(async (t) => {
-    const tx = t as unknown as DB;
-    await tx.execute(sql`select pg_advisory_xact_lock(727275)`);
-    const [m] = await tx.select({ n: sql<number>`coalesce(max(${orders.number}), 10480)::int` }).from(orders);
-    const [row] = await tx.insert(orders).values({ number: m!.n + 1, orgId: c.me.org.id, userId: c.me.user.id, count: c.body.count, channel: c.body.channel, items, total, contact: { name: c.body.contact.name || c.me.org.name, email: c.body.contact.email || c.me.user.email, phone: c.body.contact.phone } }).returning();
-    for (const s of svc) await tx.insert(customRequests).values({ orgId: c.me.org.id, userId: c.me.user.id, title: s.name, description: `مع طلب الشراء HY-${row!.number}`, contactVia: 'واتساب', contactPhone: c.body.contact.phone, contactEmail: c.body.contact.email || c.me.user.email, price: s.price === null ? '' : `${s.price} ر.س` });
-    return row!;
-  });
-  return { number: `HY-${o.number}`, total: o.total, items: o.items };
+  const { contact, code, ...o } = c.body;
+  return price.placeOrder({ orgId: c.me.org.id, orgName: c.me.org.name, userId: c.me.user.id, email: c.me.user.email }, { ...o, code: code || '' }, contact);
 });
 user('POST', '/requests', { role: 'manager', body: z.object({ title: str(80, 2, 'اختر نوع التخصيص'), description: str(1500), via: z.enum(['واتساب', 'إيميل']), phone: phone.optional(), email: optEmail.optional() }) }, async (c) => {
   await limit(`request:${c.me.org.id}`, 10, 86400);
@@ -256,6 +248,7 @@ pub('POST', '/a/:qr', { rate: [30, 60] }, async (c) => {
 /* ---------- Studio ---------- */
 pub('POST', '/studio/login', { body: z.object({ email }), rate: [20, 600] }, async (c) => { await auth.studioStart(c.body.email, meta(c)); });
 pub('POST', '/studio/verify', { body: z.object({ email, code: code6 }), rate: [30, 600] }, async (c) => auth.studioVerify(c.body.email, c.body.code, meta(c)));
+pub('POST', '/studio/mfa', { body: z.object({ code: str(20, 6) }), rate: [30, 600] }, async (c) => auth.studioMfa(c.body.code, meta(c)));
 pub('POST', '/studio/logout', {}, async () => { await endSession('staff'); });
 studio('POST', '/studio/sends/:id/advance', 'sends', {}, async (c) => st.advanceSend(c.me, uuid(c.params.id), c.ip));
 studio('POST', '/studio/sends/:id/recipients', 'sends', {}, async (c) => ({ rows: await st.recipients(c.me, uuid(c.params.id), c.ip) }));
@@ -278,6 +271,19 @@ studio('POST', '/studio/customers/:id/credit', 'credit', { body: z.object({ coun
 studio('POST', '/studio/orders/:id', 'sales', { body: z.object({ ok: z.boolean() }) }, async (c) => { await st.decideOrder(c.me, uuid(c.params.id), c.body.ok, c.ip); });
 studio('POST', '/studio/team', 'team', { body: z.object({ name: str(60, 2, 'اكتب الاسم'), email, role: z.enum(['founder', 'support', 'design']) }) }, async (c) => { await st.addMember(c.me, c.body, c.ip); });
 studio('POST', '/studio/team/:id/remove', 'team', {}, async (c) => { await st.removeMember(c.me, uuid(c.params.id), c.ip); });
+studio('POST', '/studio/team/:id/reset', 'team', {}, async (c) => { await st.resetMember(c.me, uuid(c.params.id), c.ip); });
+
+/* prices, discounts, analytics, ready designs, trial workspaces */
+const who = (c: { me: StaffCtx; ip: string }) => ({ type: 'staff' as const, id: c.me.staff.id, name: c.me.staff.name, ip: c.ip });
+studio('POST', '/studio/pricing', 'pricing', { body: price.pricingSchema }, async (c) => { await price.savePricing(who(c), c.body); });
+studio('POST', '/studio/discounts', 'pricing', { body: price.discountSchema }, async (c) => { await price.addDiscount(who(c), c.body); });
+studio('PATCH', '/studio/discounts/:id', 'pricing', { body: z.object({ active: z.boolean() }) }, async (c) => { await price.toggleDiscount(who(c), uuid(c.params.id), c.body.active); });
+studio('POST', '/studio/customers/:id/discount', 'pricing', { body: z.object({ pct: z.number().int().min(0).max(100), reason: str(200, 3, 'اكتب السبب') }) }, async (c) => { await price.setOrgDiscount(who(c), uuid(c.params.id), c.body.pct, c.body.reason); });
+studio('POST', '/studio/customers/:id/test', 'team', { body: z.object({ test: z.boolean() }) }, async (c) => { await st.setTest(c.me, uuid(c.params.id), c.body.test, c.ip); });
+studio('POST', '/studio/customers/:id/wipe', 'team', { body: z.object({ name: str(120) }) }, async (c) => { await st.wipeTest(c.me, uuid(c.params.id), c.body.name, c.ip); });
+studio('GET', '/studio/analytics', 'analytics', {}, async (c) => analytics(({ 7: 7, 30: 30, 90: 90 } as const)[Number(c.query.get('days')) as 7 | 30 | 90] ?? 30, can(c.me.staff.role, 'sales')));
+studio('POST', '/studio/designs', 'design', { body: z.object({ name: str(40, 1, 'اكتب اسم التصميم'), orgId: uid.nullable(), design: designData }) }, async (c) => { await st.createDesign(c.me, { name: c.body.name, orgId: c.body.orgId, kind: c.body.design.kind, data: c.body.design.data }, c.ip); });
+studio('PATCH', '/studio/designs/:id', 'design', { body: z.object({ on: z.boolean() }) }, async (c) => { await st.toggleDesign(c.me, uuid(c.params.id), c.body.on, c.ip); });
 
 /* ---------- scheduler hook ---------- */
 pub('GET', '/cron/tick', {}, async (c) => {

@@ -6,16 +6,20 @@
  * Set TEST_DATABASE_URL to an empty throwaway Postgres database to run against a real server instead.
  */
 import { spawn, execFileSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import { createHmac } from 'node:crypto';
+import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync } from 'node:fs';
 import http from 'node:http';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
 const PORT = 3111;
 const BASE = `http://localhost:${PORT}`;
+const STUDIO = `http://127.0.0.1:${PORT}`; // the Studio's own address
+const SECRET = 'e2e-only-app-secret-0123456789abcdef0123';
+const DKEY = 'e2e-only-data-key-0123456789abcdef012345';
 const tmp = mkdtempSync(path.join(tmpdir(), 'hy-'));
 const MAIL = path.join(tmp, 'mail.jsonl');
-const env = { ...process.env, NODE_ENV: 'production', APP_URL: BASE, ALLOW_EMBEDDED_DB: '1', ALLOW_DEV_SECRETS: '1', PGLITE_DIR: path.join(tmp, 'pg'), MAIL_FILE: MAIL, MAIL_SILENT: '1', TRUSTED_PROXIES: '1', CRON_SECRET: 'test-cron-secret-123456', DATABASE_URL: process.env.TEST_DATABASE_URL || '', SMTP_URL: '', RESEND_API_KEY: '' };
+const env = { ...process.env, NODE_ENV: 'production', APP_URL: BASE, STUDIO_URL: STUDIO, APP_SECRET: SECRET, DATA_KEY: DKEY, APP_ENV: '', ALLOW_EMBEDDED_DB: '1', ALLOW_DEV_SECRETS: '1', PGLITE_DIR: path.join(tmp, 'pg'), MAIL_FILE: MAIL, MAIL_SILENT: '1', TRUSTED_PROXIES: '1', CRON_SECRET: 'test-cron-secret-123456', DATABASE_URL: process.env.TEST_DATABASE_URL || '', SMTP_URL: '', RESEND_API_KEY: '' };
 
 let pass = 0;
 const fails = [];
@@ -32,7 +36,8 @@ const newIp = () => `203.0.113.${ipN++ % 250}`;
 
 /** A browser: keeps cookies, sends the right Origin. */
 class Client {
-  constructor(ip = newIp()) {
+  constructor(ip = newIp(), base = BASE) {
+    this.base = base;
     this.jar = new Map();
     this.ip = ip;
     this.raw = [];
@@ -40,7 +45,7 @@ class Client {
 
   async req(method, url, body, o = {}) {
     const headers = { 'user-agent': 'Mozilla/5.0 (iPhone) Safari/605', 'x-forwarded-for': this.ip, ...(o.headers || {}) };
-    if (method !== 'GET' && !o.noOrigin) headers.origin = o.origin ?? BASE;
+    if (method !== 'GET' && !o.noOrigin) headers.origin = o.origin ?? this.base;
     if (this.jar.size) headers.cookie = [...this.jar].map(([k, v]) => `${k}=${v}`).join('; ');
     let payload;
     if (o.form) payload = o.form;
@@ -48,7 +53,7 @@ class Client {
       headers['content-type'] = o.type || 'application/json';
       payload = typeof body === 'string' ? body : JSON.stringify(body ?? {});
     }
-    const r = await fetch(BASE + url, { method, headers, body: method === 'GET' ? undefined : payload, redirect: 'manual' });
+    const r = await fetch(this.base + url, { method, headers, body: method === 'GET' ? undefined : payload, redirect: 'manual' });
     for (const c of r.headers.getSetCookie()) {
       this.raw.push(c);
       const [kv] = c.split(';');
@@ -70,6 +75,32 @@ class Client {
   del(u, o) { return this.req('DELETE', '/api' + u, undefined, o); }
 }
 
+const desk = () => new Client(newIp(), STUDIO);
+/** What an authenticator app does. */
+function totp(secret, shift = 0) {
+  const A = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+  const bits = [...secret].map((c) => A.indexOf(c).toString(2).padStart(5, '0')).join('');
+  const key = Buffer.from(bits.match(/.{8}/g).map((x) => parseInt(x, 2)));
+  const msg = Buffer.alloc(8);
+  msg.writeBigUInt64BE(BigInt(Math.floor(Date.now() / 30000) + shift));
+  const h = createHmac('sha1', key).update(msg).digest();
+  return String((h.readUInt32BE(h[19] & 15) & 0x7fffffff) % 1e6).padStart(6, '0');
+}
+/** Both steps of a first Studio sign-in. */
+async function enterStudio(email) {
+  const c = desk();
+  await c.post('/studio/login', { email });
+  const one = await c.post('/studio/verify', { email, code: codeFor(email) });
+  const used = totp(one.j?.secret || 'A');
+  const two = await c.post('/studio/mfa', { code: used });
+  return Object.assign(c, { one, two, used, secret: one.j?.secret, codes: two.j?.codes || [] });
+}
+/** Sends the path exactly as written; fetch would tidy up the dots. */
+const rawGet = (path, headers = {}) => new Promise((ok) => {
+  const r = http.request({ host: '127.0.0.1', port: PORT, path, method: 'GET', agent: false, headers: { host: `localhost:${PORT}`, 'x-forwarded-for': newIp(), ...headers } }, (res) => { let t = ''; res.setEncoding('utf8'); res.on('data', (d) => { t += d; }); res.on('end', () => ok({ s: res.statusCode, t, loc: res.headers.location || '' })); });
+  r.on('error', (e) => ok({ s: 0, t: String(e.code), loc: '' }));
+  r.end();
+});
 const mails = () => (existsSync(MAIL) ? readFileSync(MAIL, 'utf8').trim().split('\n').filter(Boolean).map((l) => JSON.parse(l)) : []);
 const lastMail = (to, re = /./) => mails().filter((m) => m.to === to && re.test(m.subject + m.text)).pop();
 const codeFor = (to) => lastMail(to, /^\d{6} /)?.subject.slice(0, 6);
@@ -113,7 +144,7 @@ async function main() {
 
   section('public pages and headers');
   const v = new Client();
-  for (const p of ['/', '/signup', '/privacy', '/terms', '/studio/login', '/robots.txt']) check(`GET ${p}`, (await v.get(p)).s === 200);
+  for (const p of ['/', '/signup', '/privacy', '/terms', '/robots.txt']) check(`GET ${p}`, (await v.get(p)).s === 200);
   const home = await v.get('/');
   const csp = home.h.get('content-security-policy') || '';
   check('CSP blocks inline and foreign scripts', /script-src 'self' 'nonce-[^']+' 'strict-dynamic'/.test(csp) && !/script-src[^;]*unsafe-inline/.test(csp) && !/unsafe-eval/.test(csp), csp);
@@ -123,7 +154,17 @@ async function main() {
   check('nosniff, HSTS, frame and referrer headers', home.h.get('x-content-type-options') === 'nosniff' && /max-age/.test(home.h.get('strict-transport-security')) && home.h.get('x-frame-options') === 'DENY' && Boolean(home.h.get('referrer-policy')));
   check('server does not advertise itself', !home.h.get('x-powered-by'));
   check('/app needs sign-in', [307, 303, 302].includes((await v.get('/app')).s));
-  check('/studio needs sign-in', [307, 303, 302].includes((await v.get('/studio')).s));
+  const sv = desk();
+  check('/studio needs sign-in', [307, 303, 302].includes((await sv.get('/studio')).s) && (await sv.get('/studio/login')).s === 200);
+
+  section('the Studio has its own address');
+  for (const p of ['/studio', '/studio/login', '/studio/anything', '/Studio', '/studio/']) check(`public address does not have ${p}`, [404, 308].includes((await v.get(p)).s) && !(await v.get(p)).t.includes('الاستوديو'));
+  for (const h of [{ 'next-router-prefetch': '1' }, { RSC: '1' }, { RSC: '1', 'next-router-prefetch': '1', 'next-url': '/studio' }, { 'x-middleware-subrequest': 'middleware:middleware:middleware:middleware:middleware' }, { 'x-forwarded-host': `127.0.0.1:${PORT}` }]) check(`nor with the header ${Object.keys(h).join(' + ')}`, (await v.get('/studio/login', { headers: h })).s === 404);
+  check('nor its API', (await v.post('/studio/login', { email: 'founder@example.com' })).s === 404 && (await v.get('/api/studio/customers')).s === 404);
+  for (const p of ['/', '/signup', '/app', '/privacy', '/i/abcdefg']) check(`Studio address does not serve ${p}`, [404, 307].includes((await sv.get(p)).s) && !(await sv.get(p)).t.includes('أنشئ حسابك'));
+  check('Studio address does not serve the customers\' API', (await sv.post('/auth/login', { email: 'a@example.com', password: 'x' })).s === 404);
+  check('Studio forms are only accepted from the Studio', (await sv.post('/studio/login', { email: 'x@example.com' }, { origin: BASE })).s === 403);
+  check('nothing public points at it', !/studio/i.test((await v.get('/robots.txt')).t) && !(await v.get('/')).t.includes('/studio'));
 
   section('accounts');
   const a = await account('نادي العلوم', 'a@example.com');
@@ -211,11 +252,27 @@ async function main() {
   check('the cap holds under simultaneous sign-ups', race.filter((x) => x.s === 200).length === 1, race.map((x) => x.s).join());
 
   section('Studio');
-  const st = new Client();
-  const unknown = await st.post('/studio/login', { email: 'nobody@example.com' });
-  const known = await st.post('/studio/login', { email: 'founder@example.com' });
+  const st0 = desk();
+  const unknown = await st0.post('/studio/login', { email: 'nobody@example.com' });
+  const known = await st0.post('/studio/login', { email: 'founder@example.com' });
   check('Studio sign-in does not reveal who is on the team', unknown.s === known.s && JSON.stringify(unknown.j) === JSON.stringify(known.j));
-  check('Studio code', (await st.post('/studio/verify', { email: 'founder@example.com', code: codeFor('founder@example.com') })).s === 200);
+  const pre = await st0.post('/studio/verify', { email: 'founder@example.com', code: codeFor('founder@example.com') });
+  check('the email code alone does not open the Studio', pre.s === 200 && pre.j.next === 'setup' && (await st0.get('/studio')).s !== 200 && (await st0.get('/api/studio/customers')).s === 401);
+  check('a wrong authenticator code is refused', (await st0.post('/studio/mfa', { code: '000000' })).s === 400);
+  const st = await enterStudio('founder@example.com');
+  check('authenticator code opens it and gives recovery codes once', st.two.s === 200 && st.codes.length === 8 && st.secret === pre.j.secret, JSON.stringify(st.two.j));
+  check('every Studio sign-in is announced by email', Boolean(await waitMail('founder@example.com', /دخول جديد/)));
+  const again = desk();
+  await again.post('/studio/login', { email: 'founder@example.com' });
+  const ag = await again.post('/studio/verify', { email: 'founder@example.com', code: codeFor('founder@example.com') });
+  check('the secret is never shown again', ag.j.next === 'code' && !ag.j.secret);
+  check('a code cannot be replayed', (await again.post('/studio/mfa', { code: st.used })).s === 400);
+  check('a recovery code works once', (await again.post('/studio/mfa', { code: st.codes[0].toUpperCase() })).s === 200 && (await again.get('/studio')).s === 200);
+  const re = desk();
+  await re.post('/studio/login', { email: 'founder@example.com' });
+  await re.post('/studio/verify', { email: 'founder@example.com', code: codeFor('founder@example.com') });
+  check('and not twice', (await re.post('/studio/mfa', { code: st.codes[0] })).s === 400);
+  check('the short pass ends with the wrong session', (await desk().post('/studio/mfa', { code: totp(st.secret) })).s === 401);
   check('Studio cookie is SameSite=Strict', st.raw.some((c) => /^hys=/.test(c) && /samesite=strict/i.test(c)));
   const sp = await st.get('/studio');
   check('Studio page', sp.s === 200);
@@ -246,9 +303,7 @@ async function main() {
   check('private design is not visible to others', !(await b.get('/app/create')).t.includes('ختم سفير'));
   check('new public pattern', (await st.post('/studio/patterns', { name: 'نجوم ذهبية', scope: 'public', data: { e: 0, c1: '#123E5C', c2: '#04121F', c3: '#E7C873', tx: '#FFFFFF', den: 60, spd: 50, logo: '' } })).s === 200 && (await b.get('/app/designs')).t.includes('نجوم ذهبية'));
   check('add a designer', (await st.post('/studio/team', { name: 'مصمم', email: 'designer@example.com', role: 'design' })).s === 200);
-  const ds = new Client();
-  await ds.post('/studio/login', { email: 'designer@example.com' });
-  await ds.post('/studio/verify', { email: 'designer@example.com', code: codeFor('designer@example.com') });
+  const ds = await enterStudio('designer@example.com');
   const orgB = (await st.get('/api/studio/customers?q=' + encodeURIComponent('الكيمياء'))).j.rows[0].id;
   check('designer enters the Studio', (await ds.get('/studio')).s === 200);
   check('designer cannot grant credit', (await ds.post(`/studio/customers/${orgB}/credit`, { count: 500, channel: 'whatsapp', reason: 'اختبار' })).s === 403);
@@ -258,6 +313,63 @@ async function main() {
   check('designer page has no revenue or customers', !(await ds.get('/studio')).t.includes('b@example.com'));
   check('designer cannot publish a design for everyone', (await ds.post('/studio/patterns', { name: 'للكل', scope: 'public', data: { e: 0, c1: '#123E5C', c2: '#04121F', c3: '#E7C873', tx: '#FFFFFF', den: 60, spd: 50, logo: '' } })).s === 403);
   check('founder grants credit', (await st.post(`/studio/customers/${orgB}/credit`, { count: 20, channel: 'self', reason: 'تعويض' })).s === 200);
+
+  section('prices, beta and discounts');
+  const contact = { name: 'نادي', email: '', phone: '0551234567' };
+  const p0 = (await v.get('/api/pricing')).j;
+  check('prices are public and carry nothing else', p0.packs.length === 6 && !JSON.stringify(p0).includes('updatedBy') && p0.beta.quota === 300);
+  const q1 = (await b.post('/orders/quote', { count: 100, channel: 'self', services: [] })).j;
+  check('beta credit is free', q1.total === 0 && q1.beta === true, JSON.stringify(q1));
+  const bo = await b.post('/orders', { count: 100, channel: 'self', services: [], contact });
+  check('a free order is credited at once', bo.s === 200 && bo.j.done === true && /\\"total\\":1[0-9]{2}/.test((await b.get('/app')).t), JSON.stringify(bo.j));
+  const rush = await Promise.all(Array.from({ length: 4 }, () => b.post('/orders', { count: 150, channel: 'self', services: [], contact })));
+  check('the beta quota holds under simultaneous orders', rush.filter((x) => x.j?.done).length === 1, rush.map((x) => `${x.s}:${x.j?.done}`).join());
+  check('WhatsApp is not part of the beta until it is switched on', (await b.post('/orders/quote', { count: 30, channel: 'whatsapp', services: [] })).j.total === 59);
+  const price = { packs: [{ count: 30, self: 40, email: 60, whatsapp: 70, on: true }, { count: 100, self: 120, email: 160, whatsapp: 200, on: true }, { count: 500, self: 0, email: 0, whatsapp: 0, on: true }], free: 15, beta: { on: false, quota: 300, channels: ['self', 'email'], services: true } };
+  check('founder changes prices and ends the beta', (await st.post('/studio/pricing', price)).s === 200 && (await v.get('/api/pricing')).j.beta === null);
+  check('new prices apply at once', (await b.post('/orders/quote', { count: 100, channel: 'email', services: [] })).j.total === 160 && (await b.post('/orders', { count: 300, channel: 'self', services: [], contact })).s === 400);
+  const zero = await b.post('/orders', { count: 500, channel: 'self', services: [], contact });
+  check('a pack priced at zero by mistake waits for the Studio', zero.s === 200 && zero.j.done === false, JSON.stringify(zero.j));
+  check('old orders keep their price', (await st.get('/studio')).t.includes('185') || ord.j.total === 185);
+  check('nonsense prices are refused', (await st.post('/studio/pricing', { ...price, packs: [{ count: 30, self: -5, email: 1, whatsapp: 1, on: true }] })).s === 400 && (await st.post('/studio/pricing', { ...price, packs: [] })).s === 400 && (await st.post('/studio/pricing', { ...price, packs: [price.packs[0], price.packs[0]] })).s === 400);
+  check('new accounts get the new free credit', /\\"total\\":15/.test((await (await account('حساب جديد', 'new15@example.com')).get('/app')).t));
+  const mkCode = (o) => st.post('/studio/discounts', { code: 'HALF', kind: 'percent', value: 50, maxUses: 1, perOrg: 1, orgId: null, expiresAt: null, note: '', ...o });
+  check('founder makes discount codes', (await mkCode({})).s === 200 && (await mkCode({ code: 'GIFT', value: 100, maxUses: 5 })).s === 200 && (await mkCode({ code: 'OLD', expiresAt: new Date(Date.now() - 1000).toISOString() })).s === 400 && (await mkCode({ code: 'OLDD', expiresAt: new Date(Date.now() - 1000).toISOString() })).s === 200 && (await mkCode({ code: 'FORA', orgId: orgB, value: 20 })).s === 200);
+  check('the same code twice, and more than 100%, are refused', (await mkCode({})).s === 400 && (await mkCode({ code: 'MORE', value: 150 })).s === 400);
+  const dq = (await a.post('/orders/quote', { count: 100, channel: 'self', services: [], code: 'half' })).j;
+  check('a code halves the total', dq.total === 60 && dq.discount === 60, JSON.stringify(dq));
+  check('wrong, expired and other people\'s codes do nothing', ['NOPE', 'OLDD', 'FORA'].length === 3 && (await Promise.all(['NOPE', 'OLDD', 'FORA'].map((c) => a.post('/orders/quote', { count: 100, channel: 'self', services: [], code: c })))).every((x) => x.j.total === 120 && x.j.codeError));
+  check('a workspace cannot see or make codes', (await a.post('/studio/discounts', { code: 'HACK', kind: 'percent', value: 100 })).s === 404 && !(await a.get('/app/buy')).t.includes('GIFT'));
+  const two = await Promise.all([a.post('/orders', { count: 100, channel: 'self', services: [], code: 'HALF', contact }), b.post('/orders', { count: 100, channel: 'self', services: [], code: 'HALF', contact })]);
+  check('a code with one use works once, even at the same moment', two.filter((x) => x.s === 200).length === 1, two.map((x) => x.s).join());
+  const gift = await a.post('/orders', { count: 30, channel: 'email', services: [], code: 'GIFT', contact });
+  check('a full discount is credited at once', gift.j.total === 0 && gift.j.done === true);
+  check('once per workspace', (await a.post('/orders', { count: 30, channel: 'email', services: [], code: 'GIFT', contact })).s === 400);
+  check('founder sets a standing price', (await st.post(`/studio/customers/${orgB}/discount`, { pct: 25, reason: 'نادي طلابي' })).s === 200 && (await b.post('/orders/quote', { count: 100, channel: 'self', services: [] })).j.total === 90);
+  check('discounts do not add up', (await b.post('/orders/quote', { count: 100, channel: 'self', services: [], code: 'FORA' })).j.total === 90);
+  for (const [m, u, body] of [['POST', '/studio/pricing', price], ['POST', '/studio/discounts', { code: 'DSGN', kind: 'percent', value: 100, maxUses: null, perOrg: 1, orgId: null, expiresAt: null, note: '' }], ['POST', `/studio/customers/${orgB}/discount`, { pct: 100, reason: 'اختبار' }], ['POST', `/studio/customers/${orgB}/test`, { test: true }], ['POST', `/studio/customers/${orgB}/wipe`, { name: 'x' }], ['POST', `/studio/team/${orgB}/reset`, {}]]) check(`designer cannot use ${u.replace(orgB, ':id')}`, (await ds.req(m, '/api' + u, body)).s === 403);
+  check('designer cannot read analytics', (await ds.get('/api/studio/analytics?days=7')).s === 403);
+  const an = await st.get('/api/studio/analytics?days=30');
+  check('analytics are totals only', an.s === 200 && an.j.series.length === 6 && an.j.series[0].total >= 3 && !/example\.com|0550000|ضيف رقم|متسابق/.test(an.t), an.t.slice(0, 200));
+  const fn = Object.fromEntries(an.j.funnel);
+  check('the funnel follows real steps', fn['سجّلوا'] >= 3 && fn['سوّوا دعوة'] >= 2 && fn['أرسلوها'] >= 2 && fn['جاهم رد'] >= 1 && fn['سجّلوا حضور'] >= 1 && fn['سوّوا دعوة'] <= fn['سجّلوا'], JSON.stringify(an.j.funnel));
+  for (const d of ['7', '90', '999', "30' or 1=1", '']) check(`analytics range "${d}"`, (await st.get('/api/studio/analytics?days=' + encodeURIComponent(d))).s === 200);
+  check('ready designs', (await st.post('/studio/designs', { name: 'ختم جاهز', orgId: null, design: { kind: 'seal', data: { text: 'حفل', wax: '#0E97AE', logo: '' } } })).s === 200 && (await b.get('/app/create')).t.includes('ختم جاهز') && (await ds.post('/studio/designs', { name: 'للكل', orgId: null, design: { kind: 'seal', data: { text: 'x', wax: '#0E97AE', logo: '' } } })).s === 403);
+  const did = (await st.get('/studio')).t.match(/\\"id\\":\\"([0-9a-f-]{36})\\",\\"kind\\":\\"seal\\",\\"name\\":\\"ختم جاهز/)?.[1];
+  check('a hidden design leaves the pickers', (await st.patch(`/studio/designs/${did}`, { on: false })).s === 200 && !(await b.get('/app/create')).t.includes('ختم جاهز'));
+
+  section('trial workspaces');
+  const tw = await account('تجربة الفريق', 'trial@example.com');
+  const ti = await invitation(tw, {}, 2);
+  await tw.post(`/invitations/${ti.id}/publish`);
+  const twId = (await st.get('/api/studio/customers?q=' + encodeURIComponent('تجربة الفريق'))).j.rows[0].id;
+  const before = (await st.get('/api/studio/analytics?days=7')).j;
+  check('a normal workspace cannot be wiped', (await st.post(`/studio/customers/${twId}/wipe`, { name: 'تجربة الفريق' })).s === 400);
+  check('mark it as a trial', (await st.post(`/studio/customers/${twId}/test`, { test: true })).s === 200);
+  const after = (await st.get('/api/studio/analytics?days=7')).j;
+  check('it leaves every number', after.series[0].total === before.series[0].total - 1 && after.series[2].total === before.series[2].total - 2, JSON.stringify([before.series.map((x) => x.total), after.series.map((x) => x.total)]));
+  check('wiping needs the exact name', (await st.post(`/studio/customers/${twId}/wipe`, { name: 'غيره' })).s === 400);
+  check('wiping empties it and only it', (await st.post(`/studio/customers/${twId}/wipe`, { name: 'تجربة الفريق' })).s === 200 && (await tw.get(`/app/invitations/${ti.id}`)).s === 404 && (await v.get(`/i/${ti.slug}`)).s === 404 && (await a.get(`/app/invitations/${inv.id}`)).s === 200 && (await tw.get('/app')).s === 200);
 
   section('workspace roles');
   const vw = await account('مشاهد الفريق', 'viewer@example.com');
@@ -278,8 +390,10 @@ async function main() {
   for (const p of ['', '/attendance', '/certificate', '/preview']) check(`B cannot open A's page${p}`, (await b.get(`/app/invitations/${inv.id}${p}`)).s === 404);
   check('a guest token only works on its own invitation', (await v.get(`/i/${pi.slug}/${t1}`)).s === 404);
   check('a made-up token is not found', (await v.get(`/i/${inv.slug}/aaaaaaaaaaaaaaaa`)).s === 404);
-  check('a customer session cannot use the Studio API', (await a.get('/api/studio/customers')).s === 401);
-  check('a Studio session cannot use the customer API', (await st.post('/invitations', { title: 'x' })).s === 401);
+  const swapA = Object.assign(desk(), { jar: new Map([...a.jar, ['hys', a.jar.get('hy')]]) });
+  check('a customer session cannot use the Studio API', (await swapA.get('/api/studio/customers')).s === 401 && (await swapA.get('/studio')).s !== 200);
+  const swapS = Object.assign(new Client(), { jar: new Map([...st.jar, ['hy', st.jar.get('hys')]]) });
+  check('a Studio session cannot use the customer API', (await swapS.post('/invitations', { title: 'x' })).s === 401 && (await swapS.get('/app')).s !== 200);
 
   section('attack: cross-site requests');
   check('foreign Origin is refused', (await a.post('/invitations', { title: 'csrf' }, { origin: 'https://evil.example' })).s === 403);
@@ -287,6 +401,20 @@ async function main() {
   check('cross-site fetch metadata is refused', (await a.post('/invitations', { title: 'csrf' }, { headers: { 'sec-fetch-site': 'cross-site' } })).s === 403);
   check('form post is refused', (await a.post('/invitations', 'title=csrf', { type: 'application/x-www-form-urlencoded' })).s === 415);
   check('GET never changes anything', (await a.get(`/api/invitations/${inv.id}/publish`)).s === 404);
+
+  section('attack: leaked files and path traversal');
+  const secretish = /APP_SECRET|DATA_KEY|DATABASE_URL=|e2e-only|root:x:0|BEGIN [A-Z ]*PRIVATE KEY|"dependencies"|\[core\]|create table/i;
+  const files = ['/.env', '/.env.local', '/.env.production', '/.git/config', '/.git/HEAD', '/package.json', '/package-lock.json', '/next.config.mjs', '/drizzle/0000_init.sql', '/src/server/lib/crypto.ts', '/tests/e2e.mjs', '/.next/BUILD_ID', '/.next/server/app/page.js', '/server/app/page.js', '/.data/pg/PG_VERSION', '/backup.sql', '/dump.sql', '/node_modules/next/package.json', '/.DS_Store', '/wp-admin', '/phpinfo.php', '/actuator/env', '/server-status', '/.well-known/../.env'];
+  const climbs = ['/../../.env', '/../../../../etc/passwd', '/..%2f..%2f.env', '/%2e%2e/%2e%2e/.env', '/%2e%2e%2f%2e%2e%2f.env', '/..%5c..%5c.env', '/..\\..\\.env', '/%252e%252e%252f.env', '/_next/static/../../../.env', '/_next/static/..%2f..%2f..%2f.env', '/_next/static/%2e%2e/%2e%2e/%2e%2e/package.json', '/_next/../.env', '/img/../../.env', '/img/..%2f..%2fpackage.json', '/img/%2e%2e/%2e%2e/package.json', '/icon.svg/../../.env', '/api/assets/../../../.env', '/api/assets/..%2f..%2f..%2f.env', '/api/assets/%2e%2e%2f.env', '/api/assets/....//....//.env', '/api/assets/%00', '/api/../.env', '/i/../../.env', '/c/..%2f..%2f.env', '//etc/passwd', '/.//.env', '/%c0%ae%c0%ae/.env', '/..;/..;/.env', 'C:/Windows/win.ini', '/C:/Windows/win.ini', '/_next/image?url=%2F..%2F..%2F.env&w=64&q=75', '/_next/image?url=file:///etc/passwd&w=64&q=75', '/_next/image?url=http://169.254.169.254/latest/meta-data&w=64&q=75', '/_next/image?url=http://localhost:3111/api/health&w=64&q=75'];
+  for (const p of [...files, ...climbs]) { const r = await rawGet(p); check(`not served: ${p}`, (r.s !== 200 || !r.t) && !secretish.test(r.t), `${r.s} ${r.t.slice(0, 80)}`); }
+  check('redirects never leave the site', (await Promise.all(['//evil.example', '/\\evil.example', '/%5cevil.example', '//evil.example/%2e%2e', '/signup//evil.example'].map((p) => rawGet(p)))).every((r) => !/^(https?:)?\/\/(?!localhost|127)/.test(r.loc)));
+  check('a next address outside the site is ignored', !(await v.get('/signup?mode=old&next=https://evil.example')).t.includes('href="https://evil.example'));
+  const chunks = readdirSync('.next/static', { recursive: true }).map(String).filter((f) => /\.(js|css|map|json)$/.test(f));
+  const inBundle = chunks.filter((f) => /APP_SECRET|DATA_KEY|DATABASE_URL|RESEND_API_KEY|SMTP_URL|CRON_SECRET|scrypt\$|postgres:\/\//.test(readFileSync(path.join('.next/static', f), 'utf8')));
+  check('nothing secret is in the browser files', chunks.length > 10 && !inBundle.length, inBundle.join());
+  check('no source maps are published', !chunks.some((f) => f.endsWith('.map')));
+  const tracked = execFileSync(process.platform === 'win32' ? 'node' : process.execPath, ['scripts/check-secrets.mjs'], { encoding: 'utf8' });
+  check('the repository holds no secrets', /clean/.test(tracked), tracked);
 
   section('attack: injection');
   const evil = '<script>alert(1)</script>"\'><img src=x onerror=alert(1)>';
@@ -300,7 +428,7 @@ async function main() {
   check('bad ids are not found', (await a.get('/api/invitations/1%20OR%201=1/guests')).s === 404 && (await v.get('/api/assets/..%2f..%2f.env')).s === 404);
   const mass = await a.post('/invitations', { title: 'x', status: 'sent', orgId: orgB, slug: 'hacked', sentAt: future(1), createdBy: orgB, __proto__: { admin: true } });
   check('extra fields are ignored', mass.s === 200 && mass.j.slug !== 'hacked' && (await v.get('/i/hacked')).s === 404);
-  check('profile cannot change role, status or email', (await a.patch('/me', { role: 'founder', status: 'active', email: 'x@x.com', emailVerifiedAt: null, notify: { daily: true } })).s === 200 && (await a.get('/api/studio/customers')).s === 401);
+  check('profile cannot change role, status or email', (await a.patch('/me', { role: 'founder', status: 'active', email: 'x@x.com', emailVerifiedAt: null, notify: { daily: true } })).s === 200 && (await swapA.get('/api/studio/customers')).s === 401);
   check('unknown pattern and colours are refused', (await a.patch(`/invitations/${big.id}`, { pattern: 'x;background:url(//evil)' })).s === 400 && (await st.post('/studio/patterns', { name: 'xx', scope: 'public', data: { e: 0, c1: 'red;}body{display:none', c2: '#04121F', c3: '#E7C873', tx: '#FFFFFF', den: 60, spd: 50, logo: '' } })).s === 400);
   check('another workspace\'s photo or design cannot be attached', (await b.patch(`/invitations/${pi.id}`, { photoAssetId: inv.id })).s === 400);
   check('broken JSON is handled', (await a.post('/invitations', '{"title":', {})).s === 400);
@@ -334,7 +462,7 @@ async function main() {
     push();
   });
   const cut = await endless(a);
-  check('an upload that hides its size is cut off', cut === 413 || /ECONNRESET|EPIPE/.test(String(cut)), String(cut));
+  check('an upload that hides its size is cut off', cut === 413 || /ECONNRESET|EPIPE|ECANCELED|ECONNABORTED/.test(String(cut)), String(cut));
   check('the site still answers after it', (await v.get('/api/health')).s === 200);
   check('uploading needs sign-in', (await up(new Client(), png, 'x.png')).s === 401);
   check('certificate cannot use another workspace\'s image', (await b.post(`/invitations/${pi.id}/certificate`, { tpl: 0, color: 0, title: 0, org: 'x', orgSub: '', certLine: '', para: '', lang: 'ar', enLine: '', enPara: '', signer: '', role: '', extra: false, extraL: '', when: 0, logo: okUp.j.url, sigImg: '', bg: '', fields: { ev: true, dt: true, du: false }, px: 50, py: 50, al: 1, sz: 1, tc: 0 })).s === 400);
@@ -350,9 +478,14 @@ async function main() {
   for (let i = 0; i < 10; i++) last = (await pw.post('/auth/login', { email: a.email, password: 'wrong-' + i })).s;
   check('password guessing is slowed down', last === 429);
   check('the real owner is not locked out by it', (await a.post('/auth/login', { email: a.email, password: a.password })).s === 200);
-  const lk = new Client();
+  const lk = desk();
   for (let i = 0; i < 6; i++) await lk.post('/studio/verify', { email: 'founder@example.com', code: '00000' + i });
   check('Studio locks after five wrong codes', (await lk.post('/studio/verify', { email: 'founder@example.com', code: '123456' })).s === 429);
+  const dm = desk();
+  await dm.post('/studio/login', { email: 'designer@example.com' });
+  await dm.post('/studio/verify', { email: 'designer@example.com', code: codeFor('designer@example.com') });
+  for (let i = 0; i < 5; i++) await dm.post('/studio/mfa', { code: '11111' + i });
+  check('authenticator codes cannot be guessed', (await dm.post('/studio/mfa', { code: totp(ds.secret, 1) })).s === 429);
   const sneaky = new Client();
   let blocked = false;
   for (let i = 0; i < 12; i++) { const r = await sneaky.req('POST', '/api/auth/login', { email: 'b@example.com', password: 'x' + i }, { headers: { 'x-forwarded-for': `10.0.0.${i}, ${sneaky.ip}` } }); if (r.s === 429) blocked = true; }

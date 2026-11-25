@@ -29,6 +29,7 @@ export const IC = {
   ppl: 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21a7 7 0 0 1 14 0M17 11a3 3 0 1 0 0-6M22 21a6 6 0 0 0-4-5.6', star: 'M12 3l2.5 5.5L20 9l-4 4 1 6-5-3-5 3 1-6-4-4 5.5-.5z', card: 'M3 6h18v12H3zM3 10h18M7 15h4',
   user: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0', gear: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1',
   team: 'M16 11a4 4 0 1 0-8 0M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1', send: 'M22 2L11 13M22 2l-7 20-4-9-9-4z', tag: 'M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9zM8 8h.01', org: 'M4 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16M16 9h2a2 2 0 0 1 2 2v10M8 7h4M8 11h4M8 15h4', lock: 'M6 11h12v9H6zM8 11V8a4 4 0 0 1 8 0v3',
+  chart: 'M4 20V10M10 20V4M16 20v-7M22 20H2', grid: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',
   wand: 'M15 4V2M15 16v-2M8 9h2M20 9h2M17.8 11.8L19 13M17.8 6.2L19 5M3 21l9-9M12.2 6.2L11 5',
 };
 export const HREF = { الرئيسية: '/app', الدعوات: '/app/invitations', التصاميم: '/app/designs', المدعوين: '/app/guests', 'طلبات التخصيص': '/app/requests', 'الرصيد والفواتير': '/app/buy', الإعدادات: '/app/settings', حسابي: '/app/account', الحساب: '/app/account' };
@@ -90,8 +91,8 @@ async function call(method, path, body, form) {
   const json = await res.json().catch(() => ({}));
   if (!res.ok) {
     if (res.status === 401 && json.code === 'signed_out') {
-      const studio = path.startsWith('/studio');
-      window.location.assign(studio ? '/studio/login' : `/signup?mode=old&next=${encodeURIComponent(window.location.pathname)}`);
+      if (api.signedOut) api.signedOut();
+      else window.location.assign(`/signup?mode=old&next=${encodeURIComponent(window.location.pathname)}`);
     }
     throw new ApiError(res.status, json.error || 'صار خطأ، جرّب مرة ثانية', json.code);
   }

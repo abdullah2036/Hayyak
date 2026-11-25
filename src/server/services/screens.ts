@@ -8,6 +8,7 @@ import type { UserCtx } from '../lib/session';
 import { balance } from './credit';
 import { certFor, isOpen, nameRequestsOf, roster, sessionsOf, thankTargets } from './attendance';
 import { received } from './guest';
+import { publicPricing } from './pricing';
 import { attendanceCounts, defaultMessage, guestsOf, linkOf, list, liveStatus, lookOf, NOSTATS, own, personalMessage, reminderText, shortLink, statsFor, STATUS_AR, type Guest, type Inv } from './invitations';
 import { serviceList } from './studio';
 
@@ -215,6 +216,7 @@ export async function buyScreen(me: UserCtx) {
   const mine = await d.select().from(orders).where(eq(orders.orgId, me.org.id)).orderBy(desc(orders.createdAt)).limit(30);
   return {
     services: (await serviceList(true)).filter((s) => s.price !== null).map((s) => ({ id: s.id, name: s.name, description: s.description, duration: s.duration, price: s.price! })),
+    pricing: await publicPricing(), special: me.org.discountPct,
     contact: { name: me.org.name, email: me.org.contactEmail || me.user.email, phone: me.org.phone },
     orders: mine.map((o) => ({ number: `HY-${o.number}`, count: o.count, total: o.total, status: o.status, date: dayMonth(o.createdAt) })),
   };

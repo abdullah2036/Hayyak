@@ -2,6 +2,16 @@
 import LuxCView from '@/views/LuxC.view';
 import { Screen } from '@/ui/dc';
 import { guestTemplate, waxPath } from '@/ui/kit';
+import { freeText } from '@/ui/pricing';
+import { DEFAULT_FREE, DEFAULT_PACKS } from '@/lib/constants';
+
+/** The free trial and three packs; the middle one stands out. */
+function planCards(pr) {
+  const packs = pr?.packs?.length ? pr.packs : DEFAULT_PACKS;
+  const pick = packs.length > 3 ? [packs[1], packs[2], packs[packs.length - 1]] : packs;
+  const beta = pr?.beta && pr.beta.channels.includes('self');
+  return [['مجاني', '0', 'ر.س', freeText(pr ? pr.free : DEFAULT_FREE), 0], ...pick.map((p, i) => [`${p.count} دعوة`, beta ? '0' : String(p.self), beta ? 'خلال البيتا' : 'ر.س', beta ? `ترسلها بنفسك · بعد البيتا ${p.self} ر.س` : 'ترسلها بنفسك · صالحة 30 يوم', i === 1 ? 1 : 0])];
+}
 
 export default class Landing extends Screen {
   static View = LuxCView;
@@ -99,7 +109,7 @@ export default class Landing extends Screen {
       cur: { pattern: P0[0], color: 'لون ' + ((s.rn % 3) + 1), seal: 'VIP', title: P0[2], latin: P0[3] },
       seals: SD.map(function (g, i) { return { n: g[0], c: g[1], m: g[5], fs: g[0].length > 4 ? '17px' : '19px', st: 'position:relative;width:96px;height:96px;animation:stampIn .8s cubic-bezier(.3,.7,.2,1) ' + (0.2 + i * 0.15).toFixed(2) + 's both' }; }),
       steps: [['01', 'اختر التصميم', 'أنماط بألوانها وأختامها، أو صورة من عندك'], ['02', 'ارفع الأسماء', 'ارفع ملف Excel واحد، وكل ضيف تطلع له دعوته باسمه'], ['03', 'أرسل وتابع', 'أرسلها بالطريقة اللي تحبها، والردود توصلك أول بأول']].map(function (t, i) { return { n: t[0], t: t[1], d: t[2], st: 'display:flex;flex-direction:column;gap:14px;padding:34px;border-radius:30px;background:linear-gradient(160deg,rgba(255,255,255,.08),rgba(255,255,255,.02));box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 30px 60px rgba(0,0,0,.25);animation:up .9s cubic-bezier(.2,.7,.2,1) ' + (0.3 + i * 0.2).toFixed(1) + 's both' }; }),
-      plans: [['مجاني', '0', 'ر.س', '10 دعوات مرة وحدة للتجربة', 0], ['50 دعوة', '55', 'ر.س', 'ترسلها بنفسك · صالحة 30 يوم', 0], ['100 دعوة', '105', 'ر.س', 'ترسلها بنفسك · صالحة 30 يوم', 1], ['300 دعوة', '289', 'ر.س', 'ترسلها بنفسك · صالحة 30 يوم', 0]].map(function (p) { return { n: p[0], m: p[1], per: p[2], q: p[3], st: 'border-radius:26px;padding:26px;display:flex;flex-direction:column;gap:12px;text-align:right;' + (p[4] ? 'background:linear-gradient(160deg,rgba(14,151,174,.25),rgba(10,42,67,.6));border:1px solid rgba(134,220,234,.5)' : 'background:rgba(255,255,255,.03);border:1px solid rgba(134,220,234,.15)') }; })
+      plans: planCards(this.props.pricing).map(function (p) { return { n: p[0], m: p[1], per: p[2], q: p[3], st: 'border-radius:26px;padding:26px;display:flex;flex-direction:column;gap:12px;text-align:right;' + (p[4] ? 'background:linear-gradient(160deg,rgba(14,151,174,.25),rgba(10,42,67,.6));border:1px solid rgba(134,220,234,.5)' : 'background:rgba(255,255,255,.03);border:1px solid rgba(134,220,234,.15)') }; })
     };
   }
 }

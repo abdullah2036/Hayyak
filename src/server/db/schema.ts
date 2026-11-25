@@ -38,6 +38,10 @@ export const orgs = pgTable('orgs', {
   logoAssetId: uuid('logo_asset_id'),
   status: text('status').$type<'active' | 'suspended'>().notNull().default('active'),
   reportToken: text('report_token').notNull().unique(),
+  /** Special price agreed with this workspace: 10 = 10% off, 100 = free. */
+  discountPct: integer('discount_pct').notNull().default(0),
+  /** The team's own trial workspaces. Left out of every number in the Studio. */
+  test: boolean('test').notNull().default(false),
   createdAt: created(),
   lastActiveAt: ts('last_active_at'),
 });
@@ -76,6 +80,11 @@ export const staff = pgTable('staff', {
   name: text('name').notNull(),
   role: text('role').$type<StaffRole>().notNull(),
   status: text('status').$type<'pending' | 'active' | 'disabled'>().notNull().default('pending'),
+  /** Authenticator app. The secret is encrypted; the step of the last accepted code stops replays. */
+  totpSecret: text('totp_secret').notNull().default(''),
+  totpAt: ts('totp_at'),
+  totpStep: integer('totp_step').notNull().default(0),
+  recovery: jsonb('recovery').$type<string[]>().notNull().default([]),
   createdAt: created(),
   lastLoginAt: ts('last_login_at'),
 });
@@ -86,6 +95,8 @@ export const sessions = pgTable(
     id: id(),
     tokenHash: text('token_hash').notNull().unique(),
     kind: text('kind').$type<'user' | 'staff'>().notNull(),
+    /** A Studio session opens only after the authenticator code. */
+    stage: text('stage').$type<'full' | 'mfa'>().notNull().default('full'),
     userId: uuid('user_id').references(() => users.id, { onDelete: 'cascade' }),
     staffId: uuid('staff_id').references(() => staff.id, { onDelete: 'cascade' }),
     orgId: uuid('org_id').references(() => orgs.id, { onDelete: 'set null' }),
@@ -210,7 +221,10 @@ export const orders = pgTable(
     count: integer('count').notNull(),
     channel: text('channel').$type<Channel>().notNull(),
     items: jsonb('items').$type<{ k: string; v: string; price: number | null }[]>().notNull(),
-    total: integer('total').notNull(), // whole riyals
+    total: integer('total').notNull(), // whole riyals, after the discount
+    discount: integer('discount').notNull().default(0),
+    discountCode: text('discount_code').notNull().default(''),
+    beta: boolean('beta').notNull().default(false),
     contact: jsonb('contact').$type<{ name: string; email: string; phone: string }>().notNull(),
     status: text('status').$type<'pending' | 'paid' | 'cancelled'>().notNull().default('pending'),
     decidedBy: text('decided_by').notNull().default(''),
@@ -218,6 +232,34 @@ export const orders = pgTable(
     createdAt: created(),
   },
   (t) => [index('orders_org').on(t.orgId), index('orders_status').on(t.status)],
+);
+
+/** Values the founders change from the Studio: prices, the free trial, the beta. */
+export const settings = pgTable('settings', {
+  key: text('key').primaryKey(),
+  value: jsonb('value').$type<Record<string, unknown>>().notNull(),
+  updatedBy: text('updated_by').notNull().default(''),
+  updatedAt: ts('updated_at').notNull().defaultNow(),
+});
+
+export const discounts = pgTable(
+  'discounts',
+  {
+    id: id(),
+    code: text('code').notNull().unique(), // always upper case
+    kind: text('kind').$type<'percent' | 'amount'>().notNull(),
+    value: integer('value').notNull(),
+    maxUses: integer('max_uses'), // null = no limit
+    perOrg: integer('per_org').notNull().default(1),
+    uses: integer('uses').notNull().default(0),
+    orgId: uuid('org_id').references(() => orgs.id, { onDelete: 'cascade' }), // null = anyone
+    expiresAt: ts('expires_at'),
+    active: boolean('active').notNull().default(true),
+    note: text('note').notNull().default(''),
+    createdBy: text('created_by').notNull().default(''),
+    createdAt: created(),
+  },
+  (t) => [check('discount_value', sql`${t.value} > 0 and (${t.kind} = 'amount' or ${t.value} <= 100)`)],
 );
 
 export const services = pgTable('services', {

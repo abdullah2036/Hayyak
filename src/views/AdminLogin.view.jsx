@@ -1,4 +1,4 @@
-import { S, txt, A } from '@/ui/dc';
+import { S, txt } from '@/ui/dc';
 
 const CSS = `h1,h2,h3,h4,p,li,label{text-wrap:balance}span,b,a,button{text-wrap:pretty}
 body{margin:0;background:#EDF1F3}
@@ -95,6 +95,51 @@ export default function AdminLoginView({ v }) {
                   <button type="button" onClick={v.back} style={{ alignSelf: "center", border: "0", background: "transparent", color: "#086577", fontSize: "15px", fontWeight: "700", cursor: "pointer" }}>غيّر الإيميل</button>
                 </div>
             ) : null}
+            {v.isSetup ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: "14px", animation: "rise .4s ease-out both" }}>
+                  <span style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "6px" }}>
+                    <b style={{ fontFamily: "TD, serif", fontSize: "36px", lineHeight: "1.25" }}>فعّل تطبيق التحقق</b>
+                    <span style={{ fontSize: "15px", color: "#3A4B58", lineHeight: "1.8" }}>امسح الباركود بتطبيق مثل Google Authenticator أو Microsoft Authenticator أو 1Password، واكتب الرمز اللي يطلع</span>
+                  </span>
+                  <span style={{ alignSelf: "center", padding: "14px", borderRadius: "22px", background: "#FFFFFF", boxShadow: "0 12px 30px rgba(10,42,67,.12)" }}>
+                    <svg width="180" height="180" viewBox={v.qrBox} role="img" aria-label="باركود تطبيق التحقق">
+                      {v.qr.map((m, i) => <rect key={i} x={m.x} y={m.y} width="1" height="1" fill="#0A2A43" />)}
+                    </svg>
+                  </span>
+                  <span style={{ textAlign: "center", fontSize: "13px", color: "#4A5B68" }}>ما قدرت تمسحه؟ اكتب هذا المفتاح في التطبيق<br /><b style={{ direction: "ltr", display: "inline-block", fontFamily: "monospace", fontSize: "14px", color: "#0A2A43", userSelect: "all" }}>{v.secret}</b></span>
+                </div>
+            ) : null}
+            {v.isSetup || v.isApp ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+                  {v.isApp ? (
+                    <span style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "6px" }}>
+                      <b style={{ fontFamily: "TD, serif", fontSize: "40px", lineHeight: "1.25" }}>رمز التطبيق</b>
+                      <span style={{ fontSize: "15px", color: "#3A4B58", lineHeight: "1.8" }}>{v.appNote}</span>
+                    </span>
+                  ) : null}
+                  <input className="f" inputMode={v.useRec ? 'text' : 'numeric'} value={v.app} onChange={v.onApp} onKeyDown={v.appKey} aria-label="رمز تطبيق التحقق" autoComplete="one-time-code" placeholder={v.appPh} style={{ textAlign: "center", letterSpacing: v.useRec ? "2px" : "10px", direction: "ltr" }} />
+                  {v.codeErr ? (
+                    <span role="alert" style={{ fontSize: "14px", color: "#8A2D3B", fontWeight: "700" }}>{v.codeErr}</span>
+                  ) : null}
+                  <button type="button" className="btn" onClick={v.confirm} disabled={v.busy} style={{ height: "58px", border: "0", borderRadius: "999px", background: "#0E97AE", color: "#FFFFFF", fontWeight: "700", fontSize: "17px", cursor: "pointer" }}>تأكيد</button>
+                  {v.isApp ? (
+                    <button type="button" onClick={v.togRec} style={{ alignSelf: "center", border: "0", background: "transparent", color: "#086577", fontSize: "15px", fontWeight: "700", cursor: "pointer", fontFamily: "inherit" }}>{v.recL}</button>
+                  ) : null}
+                </div>
+            ) : null}
+            {v.isCodes ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: "14px", animation: "rise .4s ease-out both" }}>
+                  <span style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "6px" }}>
+                    <b style={{ fontFamily: "TD, serif", fontSize: "36px", lineHeight: "1.25" }}>رموزك الاحتياطية</b>
+                    <span style={{ fontSize: "15px", color: "#3A4B58", lineHeight: "1.8" }}>احفظها في مكان آمن غير جوالك. لو ضاع الجوال تدخل بواحد منها، وما نقدر نعرضها مرة ثانية</span>
+                  </span>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", direction: "ltr" }}>
+                    {v.codes.map((c) => <span key={c} style={{ padding: "12px", borderRadius: "16px", background: "#FFFFFF", textAlign: "center", fontFamily: "monospace", fontSize: "16px" }}>{c}</span>)}
+                  </div>
+                  <button type="button" className="btn" onClick={v.copyCodes} style={{ height: "52px", borderRadius: "999px", border: "1.5px solid #0A2A43", background: "transparent", color: "#0A2A43", fontWeight: "700", fontSize: "16px", cursor: "pointer", fontFamily: "inherit" }}>{v.copyL}</button>
+                  <button type="button" className="btn" onClick={v.done} style={{ height: "58px", border: "0", borderRadius: "999px", background: "#0A2A43", color: "#FFFFFF", fontWeight: "700", fontSize: "17px", cursor: "pointer", fontFamily: "inherit" }}>حفظتها، كمّل</button>
+                </div>
+            ) : null}
             {v.isIn ? (
               <div style={{ display: "flex", flexDirection: "column", gap: "14px", alignItems: "center", textAlign: "center", animation: "rise .4s ease-out both" }}>
                   <span style={{ width: "76px", height: "76px", borderRadius: "50%", background: "#0E97AE", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 14px 30px rgba(14,151,174,.35)" }}>
@@ -102,7 +147,7 @@ export default function AdminLoginView({ v }) {
                   </span>
                   <b style={{ fontFamily: "TD, serif", fontSize: "38px" }}>{"أهلًا "}{v.name}</b>
                   <span style={{ fontSize: "15px", color: "#3A4B58" }}>الجلسة آمنة لمدة 30 دقيقة</span>
-                  <A href="Admin.dc.html" className="btn" style={{ marginTop: "6px", height: "58px", padding: "0 40px", borderRadius: "999px", background: "#0A2A43", color: "#FFFFFF", fontWeight: "700", fontSize: "17px", textDecoration: "none", display: "inline-flex", alignItems: "center" }}>ادخل الاستوديو</A>
+                  <button type="button" className="btn" onClick={v.enter} style={{ marginTop: "6px", height: "58px", padding: "0 40px", borderRadius: "999px", background: "#0A2A43", color: "#FFFFFF", fontWeight: "700", fontSize: "17px", textDecoration: "none", display: "inline-flex", alignItems: "center", border: "0", cursor: "pointer", fontFamily: "inherit" }}>ادخل الاستوديو</button>
                 </div>
             ) : null}
             <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", fontSize: "13px", color: "#4A5B68" }}>

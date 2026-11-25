@@ -59,7 +59,19 @@ async function viaResend(key: string, m: Letter) {
   if (!r.ok) throw new Error(`Resend ${r.status}: ${(await r.text()).slice(0, 200)}`);
 }
 
+/** On a staging copy, only the listed addresses (or @domains) ever receive email. */
+function blocked(to: string) {
+  if (process.env.APP_ENV !== 'staging') return false;
+  const allow = (process.env.MAIL_ALLOW || '').toLowerCase().split(',').map((x) => x.trim()).filter(Boolean);
+  const t = to.toLowerCase();
+  return !allow.some((a) => (a.startsWith('@') ? t.endsWith(a) : t === a));
+}
+
 async function deliver(m: Letter) {
+  if (blocked(m.to)) {
+    console.log('[mail] staging: not sent, the address is not in MAIL_ALLOW');
+    return;
+  }
   if (process.env.RESEND_API_KEY) return viaResend(process.env.RESEND_API_KEY, m);
   const t = await transport();
   if (!t) {

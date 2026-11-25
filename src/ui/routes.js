@@ -18,8 +18,6 @@ export const ROUTES = {
   'Certificate.dc.html': '/app/invitations',
   'GuestJourney.dc.html': '/app/invitations',
   'InviteDetail.dc.html': '/app/invitations',
-  'AdminLogin.dc.html': '/studio/login',
-  'Admin.dc.html': '/studio',
 };
 
 export function resolve(href) {

@@ -379,6 +379,13 @@ export default function AdminView({ v }) {
                             <button type="button" onClick={e?.grant} style={{ height: "40px", padding: "0 16px", borderRadius: "999px", border: "1px solid rgba(134,220,234,.4)", background: "transparent", color: "#86DCEA", fontFamily: "inherit", fontSize: "13px", fontWeight: "700", cursor: "pointer" }}>+ رصيد</button>
                           ) : null}
                           {v.isFounder ? (
+                            <>
+                              <button type="button" onClick={e?.price} style={{ height: "40px", padding: "0 16px", borderRadius: "999px", border: "1px solid rgba(134,220,234,.4)", background: "transparent", color: "#86DCEA", fontFamily: "inherit", fontSize: "13px", fontWeight: "700", cursor: "pointer" }}>سعر خاص</button>
+                              <button type="button" onClick={e?.setTest} style={{ height: "40px", padding: "0 16px", borderRadius: "999px", border: "1px solid rgba(134,220,234,.4)", background: "transparent", color: "#86DCEA", fontFamily: "inherit", fontSize: "13px", fontWeight: "700", cursor: "pointer" }}>{e?.testL}</button>
+                              {e?.test ? <button type="button" onClick={e?.wipe} style={{ height: "40px", padding: "0 16px", borderRadius: "999px", border: "1px solid rgba(134,220,234,.4)", background: "transparent", color: "#86DCEA", fontFamily: "inherit", fontSize: "13px", fontWeight: "700", cursor: "pointer" }}>امسح بياناته</button> : null}
+                            </>
+                          ) : null}
+                          {v.isFounder ? (
                             <button type="button" onClick={e?.toggle} style={{ height: "40px", padding: "0 16px", borderRadius: "999px", border: "1px solid rgba(134,220,234,.4)", background: "transparent", color: "#86DCEA", fontFamily: "inherit", fontSize: "13px", fontWeight: "700", cursor: "pointer" }}>{e?.toggleL}</button>
                           ) : null}
                         </span>
@@ -395,7 +402,11 @@ export default function AdminView({ v }) {
                               ))}
                             </div>
                         ) : null}
-                        <input className="fld" value={v.gReason ?? ''} onChange={v.onGReason} placeholder="السبب (يطلع للمستخدم في سجله)" aria-label="السبب" />
+                        {v.gPrice ? (
+                          <label style={{ display: "flex", alignItems: "center", gap: "10px", fontSize: "14px" }}>خصم دائم %<input className="fld" inputMode="numeric" value={v.gPct ?? ''} onChange={v.onGPct} style={{ width: "110px" }} /></label>
+                        ) : null}
+                        {v.gWarn ? <span style={{ fontSize: "13px", color: "#F2DC9B" }}>{v.gWarn}</span> : null}
+                        <input className="fld" value={v.gReason ?? ''} onChange={v.onGReason} placeholder={v.gPh} aria-label={v.gPh} />
                         <span style={{ display: "flex", gap: "8px" }}>
                           <button type="button" onClick={v.gSave} style={{ height: "46px", padding: "0 24px", border: "0", borderRadius: "999px", background: "#86DCEA", color: "#04121F", fontFamily: "inherit", fontWeight: "700", cursor: "pointer" }}>تأكيد</button>
                           <button type="button" onClick={v.gClose} style={{ height: "40px", padding: "0 16px", borderRadius: "999px", border: "1px solid rgba(134,220,234,.4)", background: "transparent", color: "#86DCEA", fontFamily: "inherit", fontSize: "13px", fontWeight: "700", cursor: "pointer" }}>إلغاء</button>
@@ -620,6 +631,7 @@ export default function AdminView({ v }) {
                           <span style={{ fontSize: "13px", color: "#9FB8C6", direction: "ltr", textAlign: "right" }}>{m?.mail}</span>
                         </span>
                         <span style={{ fontSize: "13px", fontWeight: "700", padding: "6px 14px", borderRadius: "999px", background: "rgba(134,220,234,.15)", color: "#86DCEA" }}>{m?.role}</span>
+                        {m?.rs ? <button type="button" onClick={m?.rs} style={{ height: "40px", padding: "0 16px", borderRadius: "999px", border: "1px solid rgba(134,220,234,.4)", background: "transparent", color: "#86DCEA", fontFamily: "inherit", fontSize: "13px", fontWeight: "700", cursor: "pointer" }}>صفّر تطبيق التحقق</button> : null}
                         {m?.rm ? (
                           <button type="button" onClick={m?.rm} aria-label={`شيل ${txt(m?.n)}`} style={{ height: "40px", padding: "0 16px", borderRadius: "999px", border: "1px solid rgba(134,220,234,.4)", background: "transparent", color: "#86DCEA", fontFamily: "inherit", fontSize: "13px", fontWeight: "700", cursor: "pointer" }}>شيل</button>
                         ) : null}
@@ -627,13 +639,14 @@ export default function AdminView({ v }) {
                   ))}
                 </section>
             ) : null}
+            {v.extra}
             {v.bOpen ? (
               <div style={{ position: "fixed", inset: "0", zIndex: "70", background: "rgba(2,12,22,.7)", WebkitBackdropFilter: "blur(8px)", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px" }}>
                   <div className="bld" style={{ width: "100%", maxWidth: "1080px", maxHeight: "94vh", overflow: "auto", boxSizing: "border-box", borderRadius: "34px", padding: "26px", background: "linear-gradient(160deg, #0B3550, #061C2E)", border: "1px solid rgba(134,220,234,.25)", boxShadow: "0 40px 90px rgba(0,0,0,.5)", display: "flex", flexDirection: "column", gap: "18px", color: "#EAF4F7" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "12px" }}>
                       <span style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                        <b style={{ fontFamily: "TD, serif", fontSize: "30px", lineHeight: "1.3" }}>جهّز التخصيص</b>
-                        <span style={{ fontSize: "14px", color: "#9FB8C6" }}>{v.bWhat}{" · لـ "}{v.bWho}</span>
+                        <b style={{ fontFamily: "TD, serif", fontSize: "30px", lineHeight: "1.3" }}>{v.bHead}</b>
+                        <span style={{ fontSize: "14px", color: "#9FB8C6" }}>{v.bSub}</span>
                       </span>
                       <button type="button" onClick={v.closeB} aria-label="إغلاق" style={{ width: "42px", height: "42px", borderRadius: "50%", border: "0", background: "rgba(255,255,255,.1)", color: "#FFFFFF", fontSize: "18px", cursor: "pointer" }}>{"×"}</button>
                     </div>
@@ -727,9 +740,12 @@ export default function AdminView({ v }) {
                               <button key={o?.key ?? $i26} type="button" onClick={o?.pick} style={S(`${txt(o?.st)}`)}><b style={{ fontSize: "14px" }}>{o?.n}</b><span style={{ fontSize: "12px", color: "#9FB8C6" }}>{o?.d}</span></button>
                             ))}
                           </div>
+                          {v.bPickUser ? (
+                            <select className="fld" value={v.bUser} onChange={v.onBUser} aria-label="المستخدم">{v.bUsers.map((u) => <option key={u.key} value={u.v}>{u.n}</option>)}</select>
+                          ) : null}
                           {v.bPublic ? (
                             <label style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "13px", fontWeight: "700" }}>
-                                اسم التصميم للكل
+                                اسم التصميم
                                 <input className="fld" value={v.bName ?? ''} onChange={v.onBName} placeholder="مثال: ليلي ذهبي" />
                               </label>
                           ) : null}
@@ -812,8 +828,8 @@ export default function AdminView({ v }) {
                     </div>
                     {v.bNotDone ? (
                       <div style={{ display: "flex", gap: "10px", justifyContent: "flex-start", flexWrap: "wrap" }}>
-                          <button type="button" onClick={v.bApprove} style={{ height: "54px", padding: "0 30px", border: "0", borderRadius: "999px", background: "#86DCEA", color: "#04121F", fontWeight: "700", fontSize: "16px", cursor: "pointer", fontFamily: "inherit" }}>اعتمد وسلّم</button>
-                          <button type="button" onClick={v.bPreview} style={{ height: "54px", padding: "0 24px", borderRadius: "999px", border: "1px solid rgba(255,255,255,.25)", background: "transparent", color: "#EAF4F7", fontSize: "15px", cursor: "pointer", fontFamily: "inherit" }}>أرسل معاينة للمستخدم</button>
+                          <button type="button" onClick={v.bApprove} style={{ height: "54px", padding: "0 30px", border: "0", borderRadius: "999px", background: "#86DCEA", color: "#04121F", fontWeight: "700", fontSize: "16px", cursor: "pointer", fontFamily: "inherit" }}>{v.bSaveL}</button>
+                          {v.bNotFree ? <button type="button" onClick={v.bPreview} style={{ height: "54px", padding: "0 24px", borderRadius: "999px", border: "1px solid rgba(255,255,255,.25)", background: "transparent", color: "#EAF4F7", fontSize: "15px", cursor: "pointer", fontFamily: "inherit" }}>أرسل معاينة للمستخدم</button> : null}
                         </div>
                     ) : null}
                     {v.bDone ? (

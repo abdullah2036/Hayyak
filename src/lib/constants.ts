@@ -18,20 +18,21 @@ export const SEAL_NAMES = SEALS.map((s) => s[0]);
 /** Seals that are only available while the workspace has paid credit. */
 export const PAID_SEALS = ['راعي', 'شريك', 'تحكيم'];
 
-/** Credit packs: [count, self, email, whatsapp] in riyals. */
-export const PACKS: [number, number, number, number][] = [
-  [30, 35, 50, 59],
-  [50, 55, 80, 95],
-  [100, 105, 155, 185],
-  [150, 155, 230, 275],
-  [200, 199, 299, 359],
-  [300, 289, 439, 529],
+/** Starting values. The founders change them later from the Studio (settings table). */
+export const DEFAULT_PACKS = [
+  { count: 30, self: 35, email: 50, whatsapp: 59, on: true },
+  { count: 50, self: 55, email: 80, whatsapp: 95, on: true },
+  { count: 100, self: 105, email: 155, whatsapp: 185, on: true },
+  { count: 150, self: 155, email: 230, whatsapp: 275, on: true },
+  { count: 200, self: 199, email: 299, whatsapp: 359, on: true },
+  { count: 300, self: 289, email: 439, whatsapp: 529, on: true },
 ];
+export type Pack = (typeof DEFAULT_PACKS)[number];
+export const DEFAULT_FREE = 10;
 export const CHANNELS = ['self', 'email', 'whatsapp'] as const;
 export const CHANNEL_NAMES: Record<string, string> = { self: 'أرسلها بنفسي', email: 'حيّــاك ترسلها بالإيميل', whatsapp: 'حيّــاك ترسلها بالواتساب' };
 export const CHANNEL_SHORT: Record<string, string> = { self: 'بنفسه', email: 'إيميل', whatsapp: 'واتساب', free: 'مجاني' };
 
-export const FREE_CREDITS = 10;
 export const CREDIT_DAYS = 30;
 export const SEND_LEAD_HOURS = 48;
 export const CERT_LINK_DAYS = 30;
@@ -77,9 +78,3 @@ export const THANK_GROUPS: { label: string; seals: string[] | null }[] = [
 
 export const STAFF_ROLES: Record<string, string> = { founder: 'مؤسس', support: 'دعم', design: 'تصميم' };
 export const ORG_ROLES: Record<string, string> = { owner: 'مالك الحساب', manager: 'مشرف', viewer: 'مشاهد' };
-
-export function packPrice(count: number, channel: string): number | null {
-  const row = PACKS.find((p) => p[0] === count);
-  const i = (CHANNELS as readonly string[]).indexOf(channel);
-  return row && i >= 0 ? (row[1 + i] as number) : null;
-}

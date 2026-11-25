@@ -1,0 +1,3 @@
+#!/bin/sh
+# Refuses a commit that carries something that looks like a secret.
+exec node scripts/check-secrets.mjs

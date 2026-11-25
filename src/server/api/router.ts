@@ -1,8 +1,9 @@
 import 'server-only';
 import { NextResponse, type NextRequest } from 'next/server';
 import { z } from 'zod';
+import { appOrigin, areaOf, studioOrigin } from '@/lib/hosts';
 import type { OrgRole } from '../db';
-import { AppError, appUrl, clientIp, deviceLabel, forbidden, limit, notFound } from '../lib/core';
+import { AppError, clientIp, deviceLabel, forbidden, limit, notFound } from '../lib/core';
 import { can, getStaff, getUser, needActive, needRole, type Perm, type StaffCtx, type UserCtx } from '../lib/session';
 
 /**
@@ -44,12 +45,12 @@ export function uuid(s: string | undefined) {
 }
 
 /** Requests that change something must come from our own pages. Works together with SameSite cookies. */
-function sameSite(req: NextRequest) {
+function sameSite(req: NextRequest, studioRoute: boolean) {
   const site = req.headers.get('sec-fetch-site');
   if (site && site !== 'same-origin' && site !== 'none') return false;
   const origin = req.headers.get('origin');
   if (!origin) return false;
-  if (origin === new URL(appUrl()).origin) return true;
+  if (origin === (studioRoute ? studioOrigin() : appOrigin())) return true;
   return process.env.NODE_ENV !== 'production' && origin === req.nextUrl.origin;
 }
 
@@ -103,8 +104,12 @@ export async function handle(req: NextRequest, path: string[]) {
     const m = match(req.method, path);
     if (!m) throw notFound();
     const { r, params } = m;
+    // The Studio has its own address; see lib/hosts.ts. The answer is the same as for a path that does not exist.
+    const studioRoute = r.parts[0] === 'studio';
+    const area = areaOf(req.headers.get('host'));
+    if (area === 'app' ? studioRoute : area === 'studio' && !studioRoute && r.parts[0] !== 'assets' && r.parts[0] !== 'health') throw notFound();
     const mutating = req.method !== 'GET';
-    if (mutating && !sameSite(req)) throw new AppError(403, 'الطلب مرفوض', 'bad_origin');
+    if (mutating && !sameSite(req, studioRoute)) throw new AppError(403, 'الطلب مرفوض', 'bad_origin');
     const ip = clientIp(req.headers);
     const device = deviceLabel(req.headers.get('user-agent') || '');
     await limit(`api:${ip}`, 600, 60);

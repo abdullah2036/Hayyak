@@ -58,6 +58,9 @@ export default function SubscribeView({ v }) {
               </div>
             <div className="body" style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) 340px", gap: "22px", alignItems: "start" }}>
                 <div style={{ display: "flex", flexDirection: "column", gap: "18px", minWidth: "0" }}>
+                  {v.banner ? (
+                    <div role="note" style={{ borderRadius: "24px", padding: "14px 20px", background: "#0E97AE", color: "#FFFFFF", fontWeight: "700", fontSize: "15px", lineHeight: "1.7" }}>{v.banner}</div>
+                  ) : null}
                   <section className="glass card" style={{ borderRadius: "28px", padding: "20px 22px", display: "flex", flexDirection: "column", gap: "12px" }}>
                     <span style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
                       <h2 style={{ margin: "0", fontSize: "18px" }}>مين يرسل الدعوات؟</h2>
@@ -91,7 +94,7 @@ export default function SubscribeView({ v }) {
                         </button>
                     ))}
                     <A href="mailto:hayyakinfo@gmail.com" style={{ gridColumn: "1 / -1", textDecoration: "none", textAlign: "right", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", columnGap: "16px", rowGap: "4px", padding: "16px 20px", borderRadius: "24px", border: "2px dashed rgba(14,151,174,.35)", background: "rgba(230,246,249,.5)", color: "#0A2A43" }}>
-                      <b style={{ fontSize: "18px" }}>أكثر من 300؟</b>
+                      <b style={{ fontSize: "18px" }}>{v.moreTx}</b>
                       <span style={{ fontSize: "12px", color: "#4A5B68", lineHeight: "1.6" }}>نحدد السعر معك حسب حجم مناسبتك</span>
                       <span style={{ fontSize: "13px", fontWeight: "700", color: "#086577" }}>تواصل معنا ←</span>
                     </A>
@@ -174,6 +177,21 @@ export default function SubscribeView({ v }) {
                   {(v.lines || []).map((l, $i5) => (
                     <span key={l?.key ?? $i5} style={{ display: "flex", justifyContent: "space-between", gap: "10px", fontSize: "14px", paddingBottom: "8px", borderBottom: "1px solid rgba(255,255,255,.12)" }}><span style={{ color: "#CFE7EE" }}>{l?.k}</span><b>{l?.v}</b></span>
                   ))}
+                  {v.codeOn ? (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                      {v.codeOk ? (
+                        <span style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "8px", fontSize: "13px", fontWeight: "700", color: "#86DCEA" }}>{v.codeTx}<button type="button" onClick={v.dropCode} style={{ border: "0", background: "transparent", color: "#CFE7EE", fontFamily: "inherit", fontSize: "13px", cursor: "pointer", textDecoration: "underline" }}>شيله</button></span>
+                      ) : (
+                        <span style={{ display: "flex", gap: "8px" }}>
+                          <input value={v.code ?? ''} onChange={v.onCode} onKeyDown={v.codeKey} placeholder="كود الخصم" aria-label="كود الخصم" autoComplete="off" style={{ flex: "1", minWidth: "0", height: "44px", borderRadius: "999px", border: "1px solid rgba(255,255,255,.25)", background: "rgba(255,255,255,.08)", color: "#FFFFFF", padding: "0 16px", fontFamily: "inherit", fontSize: "14px" }} />
+                          <button type="button" onClick={v.applyCode} style={{ height: "44px", padding: "0 18px", borderRadius: "999px", border: "1px solid #86DCEA", background: "transparent", color: "#86DCEA", fontFamily: "inherit", fontWeight: "700", cursor: "pointer" }}>طبّق</button>
+                        </span>
+                      )}
+                      {v.codeErr ? (
+                        <span role="alert" style={{ fontSize: "13px", fontWeight: "700", color: "#FFC2C2" }}>{v.codeErr}</span>
+                      ) : null}
+                    </div>
+                  ) : null}
                   <span style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
                     <span style={{ fontSize: "14px", color: "#CFE7EE" }}>الإجمالي</span>
                     <b style={{ fontFamily: "TD, serif", fontSize: "34px" }}>{v.total}</b>
@@ -187,7 +205,7 @@ export default function SubscribeView({ v }) {
                   <button type="button" onClick={v.go} style={{ height: "54px", border: "0", borderRadius: "999px", background: "#0E97AE", color: "#FFFFFF", fontWeight: "700", fontSize: "16px", cursor: "pointer" }}>{v.cta}</button>
                   <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "6px", fontSize: "11px", color: "#B8D4DE" }}>
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4" /></svg>
-                    يوصلنا طلبك ونتواصل معك لتأكيد الدفع، وبعدها ينزل رصيدك
+                    {v.footTx}
                   </span>
                 </aside>
               </div></>

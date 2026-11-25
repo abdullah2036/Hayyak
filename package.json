@@ -14,10 +14,13 @@
     "start:prod": "npm run db:migrate && next start",
     "typecheck": "tsc --noEmit",
     "test:e2e": "node tests/e2e.mjs",
+    "check:secrets": "node scripts/check-secrets.mjs",
+    "prepare": "node scripts/use-hooks.mjs",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx scripts/migrate.ts",
     "seed:admin": "tsx scripts/seed-admin.ts",
-    "seed:demo": "tsx scripts/seed-demo.ts"
+    "seed:demo": "tsx scripts/seed-demo.ts",
+    "studio:reset": "tsx scripts/studio-reset.ts"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.6.0",

@@ -23,10 +23,12 @@ export async function startUserSession(userId: string, orgId: string | null, met
   await d.insert(sessions).values({ kind: 'user', userId, orgId, tokenHash: hmac(t), device: meta.device, ip: meta.ip, expiresAt: new Date(Date.now() + USER_DAYS * 864e5) });
   (await cookies()).set(names().user, t, opts(USER_DAYS * 86400));
 }
-export async function startStaffSession(staffId: string, meta: { device: string; ip: string }) {
+const MFA_MIN = 10;
+/** 'mfa' is a short pass that can only be used to enter the authenticator code. */
+export async function startStaffSession(staffId: string, meta: { device: string; ip: string }, stage: 'full' | 'mfa') {
   const t = raw();
   const d = await db();
-  await d.insert(sessions).values({ kind: 'staff', staffId, tokenHash: hmac(t), device: meta.device, ip: meta.ip, expiresAt: new Date(Date.now() + STAFF_MAX_HOURS * 36e5) });
+  await d.insert(sessions).values({ kind: 'staff', stage, staffId, tokenHash: hmac(t), device: meta.device, ip: meta.ip, expiresAt: new Date(Date.now() + (stage === 'mfa' ? MFA_MIN * 60_000 : STAFF_MAX_HOURS * 36e5)) });
   // Strict: the Studio is never opened from a link on another site.
   (await cookies()).set(names().staff, t, { ...opts(STAFF_MAX_HOURS * 3600), sameSite: 'strict' });
 }
@@ -104,7 +106,7 @@ export function needActive(ctx: UserCtx) {
 }
 
 export type StaffCtx = { session: { id: string }; staff: typeof staff.$inferSelect };
-export async function getStaff(): Promise<StaffCtx | null> {
+export async function getStaff(stage: 'full' | 'mfa' = 'full'): Promise<StaffCtx | null> {
   const t = (await cookies()).get(names().staff)?.value;
   if (!t) return null;
   const d = await db();
@@ -112,8 +114,8 @@ export async function getStaff(): Promise<StaffCtx | null> {
     .select({ s: sessions, m: staff })
     .from(sessions)
     .innerJoin(staff, eq(staff.id, sessions.staffId))
-    .where(and(eq(sessions.tokenHash, hmac(t)), eq(sessions.kind, 'staff'), gt(sessions.expiresAt, new Date())));
-  if (!row || row.m.status !== 'active') return null;
+    .where(and(eq(sessions.tokenHash, hmac(t)), eq(sessions.kind, 'staff'), eq(sessions.stage, stage), gt(sessions.expiresAt, new Date())));
+  if (!row || row.m.status === 'disabled' || (stage === 'full' && row.m.status !== 'active')) return null;
   const idle = Date.now() - row.s.lastSeenAt.getTime();
   if (idle > STAFF_IDLE_MIN * 60_000) {
     await d.delete(sessions).where(eq(sessions.id, row.s.id));
@@ -124,10 +126,10 @@ export async function getStaff(): Promise<StaffCtx | null> {
 }
 
 /* ---------- what each Studio role may do ---------- */
-export type Perm = 'overview' | 'sends' | 'requests' | 'design' | 'services' | 'users' | 'credit' | 'sales' | 'privacy' | 'team';
+export type Perm = 'overview' | 'analytics' | 'sends' | 'requests' | 'design' | 'services' | 'pricing' | 'users' | 'credit' | 'sales' | 'privacy' | 'team';
 const PERMS: Record<StaffRole, Perm[]> = {
-  founder: ['overview', 'sends', 'requests', 'design', 'services', 'users', 'credit', 'sales', 'privacy', 'team'],
-  support: ['overview', 'sends', 'requests', 'users', 'credit', 'sales', 'privacy'],
+  founder: ['overview', 'analytics', 'sends', 'requests', 'design', 'services', 'pricing', 'users', 'credit', 'sales', 'privacy', 'team'],
+  support: ['overview', 'analytics', 'sends', 'requests', 'users', 'credit', 'sales', 'privacy'],
   design: ['overview', 'requests', 'design'],
 };
 export const can = (role: StaffRole, p: Perm) => PERMS[role].includes(p);

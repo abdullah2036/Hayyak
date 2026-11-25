@@ -622,7 +622,7 @@ export default function CreateView({ v }) {
                           </span>
                           <span style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                             <b style={{ fontSize: "15px" }}>كل دعوة ترسلها تنحسب من رصيدك</b>
-                            <span style={{ fontSize: "13px", color: "#3A4B58", lineHeight: "1.7" }}>والرصيد صالح 30 يوم من يوم الشراء، واللي ما تستخدمه ينتهي معه. والمجاني 10 دعوات مرة وحدة</span>
+                            <span style={{ fontSize: "13px", color: "#3A4B58", lineHeight: "1.7" }}>والرصيد صالح 30 يوم من يوم الشراء، واللي ما تستخدمه ينتهي معه</span>
                           </span>
                         </section>
                       <section className="in glass card" style={{ borderRadius: "30px", padding: "22px 24px", display: "flex", flexDirection: "column", gap: "12px" }}>

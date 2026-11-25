@@ -1,12 +1,16 @@
 import 'server-only';
 import { and, asc, desc, eq, gte, ilike, inArray, isNull, lt, ne, or, sql } from 'drizzle-orm';
-import { CHANNEL_NAMES, CHANNEL_SHORT, PACKS, STAGES } from '@/lib/constants';
+import { CHANNEL_NAMES, CHANNEL_SHORT, STAGES } from '@/lib/constants';
+import { studioOrigin } from '@/lib/hosts';
 import { dayMonth, partsOf, relative, time, until } from '@/lib/dates';
-import { db, auditLog, creditLots, customDesigns, customRequests, guests, invitations, memberships, orders, orgs, sendRequests, services, sessions, staff, users, type Channel, type DB, type StaffRole } from '../db';
+import { db, auditLog, creditLedger, creditLots, customDesigns, customRequests, guests, invitations, memberships, orders, orgs, sendRequests, services, sessions, staff, users, type Channel, type DB, type StaffRole } from '../db';
 import { AppError, appUrl, audit, bad, limit, notFound, type Actor } from '../lib/core';
 import { send } from '../lib/mail';
 import { can, type StaffCtx } from '../lib/session';
+import { real } from './analytics';
+import { resetTotp } from './auth';
 import { grant } from './credit';
+import { discountList, pricing } from './pricing';
 import { linkOf, log, personalMessage, reminderText, type Guest } from './invitations';
 
 const actor = (me: StaffCtx, ip: string): Actor => ({ type: 'staff', id: me.staff.id, name: me.staff.name, ip });
@@ -23,16 +27,16 @@ export async function overview() {
   const one = async (q: Promise<{ n: number }[]>) => Number((await q)[0]?.n ?? 0);
   const n = sql<number>`count(*)::int`;
   const [activeOrgs, newOrgs, revenue, lastRevenue, sent, byHayyak, bySelf] = await Promise.all([
-    one(d.select({ n }).from(orgs).where(eq(orgs.status, 'active'))),
-    one(d.select({ n }).from(orgs).where(gte(orgs.createdAt, m0))),
-    one(d.select({ n: sql<number>`coalesce(sum(${orders.total}),0)::int` }).from(orders).where(and(eq(orders.status, 'paid'), gte(orders.decidedAt, m0)))),
-    one(d.select({ n: sql<number>`coalesce(sum(${orders.total}),0)::int` }).from(orders).where(and(eq(orders.status, 'paid'), gte(orders.decidedAt, m1), lt(orders.decidedAt, m0)))),
-    one(d.select({ n }).from(guests).innerJoin(invitations, eq(invitations.id, guests.invitationId)).where(and(eq(guests.charged, true), gte(invitations.createdAt, m0)))),
-    one(d.select({ n }).from(invitations).where(and(eq(invitations.audience, 'private'), eq(invitations.sendBy, 'hayyak'), ne(invitations.status, 'draft'), gte(invitations.createdAt, m0)))),
-    one(d.select({ n }).from(invitations).where(and(eq(invitations.audience, 'private'), eq(invitations.sendBy, 'self'), ne(invitations.status, 'draft'), gte(invitations.createdAt, m0)))),
+    one(d.select({ n }).from(orgs).where(and(eq(orgs.status, 'active'), eq(orgs.test, false)))),
+    one(d.select({ n }).from(orgs).where(and(gte(orgs.createdAt, m0), eq(orgs.test, false)))),
+    one(d.select({ n: sql<number>`coalesce(sum(${orders.total}),0)::int` }).from(orders).where(and(real(orders.orgId), eq(orders.status, 'paid'), gte(orders.decidedAt, m0)))),
+    one(d.select({ n: sql<number>`coalesce(sum(${orders.total}),0)::int` }).from(orders).where(and(real(orders.orgId), eq(orders.status, 'paid'), gte(orders.decidedAt, m1), lt(orders.decidedAt, m0)))),
+    one(d.select({ n }).from(guests).innerJoin(invitations, eq(invitations.id, guests.invitationId)).where(and(real(guests.orgId), eq(guests.charged, true), gte(invitations.createdAt, m0)))),
+    one(d.select({ n }).from(invitations).where(and(eq(invitations.audience, 'private'), eq(invitations.sendBy, 'hayyak'), real(invitations.orgId), ne(invitations.status, 'draft'), gte(invitations.createdAt, m0)))),
+    one(d.select({ n }).from(invitations).where(and(eq(invitations.audience, 'private'), eq(invitations.sendBy, 'self'), real(invitations.orgId), ne(invitations.status, 'draft'), gte(invitations.createdAt, m0)))),
   ]);
-  const sales = await d.select({ channel: orders.channel, c: sql<number>`count(distinct ${orders.orgId})::int`, r: sql<number>`coalesce(sum(${orders.total}),0)::int` }).from(orders).where(eq(orders.status, 'paid')).groupBy(orders.channel);
-  const free = await one(d.select({ n: sql<number>`count(distinct ${creditLots.orgId})::int` }).from(creditLots).where(eq(creditLots.kind, 'free')));
+  const sales = await d.select({ channel: orders.channel, c: sql<number>`count(distinct ${orders.orgId})::int`, r: sql<number>`coalesce(sum(${orders.total}),0)::int` }).from(orders).where(and(real(orders.orgId), eq(orders.status, 'paid'))).groupBy(orders.channel);
+  const free = await one(d.select({ n: sql<number>`count(distinct ${creditLots.orgId})::int` }).from(creditLots).where(and(real(creditLots.orgId), eq(creditLots.kind, 'free'))));
   return { activeOrgs, newOrgs, revenue, lastRevenue, sent, byHayyak, bySelf, sales, free };
 }
 
@@ -178,7 +182,7 @@ export async function customers(q: string) {
     const total = mine.reduce((a, l) => a + l.total, 0);
     const used = mine.reduce((a, l) => a + l.used, 0);
     const exp = mine.filter((l) => l.expiresAt).sort((a, b) => a.expiresAt!.getTime() - b.expiresAt!.getTime())[0]?.expiresAt;
-    return { id: o.id, n: o.name, kind: o.kind || 'حساب', plan: plans[o.id] || 'مجاني', total, used, end: exp ? `ينتهي ${until(exp)}` : 'تجربة مرة وحدة', last: relative(o.lastActiveAt || o.createdAt), status: o.status, invitations: invs.find((i) => i.id === o.id)?.n ?? 0, owner: own.find((u) => u.orgId === o.id)?.email || '' };
+    return { id: o.id, n: o.name, kind: o.kind || 'حساب', plan: plans[o.id] || 'مجاني', total, used, end: exp ? `ينتهي ${until(exp)}` : 'تجربة مرة وحدة', last: relative(o.lastActiveAt || o.createdAt), status: o.status, test: o.test, pct: o.discountPct, invitations: invs.find((i) => i.id === o.id)?.n ?? 0, owner: own.find((u) => u.orgId === o.id)?.email || '' };
   });
 }
 export async function setOrgStatus(me: StaffCtx, orgId: string, status: 'active' | 'suspended', reason: string, ip: string) {
@@ -199,12 +203,13 @@ export async function grantCredit(me: StaffCtx, p: { orgId: string; count: numbe
 /* ---------- orders: confirmed by hand until a payment gateway is connected ---------- */
 export async function sales() {
   const d = await db();
-  const paid = await d.select({ count: orders.count, c: sql<number>`count(*)::int`, r: sql<number>`coalesce(sum(${orders.total}),0)::int` }).from(orders).where(eq(orders.status, 'paid')).groupBy(orders.count);
+  const paid = await d.select({ count: orders.count, c: sql<number>`count(*)::int`, r: sql<number>`coalesce(sum(${orders.total}),0)::int` }).from(orders).where(and(real(orders.orgId), eq(orders.status, 'paid'))).groupBy(orders.count);
   const pending = await d.select({ o: orders, org: orgs.name }).from(orders).innerJoin(orgs, eq(orgs.id, orders.orgId)).where(eq(orders.status, 'pending')).orderBy(desc(orders.createdAt)).limit(100);
-  const [f] = await d.select({ n: sql<number>`count(*)::int` }).from(creditLots).where(eq(creditLots.kind, 'free'));
+  const [f] = await d.select({ n: sql<number>`count(*)::int` }).from(creditLots).where(and(real(creditLots.orgId), eq(creditLots.kind, 'free')));
+  const now = await pricing();
   return {
-    packs: [{ n: 'مجاني', price: '0', lim: '10 دعوات مرة وحدة للتجربة', c: f?.n ?? 0, r: '0 ر.س' }, ...PACKS.map((p) => { const s = paid.find((x) => x.count === p[0]); return { n: `${p[0]} دعوة`, price: `${p[1]} · ${p[2]} · ${p[3]}`, lim: 'بنفسك · إيميل · واتساب', c: s?.c ?? 0, r: `${(s?.r ?? 0).toLocaleString('en-US')} ر.س` }; })],
-    pending: pending.map((x) => ({ id: x.o.id, number: x.o.number, who: x.org, total: x.o.total, what: `${x.o.count} دعوة · ${CHANNEL_NAMES[x.o.channel]}`, items: x.o.items, contact: x.o.contact, when: relative(x.o.createdAt) })),
+    packs: [{ n: 'مجاني', price: '0', lim: `${now.free} دعوة مرة وحدة للتجربة`, c: f?.n ?? 0, r: '0 ر.س' }, ...now.packs.map((p) => { const s = paid.find((x) => x.count === p.count); return { n: `${p.count} دعوة${p.on ? '' : ' · موقّفة'}`, price: `${p.self} · ${p.email} · ${p.whatsapp}`, lim: 'بنفسك · إيميل · واتساب', c: s?.c ?? 0, r: `${(s?.r ?? 0).toLocaleString('en-US')} ر.س` }; })],
+    pending: pending.map((x) => ({ id: x.o.id, number: x.o.number, who: x.org, total: x.o.total, what: `${x.o.count} دعوة · ${CHANNEL_NAMES[x.o.channel]}${x.o.discount ? ` · خصم ${x.o.discount} ر.س${x.o.discountCode ? ` (${x.o.discountCode})` : ''}` : ''}`, items: x.o.items, contact: x.o.contact, when: relative(x.o.createdAt) })),
   };
 }
 export async function decideOrder(me: StaffCtx, id: string, ok: boolean, ip: string) {
@@ -236,7 +241,7 @@ export async function addMember(me: StaffCtx, p: { name: string; email: string; 
   const r = await d.insert(staff).values(p).onConflictDoUpdate({ target: staff.email, set: { name: p.name, role: p.role, status: 'pending' }, setWhere: eq(staff.status, 'disabled') }).returning();
   if (!r.length) throw bad('الإيميل مضاف من قبل');
   await audit(actor(me, ip), 'أضاف عضو للفريق', { detail: `${p.name} · ${p.role}` });
-  await send({ to: p.email, subject: 'دعوة لفريق حيّــاك', title: `أهلًا ${p.name}`, lines: [`${me.staff.name} أضافك لفريق إدارة حيّــاك. ادخل الاستوديو بهذا الإيميل، وبيوصلك رمز التحقق عليه.`], button: { label: 'ادخل الاستوديو', url: `${appUrl()}/studio/login` } });
+  await send({ to: p.email, subject: 'دعوة لفريق حيّــاك', title: `أهلًا ${p.name}`, lines: [`${me.staff.name} أضافك لفريق إدارة حيّــاك. ادخل الاستوديو بهذا الإيميل، وبيوصلك رمز التحقق عليه.`], button: { label: 'ادخل الاستوديو', url: `${studioOrigin() || appUrl()}/studio/login` } });
 }
 export async function removeMember(me: StaffCtx, id: string, ip: string) {
   if (id === me.staff.id) throw bad('ما تقدر تشيل نفسك');
@@ -252,14 +257,77 @@ export async function removeMember(me: StaffCtx, id: string, ip: string) {
   await audit(actor(me, ip), 'شال عضو من الفريق', { detail: m.name });
 }
 
+export async function resetMember(me: StaffCtx, id: string, ip: string) {
+  if (id === me.staff.id) throw bad('لحسابك استخدم رمز احتياطي');
+  const [m] = await (await db()).select().from(staff).where(eq(staff.id, id));
+  if (!m) throw notFound();
+  await resetTotp(id);
+  await audit(actor(me, ip), 'صفّر تطبيق التحقق لعضو', { detail: m.name });
+  await send({ to: m.email, subject: 'تصفّر تطبيق التحقق', title: 'تصفّر تطبيق التحقق', lines: [`${me.staff.name} صفّر تطبيق التحقق في حسابك. بتضيفه من جديد في دخولك الجاي. لو ما طلبت هذا كلّم المؤسسين.`] });
+}
+
+/* ---------- ready designs ---------- */
+export async function designs() {
+  const d = await db();
+  const rows = await d.select({ c: customDesigns, org: orgs.name }).from(customDesigns).leftJoin(orgs, eq(orgs.id, customDesigns.orgId)).orderBy(desc(customDesigns.createdAt)).limit(200);
+  return rows.map((x) => ({ id: x.c.id, kind: x.c.kind, name: x.c.name, org: x.org || '', on: x.c.approved, data: x.c.data, when: relative(x.c.createdAt) }));
+}
+export async function createDesign(me: StaffCtx, p: { name: string; orgId: string | null; kind: 'seal' | 'colors' | 'loading'; data: Record<string, unknown> }, ip: string) {
+  const d = await db();
+  if (p.orgId) {
+    const [o] = await d.select({ id: orgs.id }).from(orgs).where(eq(orgs.id, p.orgId));
+    if (!o) throw bad('اختر المستخدم');
+  } else if (me.staff.role !== 'founder') throw new AppError(403, 'النشر للكل من صلاحية المؤسسين', 'forbidden');
+  await d.insert(customDesigns).values({ kind: p.kind, name: p.name, orgId: p.orgId, data: p.data });
+  await audit(actor(me, ip), 'أضاف تصميم جاهز', { detail: p.name, orgId: p.orgId });
+}
+/** Hiding a design takes it out of the pickers. Invitations that already use it keep it. */
+export async function toggleDesign(me: StaffCtx, id: string, on: boolean, ip: string) {
+  const d = await db();
+  const [x] = await d.select().from(customDesigns).where(eq(customDesigns.id, id));
+  if (!x) throw notFound();
+  if (!x.orgId && me.staff.role !== 'founder') throw new AppError(403, 'التصاميم العامة من صلاحية المؤسسين', 'forbidden');
+  await d.update(customDesigns).set({ approved: on }).where(eq(customDesigns.id, id));
+  await audit(actor(me, ip), on ? 'أظهر تصميم' : 'أخفى تصميم', { detail: x.name, orgId: x.orgId });
+}
+
+/* ---------- trial workspaces: the team's own accounts for testing on the live site ---------- */
+export async function setTest(me: StaffCtx, orgId: string, test: boolean, ip: string) {
+  const r = await (await db()).update(orgs).set({ test }).where(eq(orgs.id, orgId)).returning();
+  if (!r.length) throw notFound();
+  await audit(actor(me, ip), test ? 'علّم الحساب كحساب تجربة' : 'رجّع الحساب حساب عادي', { detail: r[0]!.name, orgId });
+}
+/** Empties a trial workspace. Refuses anything that is not marked as one, and the name must be typed. */
+export async function wipeTest(me: StaffCtx, orgId: string, name: string, ip: string) {
+  const d = await db();
+  await d.transaction(async (t) => {
+    const tx = t as unknown as DB;
+    const [o] = await tx.select().from(orgs).where(eq(orgs.id, orgId)).for('update');
+    if (!o) throw notFound();
+    if (!o.test) throw bad('المسح لحسابات التجربة بس');
+    if (o.name.trim() !== name.trim()) throw bad('اكتب اسم الحساب مثل ما هو');
+    await tx.delete(invitations).where(eq(invitations.orgId, orgId)); // guests, attendance and certificates go with them
+    await tx.delete(orders).where(eq(orders.orgId, orgId));
+    await tx.delete(customRequests).where(eq(customRequests.orgId, orgId));
+    await tx.delete(customDesigns).where(eq(customDesigns.orgId, orgId));
+    await tx.delete(creditLedger).where(eq(creditLedger.orgId, orgId));
+    await tx.delete(creditLots).where(eq(creditLots.orgId, orgId));
+    const { free } = await pricing(tx);
+    if (free) await tx.insert(creditLots).values({ orgId, kind: 'free', channel: 'self', total: free });
+  });
+  await audit(actor(me, ip), 'مسح بيانات حساب تجربة', { detail: name, orgId });
+}
+
 /** Everything the Studio page needs, limited to what this role may see. */
 export async function studioData(me: StaffCtx) {
   const r = me.staff.role;
   const has = (p: Parameters<typeof can>[1]) => can(r, p);
-  const [ov, sendList, reqs, svc, ents, sal, log_, tm] = await Promise.all([
+  const [ov, sendList, reqs, svc, ents, sal, log_, tm, pr, codes, des] = await Promise.all([
+   
     overview(), has('sends') ? sends() : [], has('requests') ? requests() : [], has('services') ? serviceList() : [], has('users') ? customers('') : [],
     has('sales') ? sales() : null, has('privacy') ? auditList() : [], has('team') ? team() : [],
+    has('pricing') ? pricing() : null, has('pricing') ? discountList() : [], has('design') ? designs() : [],
   ]);
-  return { me: { name: me.staff.name, role: r }, overview: has('sales') ? ov : { ...ov, revenue: 0, lastRevenue: 0, sales: [] }, sends: sendList, requests: reqs, services: svc, customers: ents, sales: sal, audit: log_, team: tm.map((m) => ({ id: m.id, n: m.name, mail: m.email, role: m.role, status: m.status, me: m.id === me.staff.id })) };
+  return { me: { name: me.staff.name, role: r }, overview: has('sales') ? ov : { ...ov, revenue: 0, lastRevenue: 0, sales: [] }, sends: sendList, requests: reqs, services: svc, customers: ents, sales: sal, audit: log_, team: tm.map((m) => ({ id: m.id, n: m.name, mail: m.email, role: m.role, status: m.status, app: Boolean(m.totpAt), me: m.id === me.staff.id })), pricing: pr, discounts: codes, designs: des };
 }
 export type StudioData = Awaited<ReturnType<typeof studioData>>;

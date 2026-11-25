@@ -3,10 +3,10 @@
 Animated invitations with RSVP, attendance by code or QR, and certificates. Arabic, right to left.
 
 - **Workspace** (`/app`): invitations, guest lists, sending, reminders, attendance, certificates, reports, credit, team.
-- **Studio** (`/studio`): the Hayyak team's own admin: orders, credit, customisation requests, send requests, pattern editor, audit log.
+- **Studio** (its own address, `STUDIO_URL`): the Hayyak team's admin: analytics, prices, beta and discounts, orders, credit, designs, requests, team, audit log.
 - **Guest pages** (`/i/…`, `/a/…`, `/c/…`): the animated invitation, registration, check-in and certificate.
 
-There is no payment gateway in this version. A purchase creates an order, and the Studio confirms it once the money arrives.
+There is no payment gateway in this version. An order that costs nothing (beta, or a full discount) is credited at once; any other waits until the Studio confirms the money arrived.
 
 ## Run it on your computer
 
@@ -17,7 +17,7 @@ npm install
 cp .env.example .env.local
 npm run seed:demo      # optional: a sample workspace, prints its password
 npm run seed:admin -- you@example.com "Your name"
-npm run dev            # http://localhost:3000
+npm run dev            # http://localhost:3000 and http://localhost:3000/studio
 ```
 
 Emails, including sign-in codes, are printed in the terminal. Stop the dev server before running a seed command, because the embedded database has one user at a time.
@@ -56,9 +56,9 @@ tests/e2e.mjs     plays the product through the API, then attacks it
 | Workspace | owner | everything, including credit, team and settings |
 | Workspace | manager | create and send invitations, guests, attendance, certificates |
 | Workspace | viewer | look only |
-| Studio | founder | everything, including the team |
-| Studio | support | orders, requests, sends and customers |
-| Studio | design | customisation requests and patterns |
+| Studio | founder | everything, including prices, discounts, trial workspaces and the team |
+| Studio | support | analytics, orders, requests, sends and customers |
+| Studio | design | customisation requests, designs and patterns |
 
 The exact permissions are in `src/server/lib/session.ts`.
 
@@ -70,7 +70,9 @@ The exact permissions are in `src/server/lib/session.ts`.
 | `npm run build` | production build |
 | `npm run start:prod` | apply migrations, then start |
 | `npm run typecheck` | TypeScript |
-| `npm run test:e2e` | 205 product and security checks (run `build` first) |
+| `npm run test:e2e` | 337 product and security checks (run `build` first) |
+| `npm run check:secrets` | looks for secrets in what git would publish; also runs on every commit |
+| `npm run studio:reset -- email` | clears a lost Studio authenticator |
 | `npm run db:generate` | new migration after changing the schema |
 | `npm run seed:admin -- email "Name"` | first Studio founder |
 

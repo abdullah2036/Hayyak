@@ -1,5 +1,7 @@
 import 'server-only';
+import { headers } from 'next/headers';
 import { redirect, notFound as next404 } from 'next/navigation';
+import { areaOf } from '@/lib/hosts';
 import { AppError } from './lib/core';
 import { getStaff, getUser, permsOf, type UserCtx } from './lib/session';
 import { shell } from './services/screens';
@@ -23,7 +25,12 @@ export function id(v: string) {
   if (!UUID.test(v)) next404();
   return v;
 }
+/** The proxy already keeps the Studio off the public address; this holds even if a request gets past it. */
+export async function studioHere() {
+  if (areaOf((await headers()).get('host')) === 'app') next404();
+}
 export async function studioPage() {
+  await studioHere();
   const me = await getStaff();
   if (!me) redirect('/studio/login');
   return { me, perms: permsOf(me.staff.role) };

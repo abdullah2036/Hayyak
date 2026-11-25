@@ -104,7 +104,7 @@ export default function TermsView({ v }) {
               <div className="tl" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0,1fr))", gap: "14px" }}>
                 <div style={{ borderRadius: "26px", padding: "22px", background: "#FFFFFF", color: "#0A2A43", display: "flex", flexDirection: "column", gap: "6px", boxShadow: "0 12px 30px rgba(10,42,67,.08)" }}>
                   <b style={{ fontSize: "20px" }}>المجاني</b>
-                  <span style={{ fontSize: "15px", lineHeight: "1.7", opacity: ".85" }}>10 دعوات مرة وحدة للتجربة</span>
+                  <span style={{ fontSize: "15px", lineHeight: "1.7", opacity: ".85" }}>{v.freeTx}</span>
                 </div>
                 <div style={{ borderRadius: "26px", padding: "22px", background: "linear-gradient(155deg,#123E5C,#0A2A43)", color: "#FFFFFF", display: "flex", flexDirection: "column", gap: "6px", boxShadow: "0 12px 30px rgba(10,42,67,.08)" }}>
                   <b style={{ fontSize: "20px" }}>الرصيد</b>

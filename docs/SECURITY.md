@@ -23,6 +23,12 @@ What protects the platform, where it lives in the code, and what is left to you.
 | Email header injection | Line breaks are removed from every header value | `lib/mail.ts` |
 | Faked client address | Only the entries added by trusted proxies are believed | `lib/core.ts` |
 | Clickjacking, sniffing, downgrade | `frame-ancestors 'none'`, `nosniff`, HSTS | `src/proxy.ts`, `next.config.mjs` |
+| Finding the admin panel | It exists only on `STUDIO_URL`; elsewhere its pages and API answer like an address that does not exist, and no public page, file or sitemap names it | `src/lib/hosts.ts`, `src/proxy.ts`, `server/api/router.ts`, `server/page.ts` |
+| Getting into the admin panel | Two steps for everyone: a code by email, then an authenticator app; codes cannot be replayed, five wrong tries lock it, each sign-in is emailed to its owner, sessions end after 30 idle minutes, strict cookies | `services/auth.ts`, `lib/totp.ts` |
+| Wrong or abused prices | Only founders change them; every change is logged with the old and new value; a pack priced at zero by mistake waits for approval; quotas and code limits hold under simultaneous orders | `services/pricing.ts` |
+| Path traversal and leaked files | No route reads a file by name: images are looked up by id in the database. 58 raw paths are tried in the tests | `tests/e2e.mjs` |
+| Secrets in the repository or the browser | A check on every commit and in CI, `.env` files ignored, server code marked `server-only`, no source maps published | `scripts/check-secrets.mjs`, `.github/workflows/check.yml` |
+| Test data reaching real people | Staging only emails listed addresses; trial workspaces are left out of every number | `lib/mail.ts`, `services/studio.ts` |
 | Insider access | Guest lists open in the Studio only to carry out a send the customer confirmed; each look is logged and the customer sees the log | `services/studio.ts` |
 | Keeping data too long | Guest data is encrypted 90 days after the event and deleted 90 days after that | `services/scheduler.ts` |
 | Leaked errors | The browser gets a general message; the details stay in the log | `src/server/api/router.ts` |
@@ -31,7 +37,7 @@ The app refuses to run in production without `DATABASE_URL`, `APP_SECRET` and `D
 
 ## Proof
 
-`npm run test:e2e` runs 205 checks against a real production build. About half of them are attacks: other people's ids, cross-site posts, injection strings, hostile uploads, guessing, racing, forged prices, replayed codes and stale sessions. To run it on a real server instead of the embedded one, set `TEST_DATABASE_URL` to an empty throwaway database.
+`npm run test:e2e` runs 337 checks against a real production build. More than half of them are attacks: other people's ids, path traversal, the hidden admin panel, cross-site posts, injection strings, hostile uploads, guessing, racing, forged prices, replayed codes and stale sessions. To run it on a real server instead of the embedded one, set `TEST_DATABASE_URL` to an empty throwaway database.
 
 Run it before each release, together with `npm audit --omit=dev`.
 
@@ -48,7 +54,8 @@ Run it before each release, together with `npm audit --omit=dev`.
 
 - The content security policy allows inline styles, because the design animates through them. Styles cannot run code.
 - A personal invitation link works for whoever holds it. That is how guests use it without an account, so it only shows that guest's own invitation.
-- Workspace accounts have a code on new devices but no authenticator app yet. Studio accounts need a code for every sign-in.
+- Workspace accounts have a code on new devices but no authenticator app yet. Studio accounts always need one.
+- A separate address hides the Studio; it does not protect it. The two sign-in steps do. Put Cloudflare Access or a VPN in front for a third.
 - This has not been tested by an independent penetration tester. Do that before real payments are added.
 
 ## Reporting a problem
