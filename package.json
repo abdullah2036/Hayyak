@@ -18,6 +18,7 @@
     "prepare": "node scripts/use-hooks.mjs",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx scripts/migrate.ts",
+    "setup": "tsx scripts/setup.ts",
     "seed:admin": "tsx scripts/seed-admin.ts",
     "seed:demo": "tsx scripts/seed-demo.ts",
     "studio:reset": "tsx scripts/studio-reset.ts"

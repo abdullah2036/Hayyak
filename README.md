@@ -74,6 +74,7 @@ The exact permissions are in `src/server/lib/session.ts`.
 | `npm run check:secrets` | looks for secrets in what git would publish; also runs on every commit |
 | `npm run studio:reset -- email` | clears a lost Studio authenticator |
 | `npm run db:generate` | new migration after changing the schema |
+| `npm run setup` | prepares a deployment: secrets, tables, first founder, email test |
 | `npm run seed:admin -- email "Name"` | first Studio founder |
 
 ## Security

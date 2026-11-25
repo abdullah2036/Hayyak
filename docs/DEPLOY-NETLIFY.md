@@ -1,6 +1,17 @@
 # Deploy: Netlify + Supabase
 
-Both are free with no end date, do not sleep, allow commercial projects, and upgrade in place. About 30 minutes.
+Both are free with no end date, do not sleep, allow commercial projects, and upgrade in place.
+
+## The fast way
+
+1. Supabase: new project in **East US (Ohio)**. **Connect → Transaction pooler**: copy the address. **Integrations → Data API: turn it off.**
+2. Brevo (no domain needed): verify your address under **Senders**, make an API key under **SMTP & API**.
+3. On your computer: `git clone https://github.com/abdullah2036/Hayyak.git`, `cd Hayyak`, `npm install`, `npm run setup`. It asks eight questions, creates and locks the tables, adds you as the first founder, sends a test email, and writes `.env.netlify`.
+4. Netlify: **Add new project → Import from GitHub → Hayyak**, branch `main`. Give it the site name you typed. Add the environment variables with **Import from a .env file** and paste all of `.env.netlify`. Deploy.
+5. The same again for the Studio, with the second name. Then, in that project, **Build & deploy → Continuous deployment → Build status: Stopped builds**, so it does not use credits on every push. Start a build by hand when you want it updated.
+6. Save `DATA_KEY` in a password manager, then delete `.env.netlify`.
+
+The rest of this page explains the parts, and the domain for later.
 
 ## 1. Supabase (database)
 
