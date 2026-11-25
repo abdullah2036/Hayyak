@@ -59,6 +59,17 @@ async function viaResend(key: string, m: Letter) {
   if (!r.ok) throw new Error(`Resend ${r.status}: ${(await r.text()).slice(0, 200)}`);
 }
 
+/** Brevo's HTTPS API. It can send from a verified address without a domain of your own (it then rewrites the sender). */
+async function viaBrevo(key: string, m: Letter) {
+  const from = fromHeader(m.fromName);
+  const r = await fetch('https://api.brevo.com/v3/smtp/email', {
+    method: 'POST', redirect: 'error', signal: AbortSignal.timeout(15_000),
+    headers: { 'api-key': key, 'content-type': 'application/json', accept: 'application/json' },
+    body: JSON.stringify({ sender: { name: from.name, email: from.address }, to: [{ email: m.to }], subject: m.subject, textContent: m.text, htmlContent: m.html }),
+  });
+  if (!r.ok) throw new Error(`Brevo ${r.status}: ${(await r.text()).slice(0, 200)}`);
+}
+
 /** On a staging copy, only the listed addresses (or @domains) ever receive email. */
 function blocked(to: string) {
   if (process.env.APP_ENV !== 'staging') return false;
@@ -73,9 +84,10 @@ async function deliver(m: Letter) {
     return;
   }
   if (process.env.RESEND_API_KEY) return viaResend(process.env.RESEND_API_KEY, m);
+  if (process.env.BREVO_API_KEY) return viaBrevo(process.env.BREVO_API_KEY, m);
   const t = await transport();
   if (!t) {
-    if (process.env.NODE_ENV === 'production' && process.env.ALLOW_DEV_SECRETS !== '1') throw new Error('Set RESEND_API_KEY or SMTP_URL');
+    if (process.env.NODE_ENV === 'production' && process.env.ALLOW_DEV_SECRETS !== '1') throw new Error('Set RESEND_API_KEY, BREVO_API_KEY or SMTP_URL');
     // Development: print the message (or write it to MAIL_FILE for tests), so sign-up works without an email account.
     const line = { to: m.to, subject: m.subject, text: m.text };
     if (process.env.MAIL_FILE) (await import('node:fs')).appendFileSync(process.env.MAIL_FILE, `${JSON.stringify(line)}\n`);

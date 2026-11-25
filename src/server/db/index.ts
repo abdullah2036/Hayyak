@@ -12,7 +12,7 @@ async function connect(): Promise<DB> {
   if (url) {
     const { default: postgres } = await import('postgres');
     const { drizzle } = await import('drizzle-orm/postgres-js');
-    const client = postgres(url, { max: Number(process.env.DB_POOL || 10), prepare: false, onnotice: () => {} });
+    const client = postgres(url, { max: Number(process.env.DB_POOL || 10), idle_timeout: 60, connect_timeout: 30, prepare: false, onnotice: () => {} });
     return drizzle(client, { schema }) as unknown as DB;
   }
   if (process.env.NODE_ENV === 'production' && process.env.ALLOW_EMBEDDED_DB !== '1') {

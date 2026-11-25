@@ -19,7 +19,7 @@ const SECRET = 'e2e-only-app-secret-0123456789abcdef0123';
 const DKEY = 'e2e-only-data-key-0123456789abcdef012345';
 const tmp = mkdtempSync(path.join(tmpdir(), 'hy-'));
 const MAIL = path.join(tmp, 'mail.jsonl');
-const env = { ...process.env, NODE_ENV: 'production', APP_URL: BASE, STUDIO_URL: STUDIO, APP_SECRET: SECRET, DATA_KEY: DKEY, APP_ENV: '', ALLOW_EMBEDDED_DB: '1', ALLOW_DEV_SECRETS: '1', PGLITE_DIR: path.join(tmp, 'pg'), MAIL_FILE: MAIL, MAIL_SILENT: '1', TRUSTED_PROXIES: '1', CRON_SECRET: 'test-cron-secret-123456', DATABASE_URL: process.env.TEST_DATABASE_URL || '', SMTP_URL: '', RESEND_API_KEY: '' };
+const env = { ...process.env, NODE_ENV: 'production', APP_URL: BASE, STUDIO_URL: STUDIO, APP_SECRET: SECRET, DATA_KEY: DKEY, APP_ENV: '', ALLOW_EMBEDDED_DB: '1', ALLOW_DEV_SECRETS: '1', PGLITE_DIR: path.join(tmp, 'pg'), MAIL_FILE: MAIL, MAIL_SILENT: '1', TRUSTED_PROXIES: '1', CRON_SECRET: 'test-cron-secret-123456', DATABASE_URL: process.env.TEST_DATABASE_URL || '', SMTP_URL: '', RESEND_API_KEY: '', BREVO_API_KEY: '', CLIENT_IP_HEADER: '', PASSWORD_SLOTS: '' };
 
 let pass = 0;
 const fails = [];
@@ -415,7 +415,7 @@ async function main() {
   check('redirects never leave the site', (await Promise.all(['//evil.example', '/\\evil.example', '/%5cevil.example', '//evil.example/%2e%2e', '/signup//evil.example'].map((p) => rawGet(p)))).every((r) => !/^(https?:)?\/\/(?!localhost|127)/.test(r.loc)));
   check('a next address outside the site is ignored', !(await v.get('/signup?mode=old&next=https://evil.example')).t.includes('href="https://evil.example'));
   const chunks = readdirSync('.next/static', { recursive: true }).map(String).filter((f) => /\.(js|css|map|json)$/.test(f));
-  const inBundle = chunks.filter((f) => /APP_SECRET|DATA_KEY|DATABASE_URL|RESEND_API_KEY|SMTP_URL|CRON_SECRET|scrypt\$|postgres:\/\//.test(readFileSync(path.join('.next/static', f), 'utf8')));
+  const inBundle = chunks.filter((f) => /APP_SECRET|DATA_KEY|DATABASE_URL|RESEND_API_KEY|BREVO_API_KEY|SMTP_URL|CRON_SECRET|scrypt\$|postgres:\/\//.test(readFileSync(path.join('.next/static', f), 'utf8')));
   check('nothing secret is in the browser files', chunks.length > 10 && !inBundle.length, inBundle.join());
   check('no source maps are published', !chunks.some((f) => f.endsWith('.map')));
   const tracked = execFileSync(process.platform === 'win32' ? 'node' : process.execPath, ['scripts/check-secrets.mjs'], { encoding: 'utf8' });

@@ -9,6 +9,7 @@ import path from 'node:path';
 const RULES = [
   ['private key', /-----BEGIN [A-Z ]*PRIVATE KEY-----/],
   ['Resend key', /\bre_[A-Za-z0-9]{8,}_[A-Za-z0-9]{16,}/],
+  ['Brevo key', /\bx(key|smtp)sib-[a-f0-9]{40,}/],
   ['AWS key', /\bAKIA[0-9A-Z]{16}\b/],
   ['GitHub token', /\b(ghp|gho|ghs|github_pat)_[A-Za-z0-9_]{30,}/],
   ['Google key', /\bAIza[0-9A-Za-z_-]{35}\b/],
@@ -16,7 +17,7 @@ const RULES = [
   ['payment key', /\b(sk|rk)_live_[A-Za-z0-9]{16,}/],
   ['database address with a password', /\bpostgres(ql)?:\/\/[^\s:@/]+:(?!\$|\{|<|password\b|local-)[^\s@]{6,}@(?!localhost|127\.)/],
   ['SMTP address with a password', /\bsmtps?:\/\/[^\s:@/]+:(?!\$|\{|<|password\b)[^\s@]{6,}@/],
-  ['filled-in secret', /^\s*(APP_SECRET|DATA_KEY|CRON_SECRET|RESEND_API_KEY)\s*=\s*['"]?[A-Za-z0-9+/=_-]{16,}/m],
+  ['filled-in secret', /^\s*(APP_SECRET|DATA_KEY|CRON_SECRET|RESEND_API_KEY|BREVO_API_KEY)\s*=\s*['"]?[A-Za-z0-9+/=_-]{16,}/m],
 ];
 const FORBIDDEN = /(^|\/)(\.env(\.(?!example$)[^/]*)?|id_rsa|id_ed25519|.*\.(pem|p12|pfx|key|keystore|sql\.gz|dump))$/;
 

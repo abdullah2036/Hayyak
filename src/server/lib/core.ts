@@ -1,4 +1,5 @@
 import 'server-only';
+import { isIP } from 'node:net';
 import { sql } from 'drizzle-orm';
 import { db, auditLog, rateLimits } from '../db';
 
@@ -24,6 +25,9 @@ export const hostLabel = () => appUrl().replace(/^https?:\/\//, '');
  * believed; anything before that can be typed in by an attacker.
  */
 export function clientIp(h: Headers) {
+  // A host whose edge always overwrites one header (Render: cf-connecting-ip) can name it here.
+  const named = process.env.CLIENT_IP_HEADER ? (h.get(process.env.CLIENT_IP_HEADER) || '').trim() : '';
+  if (named && isIP(named)) return named;
   const hops = Number(process.env.TRUSTED_PROXIES ?? 1);
   const list = (h.get('x-forwarded-for') || '').split(',').map((s) => s.trim()).filter(Boolean);
   if (hops > 0 && list.length) return (list[Math.max(0, list.length - hops)] || 'unknown').slice(0, 64);

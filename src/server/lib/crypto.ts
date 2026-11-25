@@ -31,11 +31,12 @@ const COST = { N: 2 ** 17, r: 8, p: 1, maxmem: 256 * 1024 * 1024 };
 const derive = (pw: string, salt: Buffer, N: number, r: number, p: number) =>
   new Promise<Buffer>((ok, bad) => scrypt(pw.normalize('NFKC'), salt, 32, { N, r, p, maxmem: COST.maxmem }, (e, k) => (e ? bad(e) : ok(k))));
 
-// Each derivation uses about 128 MB, so only a few run at the same time.
+// Each derivation uses about 128 MB, so only a few run at the same time. Use 1 on a 512 MB server.
+const SLOTS = Math.max(1, Number(process.env.PASSWORD_SLOTS) || 2);
 let running = 0;
 const waiting: (() => void)[] = [];
 async function slot<T>(fn: () => Promise<T>): Promise<T> {
-  if (running >= 2) await new Promise<void>((r) => waiting.push(r));
+  if (running >= SLOTS) await new Promise<void>((r) => waiting.push(r));
   running++;
   try {
     return await fn();

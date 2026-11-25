@@ -24,7 +24,7 @@ Emails, including sign-in codes, are printed in the terminal. Stop the dev serve
 
 ## Put it online
 
-See [docs/DEPLOY.md](docs/DEPLOY.md).
+[docs/DEPLOY-FREE.md](docs/DEPLOY-FREE.md) for a free beta (Render and Neon), [docs/DEPLOY.md](docs/DEPLOY.md) for the paid setup (Railway).
 
 ## How it is built
 
@@ -32,7 +32,7 @@ See [docs/DEPLOY.md](docs/DEPLOY.md).
 |---|---|
 | Web and API | Next.js (App Router), one Node process |
 | Database | PostgreSQL through Drizzle; migrations in `drizzle/` |
-| Email | Resend's API or any SMTP server, through a queue with retries |
+| Email | Resend's or Brevo's API, or any SMTP server, through a queue with retries |
 | Files | Images are re-encoded and kept in Postgres |
 | Scheduled work | Inside the app (`RUN_SCHEDULER=1`) or `/api/cron/tick` |
 

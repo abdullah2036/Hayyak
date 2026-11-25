@@ -1,5 +1,7 @@
 # Deploying Hayyak on Railway
 
+No budget yet? [DEPLOY-FREE.md](DEPLOY-FREE.md) runs the beta for $0.
+
 The app is its own backend: one Node process serves the pages and the API, and PostgreSQL is the only other service. It also does scheduled work (queued email, reminders, closing check-in, archiving), so it needs a host that keeps the process running.
 
 You will end up with two separate copies:
