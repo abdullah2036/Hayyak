@@ -3,7 +3,8 @@
  *   npm run build && npm run test:e2e
  * Starts the app on a spare port with an empty embedded database, plays the whole product through the
  * HTTP API (accounts, invitations, guests, attendance, certificates, orders, Studio), then attacks it.
- * Set TEST_DATABASE_URL to an empty throwaway Postgres database to run against a real server instead.
+ * Set TEST_DATABASE_URL to an empty throwaway Postgres database (after `npm run db:migrate`) to run against a real server
+ * instead, with few connections and through a stand-in for Supabase's pooler.
  */
 import { spawn, execFileSync } from 'node:child_process';
 import { createHmac } from 'node:crypto';
@@ -11,6 +12,7 @@ import { existsSync, mkdtempSync, readdirSync, readFileSync, rmSync } from 'node
 import http from 'node:http';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
+import { watchPooler } from './pooler.mjs';
 
 const PORT = 3111;
 const BASE = `http://localhost:${PORT}`;
@@ -19,7 +21,8 @@ const SECRET = 'e2e-only-app-secret-0123456789abcdef0123';
 const DKEY = 'e2e-only-data-key-0123456789abcdef012345';
 const tmp = mkdtempSync(path.join(tmpdir(), 'hy-'));
 const MAIL = path.join(tmp, 'mail.jsonl');
-const env = { ...process.env, NODE_ENV: 'production', APP_URL: BASE, STUDIO_URL: STUDIO, APP_SECRET: SECRET, DATA_KEY: DKEY, APP_ENV: '', ALLOW_EMBEDDED_DB: '1', ALLOW_DEV_SECRETS: '1', PGLITE_DIR: path.join(tmp, 'pg'), MAIL_FILE: MAIL, MAIL_SILENT: '1', TRUSTED_PROXIES: '1', CRON_SECRET: 'test-cron-secret-123456', DATABASE_URL: process.env.TEST_DATABASE_URL || '', SMTP_URL: '', RESEND_API_KEY: '', BREVO_API_KEY: '', CLIENT_IP_HEADER: '', PASSWORD_SLOTS: '' };
+const pooler = process.env.TEST_DATABASE_URL ? await watchPooler(process.env.TEST_DATABASE_URL, PORT + 1) : null;
+const env = { ...process.env, ...(pooler ? { DB_POOL: '3' } : {}), NODE_ENV: 'production', APP_URL: BASE, STUDIO_URL: STUDIO, APP_SECRET: SECRET, DATA_KEY: DKEY, APP_ENV: '', ALLOW_EMBEDDED_DB: '1', ALLOW_DEV_SECRETS: '1', PGLITE_DIR: path.join(tmp, 'pg'), MAIL_FILE: MAIL, MAIL_SILENT: '1', TRUSTED_PROXIES: '1', CRON_SECRET: 'test-cron-secret-123456', DATABASE_URL: pooler?.url || '', SMTP_URL: '', RESEND_API_KEY: '', BREVO_API_KEY: '', CLIENT_IP_HEADER: '', PASSWORD_SLOTS: '' };
 
 let pass = 0;
 const fails = [];
@@ -128,7 +131,7 @@ async function invitation(c, o = {}, guests = 2) {
 const links = async (c, id) => (await c.get(`/api/invitations/${id}/links`)).j.rows;
 const tokenOf = (l) => l.link.split('/').pop();
 
-execFileSync(process.execPath, ['node_modules/tsx/dist/cli.mjs', 'scripts/seed-admin.ts', 'founder@example.com', 'مؤسس تجريبي'], { env, stdio: 'inherit' });
+execFileSync(process.execPath, ['node_modules/tsx/dist/cli.mjs', 'scripts/seed-admin.ts', 'founder@example.com', 'مؤسس تجريبي'], { env: { ...env, DATABASE_URL: process.env.TEST_DATABASE_URL || '' }, stdio: 'inherit' });
 const server = spawn(process.execPath, ['node_modules/next/dist/bin/next', 'start', '-p', String(PORT)], { env, stdio: ['ignore', 'pipe', 'pipe'] });
 let log = '';
 server.stdout.on('data', (d) => { log += d; });
@@ -533,6 +536,7 @@ async function main() {
   check('scheduler is hidden without its secret', (await v.get('/api/cron/tick')).s === 404 && (await v.get('/api/cron/tick', { headers: { authorization: 'Bearer wrong' } })).s === 404);
   const tk1 = await v.get('/api/cron/tick', { headers: { authorization: 'Bearer test-cron-secret-123456' } });
   check('scheduler runs every step', tk1.s === 200 && !Object.values(tk1.j).includes('error'), JSON.stringify(tk1.j));
+  if (pooler) check('no query is sent behind another: Supabase would never answer it', pooler.stat.queries > 500 && pooler.stat.pipelined === 0, JSON.stringify(pooler.stat));
   check('errors never show details', !/stack|select |node_modules|postgres/i.test((await v.get('/api/nothing/here')).t));
 }
 
