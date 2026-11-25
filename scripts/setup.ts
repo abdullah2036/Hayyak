@@ -9,6 +9,7 @@ import { randomBytes, randomInt } from 'node:crypto';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { createInterface } from 'node:readline';
 import { Writable } from 'node:stream';
+import nodemailer from 'nodemailer';
 import postgres from 'postgres';
 
 const FILE = '.env.netlify';
@@ -79,17 +80,35 @@ const s = run('scripts/seed-admin.ts', [founder, await ask('Your name, as the te
 console.log(s.status === 0 ? `  ${founder} is the first founder.` : `  ${s.stderr.includes('already exists') ? 'A founder exists already; add people from the Studio.' : s.stderr.slice(-400)}`);
 
 /* ---------- email ---------- */
-const provider = /^r/i.test(await ask('Email provider: "brevo" (no domain needed) or "resend" (your own domain)', { def: old.RESEND_API_KEY ? 'resend' : 'brevo', test: /^(brevo|resend)$/i, hint: 'Type brevo or resend.' })) ? 'RESEND_API_KEY' : 'BREVO_API_KEY';
-const key = await ask(`${provider === 'RESEND_API_KEY' ? 'Resend' : 'Brevo'} API key (not shown while you type)`, { def: old[provider], secret: true });
-const from = await ask('Sender address (verified with that provider)', { def: old.MAIL_FROM?.match(/<([^>]+)>/)?.[1], test: EMAIL, hint: 'An email address, please.' });
-process.stdout.write(`Sending a test email to ${founder}... `);
-try {
-  const r = provider === 'BREVO_API_KEY'
-    ? await fetch('https://api.brevo.com/v3/smtp/email', { method: 'POST', headers: { 'api-key': key, 'content-type': 'application/json' }, body: JSON.stringify({ sender: { name: 'Hayyak', email: from }, to: [{ email: founder }], subject: 'Hayyak setup test', textContent: 'Email works.' }) })
-    : await fetch('https://api.resend.com/emails', { method: 'POST', headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json' }, body: JSON.stringify({ from: `Hayyak <${from}>`, to: [founder], subject: 'Hayyak setup test', text: 'Email works.' }) });
-  console.log(r.ok ? 'accepted. Check the inbox and the spam folder.' : `refused (${r.status}): ${(await r.text()).slice(0, 200)}\n  Fix it and run this again: sign-up does not work without email.`);
-} catch (e) {
-  console.log(`could not reach the provider: ${(e as Error).message}`);
+const kind = (await ask('Email by: "gmail" (an app password, no domain needed), "brevo", or "resend" (your own domain)', { def: old.RESEND_API_KEY ? 'resend' : old.BREVO_API_KEY ? 'brevo' : 'gmail', test: /^(gmail|brevo|resend)$/i, hint: 'Type gmail, brevo or resend.' })).toLowerCase();
+const from = await ask(kind === 'gmail' ? 'The Gmail address that sends' : 'Sender address (verified with that provider)', { def: old.MAIL_FROM?.match(/<([^>]+)>/)?.[1], test: EMAIL, hint: 'An email address, please.' });
+const provider = kind === 'gmail' ? 'SMTP_URL' : kind === 'resend' ? 'RESEND_API_KEY' : 'BREVO_API_KEY';
+let key = '';
+for (;;) {
+  key = await ask(kind === 'gmail' ? 'Its app password, 16 letters from myaccount.google.com/apppasswords (not shown while you type)' : `${kind} API key (not shown while you type)`, { def: old[provider], secret: true });
+  // Google shows it in four groups; the spaces are not part of it.
+  if (kind === 'gmail' && !key.startsWith('smtps://')) key = `smtps://${encodeURIComponent(from)}:${encodeURIComponent(key.replace(/\s/g, ''))}@smtp.gmail.com:465`;
+  process.stdout.write(`Sending a test email to ${founder}... `);
+  let problem = '';
+  try {
+    if (kind === 'gmail') await nodemailer.createTransport(key).sendMail({ from: `Hayyak <${from}>`, to: founder, subject: 'Hayyak setup test', text: 'Email works.' });
+    else {
+      const r = kind === 'brevo'
+        ? await fetch('https://api.brevo.com/v3/smtp/email', { method: 'POST', headers: { 'api-key': key, 'content-type': 'application/json' }, body: JSON.stringify({ sender: { name: 'Hayyak', email: from }, to: [{ email: founder }], subject: 'Hayyak setup test', textContent: 'Email works.' }) })
+        : await fetch('https://api.resend.com/emails', { method: 'POST', headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json' }, body: JSON.stringify({ from: `Hayyak <${from}>`, to: [founder], subject: 'Hayyak setup test', text: 'Email works.' }) });
+      if (!r.ok) problem = `${r.status} ${(await r.text()).slice(0, 160)}`;
+    }
+  } catch (e) {
+    problem = (e as Error).message.slice(0, 200);
+  }
+  if (!problem) {
+    console.log('accepted. Check the inbox and the spam folder.');
+    break;
+  }
+  console.log(`refused: ${problem}
+  Sign-up does not work without email.${kind === 'gmail' ? ' Turn on 2-Step Verification for that account first, and use an app password, not its normal one.' : ''}`);
+  delete old[provider];
+  if (!process.stdin.isTTY || !/^y/i.test(await ask('Try another password or key? (y/n)', { def: 'y' }))) break;
 }
 
 /* ---------- the file ---------- */

@@ -5,7 +5,7 @@ Both are free with no end date, do not sleep, allow commercial projects, and upg
 ## The fast way
 
 1. Supabase: new project in **East US (Ohio)**. **Connect → Transaction pooler**: copy the address. **Integrations → Data API: turn it off.**
-2. Brevo (no domain needed): verify your address under **Senders**, make an API key under **SMTP & API**.
+2. Email, with no domain: a Gmail account. Turn on **2-Step Verification**, then make an app password at myaccount.google.com/apppasswords. About 500 messages a day.
 3. On your computer: `git clone https://github.com/abdullah2036/Hayyak.git`, `cd Hayyak`, `npm install`, `npm run setup`. It asks eight questions, creates and locks the tables, adds you as the first founder, sends a test email, and writes `.env.netlify`.
 4. Netlify: **Add new project → Import from GitHub → Hayyak**, branch `main`. Give it the site name you typed. Add the environment variables with **Import from a .env file** and paste all of `.env.netlify`. Deploy.
 5. The same again for the Studio, with the second name. Then, in that project, **Build & deploy → Continuous deployment → Build status: Stopped builds**, so it does not use credits on every push. Start a build by hand when you want it updated.
@@ -22,7 +22,7 @@ The rest of this page explains the parts, and the domain for later.
 ## 2. Email
 
 - With a domain: [Resend](https://resend.com) → add the domain → API key that can only send → `RESEND_API_KEY`.
-- Without one yet: Brevo → verify your own address as a sender → API key → `BREVO_API_KEY`. Some mail lands in spam until you have a domain.
+- Without one yet: Gmail with an app password, as `SMTP_URL` = `smtps://you%40gmail.com:<app-password>@smtp.gmail.com:465` (`npm run setup` writes it for you), and `MAIL_FROM` the same address. About 500 messages a day. Brevo also works (`BREVO_API_KEY`).
 
 ## 3. Netlify
 
@@ -35,7 +35,7 @@ The rest of this page explains the parts, and the domain for later.
 | `APP_URL` | the site's address, no slash at the end |
 | `STUDIO_URL` | the Studio's address, see step 4 |
 | `APP_SECRET`, `DATA_KEY`, `CRON_SECRET` | three different random values. Keep a copy of `DATA_KEY` |
-| `RESEND_API_KEY` or `BREVO_API_KEY` | from step 2 |
+| `SMTP_URL`, `RESEND_API_KEY` or `BREVO_API_KEY` | from step 2 |
 | `MAIL_FROM` | `Hayyak <the sender address>` |
 | `CLIENT_IP_HEADER` | `x-nf-client-connection-ip` |
 | `DB_POOL` | `3` |
