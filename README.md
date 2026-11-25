@@ -24,7 +24,7 @@ Emails, including sign-in codes, are printed in the terminal. Stop the dev serve
 
 ## Put it online
 
-[docs/DEPLOY-FREE.md](docs/DEPLOY-FREE.md) for a free beta (Render and Neon), [docs/DEPLOY.md](docs/DEPLOY.md) for the paid setup (Railway).
+[docs/DEPLOY-FREE.md](docs/DEPLOY-FREE.md) for a free beta (Heroku with student credit, or Render and Supabase), [docs/DEPLOY.md](docs/DEPLOY.md) for the paid setup (Railway).
 
 ## How it is built
 

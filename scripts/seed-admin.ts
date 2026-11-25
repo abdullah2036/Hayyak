@@ -16,7 +16,7 @@ if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || !name) {
 async function open() {
   if (process.env.DATABASE_URL) {
     const { default: postgres } = await import('postgres');
-    const client = postgres(process.env.DATABASE_URL, { max: 1, prepare: false });
+    const client = postgres(process.env.DATABASE_URL, { max: 1, prepare: false, ...(process.env.DB_SSL === '1' ? { ssl: 'require' as const } : {}) });
     return { db: pgDrizzle(client), close: () => client.end() };
   }
   const { mkdirSync } = await import('node:fs');

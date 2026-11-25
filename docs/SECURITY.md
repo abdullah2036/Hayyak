@@ -28,6 +28,7 @@ What protects the platform, where it lives in the code, and what is left to you.
 | Wrong or abused prices | Nobody gets free credit beyond the sign-up trial without a code a founder made; only founders change prices; every change is logged with the old and new value; a pack priced at zero by mistake waits for approval; quotas and code limits hold under simultaneous orders | `services/pricing.ts` |
 | Path traversal and leaked files | No route reads a file by name: images are looked up by id in the database. 58 raw paths are tried in the tests | `tests/e2e.mjs` |
 | Secrets in the repository or the browser | A check on every commit and in CI, `.env` files ignored, server code marked `server-only`, no source maps published | `scripts/check-secrets.mjs`, `.github/workflows/check.yml` |
+| A host's public database API (Supabase) | Every migration closes all tables to it: row level security with no rules, and no rights for its roles, now or for tables made later | `scripts/lockdown.ts` |
 | Test data reaching real people | Staging only emails listed addresses; trial workspaces are left out of every number | `lib/mail.ts`, `services/studio.ts` |
 | Insider access | Guest lists open in the Studio only to carry out a send the customer confirmed; each look is logged and the customer sees the log | `services/studio.ts` |
 | Keeping data too long | Guest data is encrypted 90 days after the event and deleted 90 days after that | `services/scheduler.ts` |

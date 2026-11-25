@@ -98,12 +98,33 @@ async function call(method, path, body, form) {
   }
   return json;
 }
+/** A phone photo can be 10 MB. The server never keeps more than 2480 px, so the rest is not sent. */
+async function shrink(file, kind) {
+  if (!['photo', 'certbg'].includes(kind) || !(file.size > 1_500_000) || typeof createImageBitmap !== 'function') return file;
+  try {
+    const bmp = await createImageBitmap(file, { imageOrientation: 'from-image' });
+    const k = Math.min(1, 2480 / Math.max(bmp.width, bmp.height));
+    const c = document.createElement('canvas');
+    c.width = Math.round(bmp.width * k);
+    c.height = Math.round(bmp.height * k);
+    const x = c.getContext('2d');
+    x.fillStyle = '#fff';
+    x.fillRect(0, 0, c.width, c.height);
+    x.drawImage(bmp, 0, 0, c.width, c.height);
+    bmp.close();
+    const small = await new Promise((ok) => c.toBlob(ok, 'image/jpeg', 0.88));
+    return small && small.size < file.size ? new File([small], 'photo.jpg', { type: 'image/jpeg' }) : file;
+  } catch {
+    return file; // the server decides what to do with it
+  }
+}
 export const api = {
   get: (p) => call('GET', p),
   post: (p, b) => call('POST', p, b),
   patch: (p, b) => call('PATCH', p, b),
   del: (p) => call('DELETE', p),
-  upload: (p, file, fields) => {
+  upload: async (p, original, fields) => {
+    const file = await shrink(original, fields?.kind);
     const f = new FormData();
     for (const [k, val] of Object.entries(fields || {})) f.append(k, val);
     f.append('file', file);
