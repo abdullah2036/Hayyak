@@ -14,7 +14,7 @@ if (!email || !process.env.DATABASE_URL) {
   console.error('Usage: DATABASE_URL=... npm run studio:reset -- person@example.com');
   process.exit(1);
 }
-const client = postgres(process.env.DATABASE_URL, { max: 1, prepare: false, ...(process.env.DB_SSL === '1' ? { ssl: 'require' as const } : {}) });
+const client = postgres(process.env.DATABASE_URL, { max: 1, prepare: false, channel_binding: 'disable' as const, ...(process.env.DB_SSL === '1' ? { ssl: 'require' as const } : {}) });
 const db = drizzle(client);
 const [m] = await db.update(staff).set({ totpSecret: '', totpAt: null, totpStep: 0, recovery: [] }).where(eq(staff.email, email)).returning();
 if (m) await db.delete(sessions).where(eq(sessions.staffId, m.id));

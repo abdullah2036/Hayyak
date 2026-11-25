@@ -49,32 +49,101 @@ const site = await ask('1. Your site. Paste its Netlify address, like https://my
 const desk = await ask('2. The admin panel. You will make this second Netlify project later; press Enter to accept this name', { def: nameOf(old.STUDIO_URL) || `h${word().slice(0, 5)}-desk-${word().slice(0, 4)}`, test: NAME, fix: bare, hint: 'Small letters, numbers and dashes.' });
 
 /* ---------- database ---------- */
-let url = '';
-for (;;) {
-  const raw = await ask('3. Database. In Supabase press Connect at the top, choose "Transaction pooler", and paste the address (port 6543)', { def: old.DATABASE_URL, secret: Boolean(old.DATABASE_URL), test: /^postgres(ql)?:\/\/.+@.+/, hint: 'It should start with postgresql:// and contain an @.' });
-  url = raw;
-  if (/@db\.[a-z0-9]+\.supabase\.co/i.test(url)) {
-    console.log('  That is the "Direct connection" address, which Netlify cannot reach. Choose "Transaction pooler" instead: its address contains "pooler.supabase.com".');
-    delete old.DATABASE_URL;
-    if (!process.stdin.isTTY) process.exit(1);
-    continue;
-  }
-  if (/\[YOUR-PASSWORD\]/i.test(url)) url = url.replace(/\[YOUR-PASSWORD\]/i, encodeURIComponent(await ask('   The database password from when you made the project (not shown while you type)', { secret: true })));
-  if (!/[?&]sslmode=/.test(url) && !/@(localhost|127\.)/.test(url)) url += (url.includes('?') ? '&' : '?') + 'sslmode=require';
-  process.stdout.write('Connecting to the database... ');
+const FAST = process.env.SETUP_FAST === '1'; // tests do not wait
+const pause = (sec: number) => new Promise((r) => setTimeout(r, FAST ? 300 : sec * 1000));
+type Db = { user: string; host: string; port: number; name: string };
+/** Takes the address apart. The password inside it is ignored on purpose: it is asked for on its own. */
+function parts(raw: string): Db | null {
+  const v = raw.trim().replace(/^['"]?(DATABASE_URL=)?['"]?/, '').replace(/['"]$/, '');
+  const m = v.match(/^postgres(?:ql)?:\/\/([^:/@\s]+)(?::.*)?@([^:/@?\s]+)(?::(\d+))?(?:\/([^?\s]*))?/);
+  return m ? { user: decodeURIComponent(m[1]!), host: m[2]!, port: Number(m[3] || 6543), name: m[4] || 'postgres' } : null;
+}
+const isLocal = (d: Db) => /^(localhost|127\.)/.test(d.host);
+const urlOf = (d: Db, pw: string, port = d.port) => `postgresql://${encodeURIComponent(d.user)}:${encodeURIComponent(pw)}@${d.host}:${port}/${d.name}${isLocal(d) ? '' : '?sslmode=require'}`;
+async function tryConnect(u: string) {
+  const sql = postgres(u, { max: 1, prepare: false, connect_timeout: 20, onnotice: () => {}, channel_binding: 'disable' } as postgres.Options<Record<string, never>>);
   try {
-    const sql = postgres(url, { max: 1, prepare: false, connect_timeout: 20, onnotice: () => {} });
     await sql`select 1`;
-    await sql.end();
-    console.log('works');
-    break;
+    return '';
   } catch (e) {
-    console.log(`failed: ${(e as Error).message}\n  Check the password, and that it is the Transaction pooler address.`);
-    delete old.DATABASE_URL;
-    if (!process.stdin.isTTY) process.exit(1);
+    return `${(e as { code?: string }).code || ''} ${(e as Error).message}`.trim();
+  } finally {
+    await sql.end({ timeout: 2 }).catch(() => {});
   }
 }
-const run = (file: string, args: string[] = []) => spawnSync(process.execPath, ['node_modules/tsx/dist/cli.mjs', file, ...args], { env: { ...process.env, DATABASE_URL: url }, encoding: 'utf8' });
+/** Puts text on the clipboard, so a password is never shown or retyped. */
+function clipboard(text: string) {
+  if (process.env.SETUP_NOCLIP === '1') return false;
+  const cmd = process.platform === 'win32' ? ['clip'] : process.platform === 'darwin' ? ['pbcopy'] : ['xclip', '-selection', 'clipboard'];
+  return spawnSync(cmd[0]!, cmd.slice(1), { input: text }).status === 0;
+}
+
+let url = ''; // what Netlify uses
+let local = ''; // what this computer uses for the next steps
+let dbAddr: Db | null = old.DATABASE_URL ? parts(old.DATABASE_URL) : null;
+if (old.DATABASE_URL) {
+  process.stdout.write('\nTrying the saved database... ');
+  const why = await tryConnect(old.DATABASE_URL);
+  console.log(why ? `no longer works (${why.slice(0, 80)})` : 'works');
+  if (!why) url = local = old.DATABASE_URL;
+}
+while (!url) {
+  if (!dbAddr) {
+    dbAddr = parts(await ask('3. Database. In Supabase press Connect at the top, choose "Transaction pooler", and paste the address exactly as it is', { test: /postgres(ql)?:\/\/.+@.+/, hint: 'It starts with postgresql:// and contains an @. The [YOUR-PASSWORD] part can stay.' }));
+    if (!dbAddr) continue;
+    if (!isLocal(dbAddr) && !/pooler\.supabase\.com$/.test(dbAddr.host)) {
+      console.log(`  This is not the pooler (it says ${dbAddr.host}). Choose "Transaction pooler": its address contains "pooler.supabase.com".`);
+      dbAddr = null;
+      if (!process.stdin.isTTY) process.exit(1);
+      continue;
+    }
+    if (!isLocal(dbAddr) && !dbAddr.user.includes('.')) {
+      console.log('  The user name should look like postgres.abcdefgh. Copy the address again from "Transaction pooler".');
+      dbAddr = null;
+      if (!process.stdin.isTTY) process.exit(1);
+      continue;
+    }
+    if (!isLocal(dbAddr)) dbAddr.port = 6543; // 5432 is the session pooler; Netlify needs this one
+    console.log(`  user ${dbAddr.user}, server ${dbAddr.host}, port ${dbAddr.port}`);
+  }
+  let pw = await ask('   Press Enter and a new password is made for you (recommended). Or type the one you have.', { secret: true, def: 'NEW' });
+  if (pw === 'NEW') {
+    // Letters and numbers only: nothing that can break an address or get lost in copying.
+    pw = Array.from({ length: 28 }, () => 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789'[randomInt(54)]).join('');
+    console.log(clipboard(pw) ? '\n  A new password is on your clipboard.' : `\n  New password: ${pw}`);
+    console.log('  In Supabase: Project Settings (gear) > Database > Reset database password.\n  Delete what is in the box, paste with Ctrl+V, press "Reset password", and wait for the green message.');
+    await ask('   Press Enter after Supabase says it is done', { def: 'done' });
+    process.stdout.write('  Supabase needs about a minute to use a new password, waiting...');
+    await pause(60);
+    console.log('');
+  } else pw = pw.replace(/^\[(.*)\]$/, '$1');
+
+  for (let i = 1; i <= 3 && !url; i++) {
+    process.stdout.write('Connecting to the database... ');
+    let why = await tryConnect(urlOf(dbAddr, pw));
+    if (!why) { url = local = urlOf(dbAddr, pw); console.log('works'); break; }
+    if (/ETIMEDOUT|CONNECT_TIMEOUT|ECONNREFUSED|ECONNRESET|ENETUNREACH|EHOSTUNREACH/.test(why) && !isLocal(dbAddr)) {
+      // Some networks block this port; the other one leads to the same database.
+      const other = await tryConnect(urlOf(dbAddr, pw, 5432));
+      if (!other) { url = urlOf(dbAddr, pw); local = urlOf(dbAddr, pw, 5432); console.log('works (your network blocks one port; Netlify is not affected)'); break; }
+      why = other;
+    }
+    if (/tenant|ENOIDENTIFIER|not found/i.test(why)) {
+      console.log('Supabase does not know this project at this address.\n  If the project is new, wait until it has finished setting up. Then copy the address again.');
+      dbAddr = null;
+      break;
+    }
+    if (/password|auth|circuit|28P01|too many/i.test(why)) {
+      console.log(i < 3 ? `not yet (${why.slice(0, 90)}).\n  Supabase can keep checking the old password for a while, and pauses after wrong tries. Trying again in 2 minutes; leave this open.` : `still refused (${why.slice(0, 90)}).`);
+      if (i < 3) await pause(130);
+      continue;
+    }
+    console.log(`failed: ${why.slice(0, 160)}\n  Check your internet; a university network may block databases, so try a phone hotspot.`);
+    break;
+  }
+  if (!url && !process.stdin.isTTY) process.exit(1);
+}
+const run = (file: string, args: string[] = []) => spawnSync(process.execPath, ['node_modules/tsx/dist/cli.mjs', file, ...args], { env: { ...process.env, DATABASE_URL: local }, encoding: 'utf8' });
 process.stdout.write('Creating and locking the tables... ');
 const m = run('scripts/migrate.ts');
 if (m.status !== 0) {

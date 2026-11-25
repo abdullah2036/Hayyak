@@ -12,7 +12,7 @@ if (!url) {
   console.error('DATABASE_URL is not set');
   process.exit(1);
 }
-const client = postgres(url, { max: 1, prepare: false, onnotice: () => {}, ...(process.env.DB_SSL === '1' ? { ssl: 'require' as const } : {}) });
+const client = postgres(url, { max: 1, prepare: false, onnotice: () => {}, channel_binding: 'disable' as const, ...(process.env.DB_SSL === '1' ? { ssl: 'require' as const } : {}) });
 const db = drizzle(client);
 await migrate(db, { migrationsFolder: './drizzle' });
 await ensureDefaults(db);
