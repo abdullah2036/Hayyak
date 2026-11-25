@@ -249,3 +249,47 @@ export function StudioDesigns({ designs, founder, run, onNew, onPattern }) {
     </section>
   );
 }
+
+/* ---------- the brand typeface (founders) ---------- */
+
+export function StudioType({ run }) {
+  const [t, setT] = useState(null);
+  const [sure, setSure] = useState(false);
+  const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    let live = true;
+    api.get('/studio/type').then((r) => live && setT(r), () => {});
+    return () => { live = false; };
+  }, []);
+  const send = async (files) => {
+    if (!files.length) return;
+    const f = new FormData();
+    for (const x of files) f.append('file', x);
+    setBusy(true);
+    const r = await run(() => api.form('/studio/type', f), 'انحفظ الخط، ويطلع في الموقع خلال دقايق ✓');
+    if (r) setT(r);
+    setBusy(false);
+  };
+  const drop = async () => {
+    if (!sure) return setSure(true);
+    const r = await run(() => api.del('/studio/type'), 'رجع الخط البديل ✓');
+    if (r) setT(r);
+    setSure(false);
+  };
+  return (
+    <section className="in" style={{ ...card, marginTop: 18 }}>
+      <span style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+        <h3 style={{ margin: 0, fontSize: 19 }}>خط الهوية</h3>
+        <span style={{ fontSize: 13, color: C.mute, lineHeight: 1.7 }}>خط ثمانية. اختاروا الملفات الأربعة مع بعض وبأسمائها الأصلية: {(t?.need || []).join('، ')}. تنحفظ عندكم فقط، وما تطلع للزوار كملفات خط</span>
+      </span>
+      <span style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+        <label style={{ ...main, display: 'inline-flex', alignItems: 'center', position: 'relative', opacity: busy ? 0.6 : 1 }}>
+          {busy ? 'لحظة…' : t?.on ? 'بدّل الملفات' : 'ارفع الملفات'}
+          <input type="file" multiple accept=".woff2,.otf" disabled={busy} onChange={(e) => { send([...e.target.files]); e.target.value = ''; }} style={{ position: 'absolute', inset: 0, width: '100%', opacity: 0, cursor: 'pointer' }} />
+        </label>
+        {t?.on ? <button type="button" style={line} onClick={drop}>{sure ? 'أكيد؟ اضغط مرة ثانية' : 'شيل الخط'}</button> : null}
+        <span role="status" style={{ fontSize: 14, color: C.soft }}>{!t ? '' : t.on ? `مرفوع ✓ ${Math.round(t.size / 1024)} كيلوبايت` : 'ما انرفع للحين، والموقع يستخدم خط بديل'}</span>
+      </span>
+    </section>
+  );
+}

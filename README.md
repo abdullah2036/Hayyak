@@ -83,4 +83,4 @@ See [docs/SECURITY.md](docs/SECURITY.md). Never commit `.env` files: they are ig
 
 ## Fonts
 
-The design's Thmanyah typeface is not included. See [docs/FONTS.md](docs/FONTS.md).
+The design's Thmanyah typeface is not in this repository; founders upload it in the Studio. See [docs/FONTS.md](docs/FONTS.md).

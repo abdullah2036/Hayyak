@@ -1,6 +1,7 @@
 'use client';
 /** Turns what is on screen into files: invitation image and video, certificate PDF and story image. */
 import { saveBlob } from './kit';
+import { fontReady, typeCss } from './type';
 
 const lib = () => import('html-to-image');
 let fontCss;
@@ -20,7 +21,8 @@ async function snap(node, o) {
   settle(node);
   const { toCanvas, getFontEmbedCSS } = await lib();
   try {
-    fontCss ??= await getFontEmbedCSS(node);
+    // Ours come last: of two fonts with one name, the later one is used.
+    fontCss ??= `${await getFontEmbedCSS(node)}\n${await typeCss()}`;
   } catch {
     fontCss = '';
   }
@@ -144,7 +146,7 @@ export async function saveCertStory(node, name, title) {
   x.direction = 'rtl';
   x.textAlign = 'center';
   x.fillStyle = '#FFFFFF';
-  await document.fonts?.load('700 80px TD').catch(() => {});
+  await fontReady('700 80px TD');
   x.font = '700 76px TD, serif';
   x.fillText('حيّــاك', 540, 330);
   x.font = "500 40px 'IBM Plex Sans Arabic', sans-serif";

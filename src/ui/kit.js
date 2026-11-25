@@ -123,6 +123,7 @@ export const api = {
   post: (p, b) => call('POST', p, b),
   patch: (p, b) => call('PATCH', p, b),
   del: (p) => call('DELETE', p),
+  form: (p, f) => call('POST', p, undefined, f),
   upload: async (p, original, fields) => {
     const file = await shrink(original, fields?.kind);
     const f = new FormData();

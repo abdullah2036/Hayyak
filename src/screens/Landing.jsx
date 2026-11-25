@@ -1,4 +1,5 @@
 'use client';
+import { fontReady } from '@/ui/type';
 import LuxCView from '@/views/LuxC.view';
 import { Screen } from '@/ui/dc';
 import { guestTemplate, waxPath } from '@/ui/kit';
@@ -62,7 +63,7 @@ export default class Landing extends Screen {
       self.hraf = requestAnimationFrame(frame);
     };
     var started = false; function st() { if (started) return; started = true; go(); }
-    if (document.fonts && document.fonts.load) { document.fonts.load('700 100px TD').then(st, st); setTimeout(st, 1500); } else st();
+    fontReady('700 100px TD', 1500).then(st); setTimeout(st, 1800);
   }
   renderVals() {
     var self = this, s = this.state;

@@ -107,7 +107,7 @@ export async function handle(req: NextRequest, path: string[]) {
     // The Studio has its own address; see lib/hosts.ts. The answer is the same as for a path that does not exist.
     const studioRoute = r.parts[0] === 'studio';
     const area = areaOf(req.headers.get('host'));
-    if (area === 'app' ? studioRoute : area === 'studio' && !studioRoute && r.parts[0] !== 'assets' && r.parts[0] !== 'health') throw notFound();
+    if (area === 'app' ? studioRoute : area === 'studio' && !studioRoute && !['assets', 'health', 'type'].includes(r.parts[0]!)) throw notFound();
     const mutating = req.method !== 'GET';
     if (mutating && !sameSite(req, studioRoute)) throw new AppError(403, 'الطلب مرفوض', 'bad_origin');
     const ip = clientIp(req.headers);

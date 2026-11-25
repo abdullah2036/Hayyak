@@ -32,9 +32,11 @@ function listed() {
     return out;
   }
 }
+const LICENSED = /thmanyah[^/]*\.(woff2?|otf|ttf|zip)$/i; // docs/FONTS.md
 const found = [];
 for (const f of listed()) {
   if (FORBIDDEN.test(f)) found.push(`${f}: this file must never be committed`);
+  if (LICENSED.test(f)) found.push(`${f}: the licence of this font does not allow publishing it`);
   if (!existsSync(f) || statSync(f).size > 2_000_000 || /\.(jpg|png|webp|woff2?|ico)$/.test(f) || f.endsWith('check-secrets.mjs')) continue;
   const text = readFileSync(f, 'utf8');
   for (const [name, re] of RULES) {

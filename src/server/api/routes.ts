@@ -13,6 +13,7 @@ import * as inv from '../services/invitations';
 import * as att from '../services/attendance';
 import * as guest from '../services/guest';
 import * as st from '../services/studio';
+import * as type from '../services/type';
 import * as assets from '../services/assets';
 import { balance } from '../services/credit';
 import * as price from '../services/pricing';
@@ -101,6 +102,24 @@ studio('POST', '/studio/assets', 'design', { raw: true }, async (c) => {
   const file = (await readForm(c.req, MAX_UPLOAD)).get('file');
   if (!(file instanceof File)) throw bad('اختر ملف');
   return assets.store(null, 'custom', file);
+});
+studio('GET', '/studio/type', 'team', {}, async () => type.typeStatus());
+studio('POST', '/studio/type', 'team', { raw: true, rate: [20, 600] }, async (c) => {
+  const files = (await readForm(c.req, 2_100_000)).getAll('file').filter((f): f is File => f instanceof File);
+  if (!files.length || files.length > 20) throw bad('اختر ملفات الخط');
+  return type.saveType({ type: 'staff', id: c.me.staff.id, name: c.me.staff.name, ip: c.ip }, files);
+});
+studio('DELETE', '/studio/type', 'team', {}, async (c) => type.dropType({ type: 'staff', id: c.me.staff.id, name: c.me.staff.name, ip: c.ip }));
+pub('GET', '/type', {}, async () => {
+  const b = await type.typePack();
+  if (!b) return new Response(null, { status: 204, headers: { 'Cache-Control': 'public, max-age=30' } });
+  return new Response(b, {
+    headers: {
+      'Content-Type': 'application/octet-stream', 'Content-Length': String(b.length), 'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
+      'Netlify-CDN-Cache-Control': 'public, durable, max-age=300, stale-while-revalidate=86400', 'X-Content-Type-Options': 'nosniff',
+      'Content-Security-Policy': "default-src 'none'; sandbox", 'Cross-Origin-Resource-Policy': 'same-origin', 'X-Robots-Tag': 'noindex',
+    },
+  });
 });
 pub('GET', '/assets/:id', {}, async (c) => {
   const a = await assets.read(uuid(c.params.id));

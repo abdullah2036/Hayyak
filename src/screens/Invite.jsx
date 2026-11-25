@@ -1,4 +1,5 @@
 'use client';
+import { fontReady } from '@/ui/type';
 import InviteView from '@/views/Invite.view';
 import { Screen } from '@/ui/dc';
 import { loadQr, qrCells, waxPath } from '@/ui/kit';
@@ -102,7 +103,7 @@ startFx() {
       S.p = pts.map(function (q) { var a = R() * Math.PI * 2, rr = 300 + R() * 300; return { x: W / 2 + Math.cos(a) * rr, y: 200 + Math.sin(a) * rr, vx: 0, vy: 0, tx: q[0], ty: q[1], r: 0.85 + R() * 0.9, c: rc(), p: R() * 6, d: R() * 900 }; });
       S.ready = true;
     };
-    if (document.fonts && document.fonts.load) document.fonts.load('700 80px TD').then(build, build); else build();
+    fontReady('700 80px TD').then(build);
   } else if (id === 'pe') {
     S.en = this.px().engine; S.P = []; S.nb = 0;
   } else if (id === 'warp') {

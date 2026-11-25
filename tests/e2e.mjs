@@ -410,6 +410,31 @@ async function main() {
   check('form post is refused', (await a.post('/invitations', 'title=csrf', { type: 'application/x-www-form-urlencoded' })).s === 415);
   check('GET never changes anything', (await a.get(`/api/invitations/${inv.id}/publish`)).s === 404);
 
+  section('brand typeface');
+  const sample = (f) => readFileSync(path.join('node_modules/@fontsource', f));
+  const fonts = [['x-Serif_Display-Bold.woff2', sample('markazi-text/files/markazi-text-arabic-700-normal.woff2')], ...[['Regular', 400], ['Medium', 500], ['Bold', 700]].map(([n, w]) => [`xsans-${n}.woff2`, sample(`ibm-plex-sans-arabic/files/ibm-plex-sans-arabic-arabic-${w}-normal.woff2`)])];
+  const typeForm = (list) => { const f = new FormData(); for (const [n, b] of list) f.append('file', new Blob([b]), n); return { form: f }; };
+  const grab = async (base = BASE) => { const r = await fetch(`${base}/api/type`); return { s: r.status, h: r.headers, b: new Uint8Array(await r.arrayBuffer()) }; };
+  check('without an upload there is no pack', (await grab()).s === 204);
+  check('only founders upload it', (await ds.post('/studio/type', undefined, typeForm(fonts))).s === 403 && (await ds.del('/studio/type')).s === 403 && (await ds.get('/api/studio/type')).s === 403);
+  check('it is not reachable from a workspace or the public address', (await a.post('/studio/type', undefined, typeForm(fonts))).s === 404 && (await v.get('/api/studio/type')).s === 404);
+  check('another site cannot upload it', (await st.post('/studio/type', undefined, { ...typeForm(fonts), origin: 'https://evil.example' })).s === 403);
+  check('a missing file is named', /Sans Medium/.test((await st.post('/studio/type', undefined, typeForm(fonts.filter((x) => !/Medium/.test(x[0]))))).j.error));
+  check('a page dressed as a font is refused', (await st.post('/studio/type', undefined, typeForm(fonts.map(([n], i) => [n, i === 1 ? Buffer.from('<script>alert(1)</script>'.repeat(100)) : fonts[i][1]])))).s === 400);
+  check('a cut-off font is refused', (await st.post('/studio/type', undefined, typeForm(fonts.map(([n, b], i) => [n, i === 2 ? b.subarray(0, 5000) : b])))).s === 400);
+  check('an oversized font is refused', (await st.post('/studio/type', undefined, typeForm(fonts.map(([n, b], i) => [n, i === 0 ? Buffer.concat([b, Buffer.alloc(600_000)]) : b])))).s === 400);
+  check('founder uploads the four files', (await st.post('/studio/type', undefined, typeForm(fonts))).j?.on === true);
+  const pk = await grab();
+  const raw = Buffer.from(pk.b);
+  check('the pack is served on both addresses, never as a font', pk.s === 200 && (await grab(STUDIO)).s === 200 && pk.h.get('content-type') === 'application/octet-stream' && pk.h.get('x-content-type-options') === 'nosniff' && pk.h.get('cross-origin-resource-policy') === 'same-origin');
+  check('no font can be cut out of it', !raw.includes('wOF2') && !raw.includes('OTTO') && !fonts.some(([, b]) => raw.includes(b.subarray(100, 140))));
+  const un = () => { const u = Buffer.from(raw); let x = u.readUInt32BE(4) | 1; for (let i = 8; i < u.length; i++) { x ^= x << 13; x ^= x >>> 17; x ^= x << 5; u[i] ^= x & 255; } const out = []; for (let n = u[8], q = 9; n > 0; n--) { const l = u.readUInt32BE(q + 3); out.push([u[q], u.readUInt16BE(q + 1), u.subarray(q + 7, q + 7 + l)]); q += 7 + l; } return out; };
+  const faces = un();
+  check('every font arrives unchanged', faces.length === 4 && faces.every(([, , b], i) => b.equals(fonts[i][1])) && faces.map(([f, w]) => `${f}${w}`).join() === '0700,1400,1500,1700', faces.map(([f, w]) => `${f}${w}`).join());
+  check('pages load it under their nonce', /<head>.*<script nonce="[^"]+"[^>]*>\(function\(w,d\)/s.test((await v.get('/')).t));
+  check('the upload is in the log', (await st.get('/studio')).t.includes('رفع خط الهوية'));
+  check('founder takes it off again', (await st.del('/studio/type')).j?.on === false && (await grab()).s === 204);
+
   section('attack: leaked files and path traversal');
   const secretish = /APP_SECRET|DATA_KEY|DATABASE_URL=|e2e-only|root:x:0|BEGIN [A-Z ]*PRIVATE KEY|"dependencies"|\[core\]|create table/i;
   const files = ['/.env', '/.env.local', '/.env.production', '/.git/config', '/.git/HEAD', '/package.json', '/package-lock.json', '/next.config.mjs', '/drizzle/0000_init.sql', '/src/server/lib/crypto.ts', '/tests/e2e.mjs', '/.next/BUILD_ID', '/.next/server/app/page.js', '/server/app/page.js', '/.data/pg/PG_VERSION', '/backup.sql', '/dump.sql', '/node_modules/next/package.json', '/.DS_Store', '/wp-admin', '/phpinfo.php', '/actuator/env', '/server-status', '/.well-known/../.env'];

@@ -14,5 +14,9 @@ next-env.d.ts
 
 # licensed fonts (see docs/FONTS.md)
 public/fonts/licensed/
+*hmanyah*.woff*
+*hmanyah*.otf
+*hmanyah*.ttf
+*hmanyah*.zip
 
 .claude/

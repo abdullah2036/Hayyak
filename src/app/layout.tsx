@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from 'next';
+import { headers } from 'next/headers';
 import { staging } from '@/lib/hosts';
+import { BOOT } from '@/lib/typepack';
 import './globals.css';
 
 const url = process.env.APP_URL || 'http://localhost:3000';
@@ -15,9 +17,14 @@ export const viewport: Viewport = { width: 'device-width', initialScale: 1, view
 // Every page is rendered per request, so each one carries its own CSP nonce.
 export const dynamic = 'force-dynamic';
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const nonce = (await headers()).get('x-nonce') || undefined;
   return (
-    <html lang="ar" dir="rtl">
+    // The script below adds a class to this element before React takes over.
+    <html lang="ar" dir="rtl" suppressHydrationWarning>
+      <head>
+        <script nonce={nonce} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: BOOT }} />
+      </head>
       <body>
         {children}
         {staging() ? (
