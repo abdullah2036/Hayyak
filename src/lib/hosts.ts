@@ -12,8 +12,8 @@ const origin = (v: string | undefined) => {
     return '';
   }
 };
-export const appOrigin = () => origin(process.env.APP_URL) || 'http://localhost:3000';
-export const studioOrigin = () => origin(process.env.STUDIO_URL) || (process.env.NODE_ENV === 'production' ? '' : appOrigin());
+export const appOrigin = () => origin(process.env.APP_URL || process.env.BUILD_APP_URL) || 'http://localhost:3000';
+export const studioOrigin = () => origin(process.env.STUDIO_URL || process.env.BUILD_STUDIO_URL) || (process.env.NODE_ENV === 'production' ? '' : appOrigin());
 
 export type Area = 'app' | 'studio' | 'both';
 export function areaOf(host: string | null): Area {
@@ -22,4 +22,16 @@ export function areaOf(host: string | null): Area {
   if (s === appOrigin()) return 'both';
   return (host || '').toLowerCase() === new URL(s).host ? 'studio' : 'app';
 }
-export const staging = () => process.env.APP_ENV === 'staging';
+export const staging = () => (process.env.APP_ENV || process.env.BUILD_APP_ENV) === 'staging';
+
+/**
+ * The host the visitor asked for. Where the request filter runs apart from the pages (Netlify), it can reach them
+ * under another host and can run twice, so it passes the first answer on in this header. Only our own two hosts count.
+ */
+export const HOST_HEADER = 'x-hy-host';
+export function hostOf(h: { get(name: string): string | null }) {
+  const passed = (h.get(HOST_HEADER) || '').toLowerCase();
+  const s = studioOrigin();
+  if (passed && (passed === new URL(appOrigin()).host || (s && passed === new URL(s).host))) return passed;
+  return (h.get('host') || '').toLowerCase();
+}

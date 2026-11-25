@@ -20,5 +20,5 @@ jobs:
       - run: npm run check:secrets
       - run: npm audit --omit=dev --audit-level=high
       - run: npm run typecheck
-      - run: npm run vercel-build
+      - run: npm run build
       - run: npm run test:e2e

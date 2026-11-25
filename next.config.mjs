@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const config = {
   poweredByHeader: false,
+  // Some hosts (Netlify) do not give runtime variables to the request filter in src/proxy.ts, so the addresses are
+  // also kept from the build. Server files only: nothing in the browser reads them.
+  env: { BUILD_APP_URL: process.env.APP_URL || '', BUILD_STUDIO_URL: process.env.STUDIO_URL || '', BUILD_APP_ENV: process.env.APP_ENV || '' },
   reactStrictMode: false,
   output: process.env.BUILD_STANDALONE === '1' ? 'standalone' : undefined,
   serverExternalPackages: ['@electric-sql/pglite', 'sharp', 'postgres', 'nodemailer'],

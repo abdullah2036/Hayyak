@@ -1,0 +1,13 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Only the live site touches the live database; previews are built without migrating.
+[context.production]
+  command = "npm run db:migrate && npm run build"
+
+[functions]
+  directory = "netlify/functions"

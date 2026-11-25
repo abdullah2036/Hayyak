@@ -1,9 +1,12 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { appOrigin, areaOf, staging, studioOrigin } from '@/lib/hosts';
+import { appOrigin, areaOf, HOST_HEADER, hostOf, staging, studioOrigin } from '@/lib/hosts';
 
 /** Keeps the Studio on its own address, and gives every page a content security policy with a fresh nonce. */
 export function proxy(req: NextRequest) {
-  const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
+  // Reused when this runs a second time for the same request, so the header and the page always agree.
+  const given = req.headers.get('x-nonce') || '';
+  const nonce = /^[A-Za-z0-9+/]{48}$/.test(given) ? given : btoa(crypto.randomUUID());
+  const host = hostOf(req.headers);
   const dev = process.env.NODE_ENV !== 'production';
   const csp = [
     "default-src 'self'",
@@ -24,8 +27,9 @@ export function proxy(req: NextRequest) {
   ].join('; ');
   const headers = new Headers(req.headers);
   headers.set('x-nonce', nonce);
+  headers.set(HOST_HEADER, host);
   headers.set('Content-Security-Policy', csp);
-  const area = areaOf(req.headers.get('host'));
+  const area = areaOf(host);
   const path = req.nextUrl.pathname;
   const studio = path === '/studio' || path.startsWith('/studio/');
   if (area === 'studio' && path === '/') return NextResponse.redirect(new URL('/studio', studioOrigin()));
