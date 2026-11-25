@@ -25,7 +25,7 @@ What protects the platform, where it lives in the code, and what is left to you.
 | Clickjacking, sniffing, downgrade | `frame-ancestors 'none'`, `nosniff`, HSTS | `src/proxy.ts`, `next.config.mjs` |
 | Finding the admin panel | It exists only on `STUDIO_URL`; elsewhere its pages and API answer like an address that does not exist, and no public page, file or sitemap names it | `src/lib/hosts.ts`, `src/proxy.ts`, `server/api/router.ts`, `server/page.ts` |
 | Getting into the admin panel | Two steps for everyone: a code by email, then an authenticator app; codes cannot be replayed, five wrong tries lock it, each sign-in is emailed to its owner, sessions end after 30 idle minutes, strict cookies | `services/auth.ts`, `lib/totp.ts` |
-| Wrong or abused prices | Only founders change them; every change is logged with the old and new value; a pack priced at zero by mistake waits for approval; quotas and code limits hold under simultaneous orders | `services/pricing.ts` |
+| Wrong or abused prices | Nobody gets free credit beyond the sign-up trial without a code a founder made; only founders change prices; every change is logged with the old and new value; a pack priced at zero by mistake waits for approval; quotas and code limits hold under simultaneous orders | `services/pricing.ts` |
 | Path traversal and leaked files | No route reads a file by name: images are looked up by id in the database. 58 raw paths are tried in the tests | `tests/e2e.mjs` |
 | Secrets in the repository or the browser | A check on every commit and in CI, `.env` files ignored, server code marked `server-only`, no source maps published | `scripts/check-secrets.mjs`, `.github/workflows/check.yml` |
 | Test data reaching real people | Staging only emails listed addresses; trial workspaces are left out of every number | `lib/mail.ts`, `services/studio.ts` |
@@ -37,7 +37,7 @@ The app refuses to run in production without `DATABASE_URL`, `APP_SECRET` and `D
 
 ## Proof
 
-`npm run test:e2e` runs 337 checks against a real production build. More than half of them are attacks: other people's ids, path traversal, the hidden admin panel, cross-site posts, injection strings, hostile uploads, guessing, racing, forged prices, replayed codes and stale sessions. To run it on a real server instead of the embedded one, set `TEST_DATABASE_URL` to an empty throwaway database.
+`npm run test:e2e` runs 340 checks against a real production build. More than half of them are attacks: other people's ids, path traversal, the hidden admin panel, cross-site posts, injection strings, hostile uploads, guessing, racing, forged prices, replayed codes and stale sessions. To run it on a real server instead of the embedded one, set `TEST_DATABASE_URL` to an empty throwaway database.
 
 Run it before each release, together with `npm audit --omit=dev`.
 

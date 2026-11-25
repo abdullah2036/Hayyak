@@ -152,11 +152,43 @@ export function StudioPricing({ pricing, discounts, customers, run }) {
   const beta = (o) => edit({ beta: { ...p.beta, ...o } });
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+      <section className="in" style={card}>
+        <span style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+          <span style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <h3 style={{ margin: 0, fontSize: 19 }}>أكواد الخصم</h3>
+            <span style={{ fontSize: 13, color: C.mute }}>كود 100% يخلي الطلب مجاني والرصيد ينزل على طول بدون تأكيد منكم. حددوا كم مرة ينستخدم ومتى ينتهي، أو خلّوه لحساب واحد</span>
+          </span>
+          <button type="button" style={main} onClick={() => setOpen(!open)}>+ كود جديد</button>
+        </span>
+        {open ? (
+          <div style={{ ...row, alignItems: 'flex-end', background: 'rgba(134,220,234,.1)' }}>
+            <label style={label}>الكود<input className="fld" value={n.code} onChange={(e) => setN({ ...n, code: e.target.value.toUpperCase().replace(/[^A-Z0-9_-]/g, '').slice(0, 24) })} placeholder="BETA50" style={{ width: 160, direction: 'ltr' }} /></label>
+            <span style={label}>النوع<span style={{ display: 'flex', gap: 8 }}><button type="button" style={chip(n.kind === 'percent')} onClick={() => setN({ ...n, kind: 'percent' })}>نسبة %</button><button type="button" style={chip(n.kind === 'amount')} onClick={() => setN({ ...n, kind: 'amount' })}>مبلغ ر.س</button></span></span>
+            <label style={label}>القيمة<input className="fld" inputMode="numeric" value={n.value} onChange={(e) => setN({ ...n, value: num(e.target.value) })} style={{ width: 100 }} /></label>
+            <label style={label}>كل المرات<input className="fld" inputMode="numeric" value={n.maxUses} onChange={(e) => setN({ ...n, maxUses: e.target.value ? num(e.target.value) : '' })} placeholder="بلا حد" style={{ width: 110 }} /></label>
+            <label style={label}>لكل حساب<input className="fld" inputMode="numeric" value={n.perOrg} onChange={(e) => setN({ ...n, perOrg: num(e.target.value) })} style={{ width: 100 }} /></label>
+            <label style={label}>ينتهي<input className="fld" type="date" value={n.until} onChange={(e) => setN({ ...n, until: e.target.value })} style={{ width: 170, colorScheme: 'dark' }} /></label>
+            <label style={label}>لمين<select className="fld" value={n.orgId} onChange={(e) => setN({ ...n, orgId: e.target.value })} style={{ width: 190 }}><option value="">أي أحد</option>{customers.map((c) => <option key={c.id} value={c.id}>{c.n}</option>)}</select></label>
+            <label style={label}>ملاحظة لكم<input className="fld" value={n.note} onChange={(e) => setN({ ...n, note: e.target.value.slice(0, 120) })} style={{ width: 200 }} /></label>
+            <button type="button" style={main} onClick={add}>أضف الكود</button>
+          </div>
+        ) : null}
+        {discounts.map((c) => (
+          <div key={c.id} style={{ ...row, opacity: c.active && !c.ended ? 1 : 0.6 }}>
+            <b style={{ direction: 'ltr', fontSize: 16, minWidth: 110, textAlign: 'right' }}>{c.code}</b>
+            <span style={{ fontSize: 14, color: C.ink }}>{c.off}</span>
+            <span style={{ flex: '1 1 220px', fontSize: 13, color: C.mute }}>{[`انستخدم ${c.uses}${c.max ? ` من ${c.max}` : ''}`, `${c.perOrg} لكل حساب`, c.org && `لـ ${c.org}`, c.until && (c.ended ? 'انتهى' : `لين ${c.until}`), c.note].filter(Boolean).join(' · ')}</span>
+            <Toggle on={c.active} set={(v) => run(() => api.patch(`/studio/discounts/${c.id}`, { active: v }), 'تم ✓')} text={c.active ? 'شغّال' : 'متوقف'} />
+          </div>
+        ))}
+        {!discounts.length ? <span style={{ fontSize: 14, color: C.mute }}>ما فيه أكواد للحين</span> : null}
+      </section>
+
       <section className="in" style={{ ...card, ...(p.beta.on ? { border: '1px solid rgba(134,220,234,.5)', background: 'rgba(134,220,234,.1)' } : {}) }}>
         <span style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
           <span style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            <h3 style={{ margin: 0, fontSize: 19 }}>النسخة التجريبية (بيتا)</h3>
-            <span style={{ fontSize: 13, color: C.soft, lineHeight: 1.7 }}>طول ما هي شغّالة ياخذ كل حساب رصيد مجاني من صفحة الشراء وينزل على طول، لين يوصل حده. وقفها يوم الإطلاق وترجع الأسعار تحت لحالها</span>
+            <h3 style={{ margin: 0, fontSize: 19 }}>رصيد مجاني مفتوح لأي أحد (بيتا)</h3>
+            <span style={{ fontSize: 13, color: C.soft, lineHeight: 1.7 }}>لو شغّلتها، أي أحد يسجّل ياخذ رصيد مجاني من صفحة الشراء لين يوصل حده. خلّوها متوقفة لو تبون المجاني لناس محددين، وعطوهم كود خصم 100%</span>
           </span>
           <Toggle on={p.beta.on} set={(v) => beta({ on: v })} text={p.beta.on ? 'شغّالة' : 'متوقفة'} />
         </span>
@@ -189,38 +221,6 @@ export function StudioPricing({ pricing, discounts, customers, run }) {
           {dirty ? <button type="button" style={line} onClick={() => { setP(pricing); setDirty(false); }}>تراجع</button> : null}
           <button type="button" style={{ ...main, opacity: dirty ? 1 : 0.5 }} disabled={!dirty} onClick={save}>احفظ الأسعار</button>
         </span>
-      </section>
-
-      <section className="in" style={card}>
-        <span style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
-          <span style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            <h3 style={{ margin: 0, fontSize: 19 }}>أكواد الخصم</h3>
-            <span style={{ fontSize: 13, color: C.mute }}>نسبة 100% تخلي الطلب مجاني وينزل على طول. ولو تبون سعر ثابت لحساب معيّن، حطوه من «المستخدمين»</span>
-          </span>
-          <button type="button" style={main} onClick={() => setOpen(!open)}>+ كود جديد</button>
-        </span>
-        {open ? (
-          <div style={{ ...row, alignItems: 'flex-end', background: 'rgba(134,220,234,.1)' }}>
-            <label style={label}>الكود<input className="fld" value={n.code} onChange={(e) => setN({ ...n, code: e.target.value.toUpperCase().replace(/[^A-Z0-9_-]/g, '').slice(0, 24) })} placeholder="BETA50" style={{ width: 160, direction: 'ltr' }} /></label>
-            <span style={label}>النوع<span style={{ display: 'flex', gap: 8 }}><button type="button" style={chip(n.kind === 'percent')} onClick={() => setN({ ...n, kind: 'percent' })}>نسبة %</button><button type="button" style={chip(n.kind === 'amount')} onClick={() => setN({ ...n, kind: 'amount' })}>مبلغ ر.س</button></span></span>
-            <label style={label}>القيمة<input className="fld" inputMode="numeric" value={n.value} onChange={(e) => setN({ ...n, value: num(e.target.value) })} style={{ width: 100 }} /></label>
-            <label style={label}>كل المرات<input className="fld" inputMode="numeric" value={n.maxUses} onChange={(e) => setN({ ...n, maxUses: e.target.value ? num(e.target.value) : '' })} placeholder="بلا حد" style={{ width: 110 }} /></label>
-            <label style={label}>لكل حساب<input className="fld" inputMode="numeric" value={n.perOrg} onChange={(e) => setN({ ...n, perOrg: num(e.target.value) })} style={{ width: 100 }} /></label>
-            <label style={label}>ينتهي<input className="fld" type="date" value={n.until} onChange={(e) => setN({ ...n, until: e.target.value })} style={{ width: 170, colorScheme: 'dark' }} /></label>
-            <label style={label}>لمين<select className="fld" value={n.orgId} onChange={(e) => setN({ ...n, orgId: e.target.value })} style={{ width: 190 }}><option value="">أي أحد</option>{customers.map((c) => <option key={c.id} value={c.id}>{c.n}</option>)}</select></label>
-            <label style={label}>ملاحظة لكم<input className="fld" value={n.note} onChange={(e) => setN({ ...n, note: e.target.value.slice(0, 120) })} style={{ width: 200 }} /></label>
-            <button type="button" style={main} onClick={add}>أضف الكود</button>
-          </div>
-        ) : null}
-        {discounts.map((c) => (
-          <div key={c.id} style={{ ...row, opacity: c.active && !c.ended ? 1 : 0.6 }}>
-            <b style={{ direction: 'ltr', fontSize: 16, minWidth: 110, textAlign: 'right' }}>{c.code}</b>
-            <span style={{ fontSize: 14, color: C.ink }}>{c.off}</span>
-            <span style={{ flex: '1 1 220px', fontSize: 13, color: C.mute }}>{[`انستخدم ${c.uses}${c.max ? ` من ${c.max}` : ''}`, `${c.perOrg} لكل حساب`, c.org && `لـ ${c.org}`, c.until && (c.ended ? 'انتهى' : `لين ${c.until}`), c.note].filter(Boolean).join(' · ')}</span>
-            <Toggle on={c.active} set={(v) => run(() => api.patch(`/studio/discounts/${c.id}`, { active: v }), 'تم ✓')} text={c.active ? 'شغّال' : 'متوقف'} />
-          </div>
-        ))}
-        {!discounts.length ? <span style={{ fontSize: 14, color: C.mute }}>ما فيه أكواد للحين</span> : null}
       </section>
     </div>
   );

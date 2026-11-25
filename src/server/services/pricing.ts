@@ -22,8 +22,8 @@ export const pricingSchema = z.object({
 });
 export type Pricing = z.infer<typeof pricingSchema>;
 
-/** A fresh installation starts in beta: credit is free up to a quota. WhatsApp stays out because the team sends it by hand. */
-const DEFAULT: Pricing = { packs: DEFAULT_PACKS, free: DEFAULT_FREE, beta: { on: true, quota: 300, channels: ['self', 'email'], services: true } };
+/** Open free credit is off: people who should get it free receive a discount code. WhatsApp stays out even when it is on, because the team sends it by hand. */
+const DEFAULT: Pricing = { packs: DEFAULT_PACKS, free: DEFAULT_FREE, beta: { on: false, quota: 300, channels: ['self', 'email'], services: true } };
 
 export async function pricing(tx?: DB): Promise<Pricing> {
   const d = tx ?? (await db());

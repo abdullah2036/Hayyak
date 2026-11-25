@@ -111,11 +111,18 @@ With `APP_ENV=staging` the site shows a "نسخة اختبار" mark, search eng
 
 Checklist for a full run: sign up, take free credit, create a private invitation with an Excel list, send, open a personal link on a phone, confirm, save the video, create a public invitation and register on it, ask for a custom seal and deliver it from the Studio, open check-in, check in by code and by QR, download the certificate, read the report.
 
-## 6. Beta, then launch
+## 6. Beta testers, then launch
 
-A new installation starts in beta: every account takes free credit from the buy page, up to a quota, and it arrives at once. In the Studio under **الأسعار والعروض** you can change the quota, which ways of sending are free, every price, the free trial, and make discount codes.
+Anyone can sign up and gets the one-time trial (10 invitations). More than that costs money, unless you give it.
 
-On launch day switch the beta off there. Prices return by themselves and no deploy is needed. Beta credit already given runs out in 30 days like any other.
+To give it free to your testers, open the Studio → **الأسعار والعروض** → **+ كود جديد**:
+
+- 100%, with how many times it may be used, how many per account, and an end date
+- for anyone who has the code, or for one account only
+
+The tester types it on the buy page and the credit arrives at once. Other ways, in **المستخدمين**: **+ رصيد** adds credit directly, and **سعر خاص** gives one account a standing discount, where 100 means always free.
+
+The same screen changes every pack price, the trial size, and has a switch that opens free credit to everyone. That switch is off; leave it off unless you want it. Changes apply at once, with no deploy.
 
 ## Before inviting people
 

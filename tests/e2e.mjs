@@ -317,7 +317,12 @@ async function main() {
   section('prices, beta and discounts');
   const contact = { name: 'نادي', email: '', phone: '0551234567' };
   const p0 = (await v.get('/api/pricing')).j;
-  check('prices are public and carry nothing else', p0.packs.length === 6 && !JSON.stringify(p0).includes('updatedBy') && p0.beta.quota === 300);
+  check('prices are public and carry nothing else', p0.packs.length === 6 && !JSON.stringify(p0).includes('updatedBy'));
+  const paidQ = (await b.post('/orders/quote', { count: 100, channel: 'self', services: [] })).j;
+  const paidO = await b.post('/orders', { count: 30, channel: 'self', services: [], contact });
+  check('nobody gets free credit on their own', p0.beta === null && paidQ.total === 105 && paidQ.beta === false && paidO.j.total === 35 && paidO.j.done === false, JSON.stringify([paidQ, paidO.j]));
+  check('a customer cannot switch the beta on', (await b.post('/studio/pricing', { packs: p0.packs.map((x) => ({ ...x, on: true })), free: 10, beta: { on: true, quota: 300, channels: ['self', 'email'], services: true } })).s === 404);
+  check('founder can open free credit to everyone', (await st.post('/studio/pricing', { packs: p0.packs.map((x) => ({ ...x, on: true })), free: 10, beta: { on: true, quota: 300, channels: ['self', 'email'], services: true } })).s === 200);
   const q1 = (await b.post('/orders/quote', { count: 100, channel: 'self', services: [] })).j;
   check('beta credit is free', q1.total === 0 && q1.beta === true, JSON.stringify(q1));
   const bo = await b.post('/orders', { count: 100, channel: 'self', services: [], contact });

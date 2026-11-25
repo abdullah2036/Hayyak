@@ -6,7 +6,7 @@ Animated invitations with RSVP, attendance by code or QR, and certificates. Arab
 - **Studio** (its own address, `STUDIO_URL`): the Hayyak team's admin: analytics, prices, beta and discounts, orders, credit, designs, requests, team, audit log.
 - **Guest pages** (`/i/…`, `/a/…`, `/c/…`): the animated invitation, registration, check-in and certificate.
 
-There is no payment gateway in this version. An order that costs nothing (beta, or a full discount) is credited at once; any other waits until the Studio confirms the money arrived.
+There is no payment gateway in this version. An order that a discount code makes free is credited at once; any other waits until the Studio confirms the money arrived.
 
 ## Run it on your computer
 
@@ -70,7 +70,7 @@ The exact permissions are in `src/server/lib/session.ts`.
 | `npm run build` | production build |
 | `npm run start:prod` | apply migrations, then start |
 | `npm run typecheck` | TypeScript |
-| `npm run test:e2e` | 337 product and security checks (run `build` first) |
+| `npm run test:e2e` | 340 product and security checks (run `build` first) |
 | `npm run check:secrets` | looks for secrets in what git would publish; also runs on every commit |
 | `npm run studio:reset -- email` | clears a lost Studio authenticator |
 | `npm run db:generate` | new migration after changing the schema |
