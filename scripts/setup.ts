@@ -23,11 +23,12 @@ const lines: string[] = [];
 let waiter: ((l: string) => void) | null = null;
 rl.on('line', (l) => { if (waiter) { const w = waiter; waiter = null; w(l); } else lines.push(l); });
 const read = () => (lines.length ? Promise.resolve(lines.shift()!) : new Promise<string>((r) => { waiter = r; }));
-async function ask(q: string, o: { def?: string; secret?: boolean; test?: RegExp; hint?: string } = {}): Promise<string> {
+async function ask(q: string, o: { def?: string; secret?: boolean; test?: RegExp; hint?: string; fix?: (v: string) => string } = {}): Promise<string> {
   for (;;) {
     process.stdout.write(`\n${q}${o.def ? (o.secret ? ' [Enter = keep the saved one]' : ` [${o.def}]`) : ''}\n> `);
     muted = Boolean(o.secret);
-    const v = (await read()).trim() || o.def || '';
+    const typed = (await read()).trim() || o.def || '';
+    const v = o.fix ? o.fix(typed) : typed;
     muted = false;
     if (o.secret) process.stdout.write('\n');
     if (v && (!o.test || o.test.test(v))) return v;
@@ -42,15 +43,23 @@ const nameOf = (u?: string) => u?.match(/^https:\/\/(.+)\.netlify\.app$/)?.[1];
 
 console.log('Hayyak setup. Nothing you type is sent anywhere except to your own database and email provider.');
 
-const site = await ask('Netlify project name for the site (the part before .netlify.app)', { def: nameOf(old.APP_URL), test: NAME, hint: 'Small letters, numbers and dashes.' });
-const desk = await ask('Netlify project name for the Studio (a name nobody would guess)', { def: nameOf(old.STUDIO_URL) || `${word().slice(0, 5)}-desk-${word().slice(0, 4)}`, test: NAME, hint: 'Small letters, numbers and dashes.' });
+// People paste whole addresses; only the name matters.
+const bare = (v: string) => v.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/\.netlify\.app.*$/, '').replace(/\/.*$/, '');
+const site = await ask('1. Your site. Paste its Netlify address, like https://my-site.netlify.app (Netlify shows it at the top of the project)', { def: nameOf(old.APP_URL), test: NAME, fix: bare, hint: 'Paste the address that ends in .netlify.app, or just the name before it.' });
+const desk = await ask('2. The admin panel. You will make this second Netlify project later; press Enter to accept this name', { def: nameOf(old.STUDIO_URL) || `h${word().slice(0, 5)}-desk-${word().slice(0, 4)}`, test: NAME, fix: bare, hint: 'Small letters, numbers and dashes.' });
 
 /* ---------- database ---------- */
 let url = '';
 for (;;) {
-  const raw = await ask('Supabase > Connect > Transaction pooler: paste the address (it starts with postgresql://)', { def: old.DATABASE_URL, secret: Boolean(old.DATABASE_URL), test: /^postgres(ql)?:\/\/.+@.+/, hint: 'It should start with postgresql:// and contain an @.' });
+  const raw = await ask('3. Database. In Supabase press Connect at the top, choose "Transaction pooler", and paste the address (port 6543)', { def: old.DATABASE_URL, secret: Boolean(old.DATABASE_URL), test: /^postgres(ql)?:\/\/.+@.+/, hint: 'It should start with postgresql:// and contain an @.' });
   url = raw;
-  if (/\[YOUR-PASSWORD\]/i.test(url)) url = url.replace(/\[YOUR-PASSWORD\]/i, encodeURIComponent(await ask('Database password (not shown while you type)', { secret: true })));
+  if (/@db\.[a-z0-9]+\.supabase\.co/i.test(url)) {
+    console.log('  That is the "Direct connection" address, which Netlify cannot reach. Choose "Transaction pooler" instead: its address contains "pooler.supabase.com".');
+    delete old.DATABASE_URL;
+    if (!process.stdin.isTTY) process.exit(1);
+    continue;
+  }
+  if (/\[YOUR-PASSWORD\]/i.test(url)) url = url.replace(/\[YOUR-PASSWORD\]/i, encodeURIComponent(await ask('   The database password from when you made the project (not shown while you type)', { secret: true })));
   if (!/[?&]sslmode=/.test(url) && !/@(localhost|127\.)/.test(url)) url += (url.includes('?') ? '&' : '?') + 'sslmode=require';
   process.stdout.write('Connecting to the database... ');
   try {
@@ -75,17 +84,17 @@ if (m.status !== 0) {
 console.log('done');
 
 /* ---------- first founder ---------- */
-const founder = (await ask('Your email, for the Studio (admin panel)', { test: EMAIL, hint: 'An email address, please.' })).toLowerCase();
-const s = run('scripts/seed-admin.ts', [founder, await ask('Your name, as the team sees it')]);
+const founder = (await ask('4. Your own email, to sign in to the admin panel', { test: EMAIL, hint: 'An email address, please.' })).toLowerCase();
+const s = run('scripts/seed-admin.ts', [founder, await ask('5. Your name')]);
 console.log(s.status === 0 ? `  ${founder} is the first founder.` : `  ${s.stderr.includes('already exists') ? 'A founder exists already; add people from the Studio.' : s.stderr.slice(-400)}`);
 
 /* ---------- email ---------- */
-const kind = (await ask('Email by: "gmail" (an app password, no domain needed), "brevo", or "resend" (your own domain)', { def: old.RESEND_API_KEY ? 'resend' : old.BREVO_API_KEY ? 'brevo' : 'gmail', test: /^(gmail|brevo|resend)$/i, hint: 'Type gmail, brevo or resend.' })).toLowerCase();
-const from = await ask(kind === 'gmail' ? 'The Gmail address that sends' : 'Sender address (verified with that provider)', { def: old.MAIL_FROM?.match(/<([^>]+)>/)?.[1], test: EMAIL, hint: 'An email address, please.' });
+const kind = (await ask('6. Email by: "gmail" (an app password, no domain needed), "brevo", or "resend" (your own domain)', { def: old.RESEND_API_KEY ? 'resend' : old.BREVO_API_KEY ? 'brevo' : 'gmail', test: /^(gmail|brevo|resend)$/i, hint: 'Type gmail, brevo or resend.' })).toLowerCase();
+const from = await ask(kind === 'gmail' ? '7. The Gmail address that sends' : 'Sender address (verified with that provider)', { def: old.MAIL_FROM?.match(/<([^>]+)>/)?.[1], test: EMAIL, hint: 'An email address, please.' });
 const provider = kind === 'gmail' ? 'SMTP_URL' : kind === 'resend' ? 'RESEND_API_KEY' : 'BREVO_API_KEY';
 let key = '';
 for (;;) {
-  key = await ask(kind === 'gmail' ? 'Its app password, 16 letters from myaccount.google.com/apppasswords (not shown while you type)' : `${kind} API key (not shown while you type)`, { def: old[provider], secret: true });
+  key = await ask(kind === 'gmail' ? '8. Its app password, 16 letters from myaccount.google.com/apppasswords (not shown while you type)' : `${kind} API key (not shown while you type)`, { def: old[provider], secret: true });
   // Google shows it in four groups; the spaces are not part of it.
   if (kind === 'gmail' && !key.startsWith('smtps://')) key = `smtps://${encodeURIComponent(from)}:${encodeURIComponent(key.replace(/\s/g, ''))}@smtp.gmail.com:465`;
   process.stdout.write(`Sending a test email to ${founder}... `);
@@ -119,12 +128,13 @@ const env: Record<string, string> = {
 writeFileSync(FILE, Object.entries(env).map(([k, v]) => `${k}=${v}`).join('\n') + '\n', { mode: 0o600 });
 rl.close();
 console.log(`
-Done. ${FILE} is ready. In Netlify, make TWO projects from this repository with these exact names:
+Done. Everything Netlify needs is in the file ${FILE}. Open it with:  notepad ${FILE}
 
-  ${site}     the site
-  ${desk}     the Studio
+  Project 1, the site:         ${site}   (the one you have)
+  Project 2, the admin panel:  ${desk}   (make it now, same repository)
 
-and for both: Environment variables > Add a variable > Import from a .env file > paste all of ${FILE}.
-Then save DATA_KEY in a password manager and delete ${FILE}.
-If a name is taken, run "npm run setup" again with another one; everything else is kept.`);
+In both: Project configuration > Environment variables > Add a variable > Import from a .env file, paste the whole
+file, choose "Update conflicts" if asked, then Deploys > Trigger deploy > Clear cache and deploy site.
+Afterwards save DATA_KEY in a password manager and delete ${FILE}.
+If a name is taken, run "npm run setup" again; everything else is kept.`);
 process.exit(0);
