@@ -1,5 +1,5 @@
 'use client';
-/** The brand typeface is put together by the script in the page's head (lib/typepack); these wait for it. */
+/** The brand typeface is put together by the script at the top of the page (lib/typepack); these wait for it. */
 import { unpack } from '@/lib/typepack';
 
 export const typeReady = (ms = 2500) => Promise.race([Promise.resolve(window.__hyType), new Promise((r) => setTimeout(r, ms))]);

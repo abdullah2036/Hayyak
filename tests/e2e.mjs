@@ -431,7 +431,9 @@ async function main() {
   const un = () => { const u = Buffer.from(raw); let x = u.readUInt32BE(4) | 1; for (let i = 8; i < u.length; i++) { x ^= x << 13; x ^= x >>> 17; x ^= x << 5; u[i] ^= x & 255; } const out = []; for (let n = u[8], q = 9; n > 0; n--) { const l = u.readUInt32BE(q + 3); out.push([u[q], u.readUInt16BE(q + 1), u.subarray(q + 7, q + 7 + l)]); q += 7 + l; } return out; };
   const faces = un();
   check('every font arrives unchanged', faces.length === 4 && faces.every(([, , b], i) => b.equals(fonts[i][1])) && faces.map(([f, w]) => `${f}${w}`).join() === '0700,1400,1500,1700', faces.map(([f, w]) => `${f}${w}`).join());
-  check('pages load it under their nonce', /<head>.*<script nonce="[^"]+"[^>]*>\(function\(w,d\)/s.test((await v.get('/')).t));
+  const top = (await v.get('/')).t;
+  check('pages load it under their nonce', /<body>.*<script nonce="[^"]+"[^>]*>\(function\(w,d\)/s.test(top) && /<link rel="preload" href="\/api\/type" as="fetch"/.test(top));
+  check('the head holds no script of ours: hosts write into it', !/<script(?![^>]*\bsrc=)[^>]*>/.test(top.split('</head>')[0]));
   check('the upload is in the log', (await st.get('/studio')).t.includes('رفع خط الهوية'));
   check('founder takes it off again', (await st.del('/studio/type')).j?.on === false && (await grab()).s === 204);
 

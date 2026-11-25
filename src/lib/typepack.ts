@@ -52,7 +52,7 @@ export function unpack(buf: ArrayBuffer): Face[] {
 }
 
 /**
- * Runs in the head of every page, before anything is drawn. Text waits for the typeface for under a second, so it does
+ * Runs at the top of every page, before anything is drawn. Text waits for the typeface for under a second, so it does
  * not appear in one face and jump to another. Without a pack, or if anything fails, the open stand-ins stay.
  */
 export const BOOT = `(function(w,d){var h=d.documentElement,c=h.classList,t=setTimeout(show,900);function show(){clearTimeout(t);c.remove('tw')}c.add('tw');
