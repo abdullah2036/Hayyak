@@ -7,12 +7,13 @@ Two routes. Both keep the app and the database on services you can upgrade in pl
 | Platforms | one | two |
 | Cost now | $0 for 24 months with the student credit | $0, no end date |
 | Needs a card | yes | not stated as required |
-| Always on | yes | yes, with the timer below |
+| Stays up | never sleeps; restarts by itself if it crashes, and once a day for some seconds | **no guarantee**: sleeps after 15 idle minutes unless the timer wakes it, and Render may restart it any time |
+| Good for | a beta with real people | trying it out |
 | Server | 512 MB, shared CPU | 512 MB, 0.1 CPU: signing in takes some seconds |
 | Database | 1 GB class | 500 MB |
 | Upgrade later | bigger dyno and Postgres plan | Render paid instance, Supabase Pro ($25) |
 
-Choose A if one of you is a student with a card. Choose B otherwise. Email needs one more service on either route, because neither sends email for you.
+If the site has to stay up, choose A. Use B only to try things out, or until the student credit is approved. Moving from B to A later means a `pg_dump`, a `pg_restore` and the same variables. Email needs one more service on either route, because neither sends email for you.
 
 Measured on a laptop: opening an invitation costs about 10 ms of processor time with its files, and memory peaked at 334 MB in the test suite. From that, B should carry a few openings per second and A many more. A beta of 400 to 1,000 visitors fits both.
 
@@ -87,6 +88,14 @@ $$);
 **First founder**, from your computer in the project folder: make a file `.env.local` with the one line `DATABASE_URL=` and the address, run `npm run seed:admin -- you@example.com "Your name"`, then **delete that line**. While it is there, `npm run dev` uses the real database.
 
 Keep in mind: Render says not to use free servers for production and may restart them; Supabase's free plan has no downloadable backups, so take one with `pg_dump` before each event; two free Supabase projects are allowed, so one can be your test copy.
+
+## Staying up
+
+- **The app:** it keeps running when its database drops out (pages that need no data still open) and recovers by itself when it is back. Tested by killing the database under it, with the scheduler running, and by 300 broken requests.
+- **Heroku:** Basic dynos [do not sleep](https://devcenter.heroku.com/articles/dyno-type). Every dyno [restarts once a day](https://devcenter.heroku.com/articles/dyno-restarts), and a crashed one is restarted at once. To choose the moment, run `heroku ps:restart -a your-app` at a quiet hour the night before an event: the next one comes about 24 hours later. No deploys during an event.
+- **The database:** [Essential-0](https://devcenter.heroku.com/articles/heroku-postgres-plans) is expected to be up 99.5% of each month, so up to about four hours down in a bad month.
+- **More than that costs money:** Standard dynos with [preboot](https://devcenter.heroku.com/articles/preboot) have no restart gap, and Standard databases allow less downtime. Both are a plan change in the same place.
+- **Know first:** point a free uptime monitor at `https://your-domain/api/health`. It answers 200 only when the app and the database both work.
 
 ## After either route
 
