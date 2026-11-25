@@ -106,17 +106,17 @@ while (!url) {
     if (!isLocal(dbAddr)) dbAddr.port = 6543; // 5432 is the session pooler; Netlify needs this one
     console.log(`  user ${dbAddr.user}, server ${dbAddr.host}, port ${dbAddr.port}`);
   }
-  let pw = await ask('   Press Enter and a new password is made for you (recommended). Or type the one you have.', { secret: true, def: 'NEW' });
-  if (pw === 'NEW') {
-    // Letters and numbers only: nothing that can break an address or get lost in copying.
-    pw = Array.from({ length: 28 }, () => 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789'[randomInt(54)]).join('');
-    console.log(clipboard(pw) ? '\n  A new password is on your clipboard.' : `\n  New password: ${pw}`);
-    console.log('  In Supabase: Project Settings (gear) > Database > Reset database password.\n  Delete what is in the box, paste with Ctrl+V, press "Reset password", and wait for the green message.');
-    await ask('   Press Enter after Supabase says it is done', { def: 'done' });
-    process.stdout.write('  Supabase needs about a minute to use a new password, waiting...');
-    await pause(60);
-    console.log('');
-  } else pw = pw.replace(/^\[(.*)\]$/, '$1');
+  // The app gets its own database user, new every time. Supabase's pooler remembers passwords, so a user it has never
+  // seen is the only one it cannot have an old password for. It is also less powerful than the main "postgres" user.
+  const role = `hayyak_${word().slice(0, 5)}`;
+  const pw = Array.from({ length: 32 }, () => 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789'[randomInt(54)]).join('');
+  const ref = dbAddr.user.includes('.') ? dbAddr.user.slice(dbAddr.user.indexOf('.')) : '';
+  dbAddr = { ...dbAddr, user: role + ref };
+  const command = `create role ${role} with login password '${pw}'; grant usage, create on schema public to ${role}; grant connect, create on database "${dbAddr.name}" to ${role};`;
+  console.log(clipboard(command) ? '\n  A command is on your clipboard.' : `\n  Command: ${command}`);
+  console.log('  In Supabase: SQL Editor (left side) > new query > Ctrl+V > Run.\n  It should answer "Success. No rows returned". Use the same project as the address above.');
+  await ask('   Press Enter here after it says Success', { def: 'done' });
+  await pause(5);
 
   for (let i = 1; i <= 3 && !url; i++) {
     process.stdout.write('Connecting to the database... ');
@@ -134,7 +134,7 @@ while (!url) {
       break;
     }
     if (/password|auth|circuit|28P01|too many/i.test(why)) {
-      console.log(i < 3 ? `not yet (${why.slice(0, 90)}).\n  Supabase can keep checking the old password for a while, and pauses after wrong tries. Trying again in 2 minutes; leave this open.` : `still refused (${why.slice(0, 90)}).`);
+      console.log(i < 3 ? `not yet (${why.slice(0, 90)}).\n  Earlier wrong tries can make Supabase refuse this computer for 2 minutes. Trying again after that; leave this open.` : `still refused (${why.slice(0, 90)}).\n  Was the command run in the project of this address, and did it say Success?`);
       if (i < 3) await pause(130);
       continue;
     }
