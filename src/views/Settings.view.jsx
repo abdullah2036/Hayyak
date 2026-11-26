@@ -1,9 +1,10 @@
 import { S, txt, A } from '@/ui/dc';
+import Mark from '@/ui/Mark';
 import FAQ from '@/screens/FAQ';
 
 const CSS = `body{margin:0;background:#EDF1F3}
 a{color:#086577}a:hover{color:#0A2A43}
-input,button{font-family:'IBM Plex Sans Arabic',sans-serif}
+input,button{font-family:TS, 'IBM Plex Sans Arabic', sans-serif}
 .glass{background:rgba(255,255,255,.58);-webkit-backdrop-filter:blur(26px) saturate(1.4);backdrop-filter:blur(26px) saturate(1.4);border:1px solid rgba(255,255,255,.85);box-shadow:0 24px 60px rgba(10,42,67,.08),inset 0 1px 0 rgba(255,255,255,.9)}
 .lift{transition:transform .25s ease,box-shadow .25s ease}.lift:hover{transform:translateY(-3px);box-shadow:0 30px 70px rgba(10,42,67,.13),inset 0 1px 0 rgba(255,255,255,.9)}
 .nav{transition:background .2s ease}.nav:hover{background:rgba(14,151,174,.08)}
@@ -37,17 +38,17 @@ h1,h2,h3,h4,p,li,label{text-wrap:balance}span,b,a,button{text-wrap:pretty}
 .chip{transition:background .2s ease,color .2s ease}
 .tg{position:relative;width:52px;height:30px;border-radius:999px;border:0;cursor:pointer;transition:background .25s ease;flex:none}
 .tg span{position:absolute;top:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.2);transition:right .25s ease}
-.fld{height:50px;border-radius:999px;border:1px solid rgba(10,42,67,.16);background:#fff;padding:0 20px;font-size:15px;color:#0A2A43;width:100%;box-sizing:border-box;font-family:'IBM Plex Sans Arabic',sans-serif}
+.fld{height:50px;border-radius:999px;border:1px solid rgba(10,42,67,.16);background:#fff;padding:0 20px;font-size:15px;color:#0A2A43;width:100%;box-sizing:border-box;font-family:TS, 'IBM Plex Sans Arabic', sans-serif}
 .fld:focus{outline:none;border-color:#0E97AE;box-shadow:0 0 0 4px rgba(14,151,174,.14)}
 @media (max-width: 900px){.g4{grid-template-columns:repeat(2,minmax(0,1fr)) !important}.gcards{grid-template-columns:minmax(0,1fr) !important}.split{grid-template-columns:minmax(0,1fr) !important}.gt{grid-template-columns:minmax(0,1fr) auto !important}}
 @media (min-width: 901px) and (max-width: 1180px){.gcards{grid-template-columns:repeat(2,minmax(0,1fr)) !important}.split{grid-template-columns:minmax(0,1fr) !important}}
-h2,h3{font-family:TS,'IBM Plex Sans Arabic',sans-serif;font-weight:700}`;
+h2,h3{font-family:TS, 'IBM Plex Sans Arabic', sans-serif;font-weight:700}`;
 
 export default function SettingsView({ v }) {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
-      <div dir="rtl" style={{ minHeight: "100vh", position: "relative", overflow: "hidden", fontFamily: "'IBM Plex Sans Arabic', TS, sans-serif", color: "#0A2A43", background: "radial-gradient(55% 40% at 88% 4%, #CBEFF5 0%, rgba(203,239,245,0) 70%), radial-gradient(45% 40% at 6% 96%, #DCE4E8 0%, rgba(220,228,232,0) 70%), #EDF1F3" }}>
+      <div dir="rtl" style={{ minHeight: "100vh", position: "relative", overflow: "hidden", fontFamily: "TS, 'IBM Plex Sans Arabic', sans-serif", color: "#0A2A43", background: "radial-gradient(55% 40% at 88% 4%, #CBEFF5 0%, rgba(203,239,245,0) 70%), radial-gradient(45% 40% at 6% 96%, #DCE4E8 0%, rgba(220,228,232,0) 70%), #EDF1F3" }}>
         {" "}
         <svg width="0" height="0" aria-hidden="true" style={{ position: "absolute" }}>
           <defs>
@@ -69,14 +70,8 @@ export default function SettingsView({ v }) {
         <div className="pg" style={{ position: "relative", display: "flex", gap: "24px", padding: "20px", boxSizing: "border-box", minHeight: "100vh" }}>
           <nav aria-label="التنقل الرئيسي" className="glass side" style={{ flex: "0 0 250px", boxSizing: "border-box", padding: "24px 16px", borderRadius: "28px", display: "flex", flexDirection: "column", gap: "22px" }}>
             <span style={{ display: "inline-flex", alignItems: "center", gap: "10px", padding: "0 6px" }}>
-              <svg width="40" height="40" viewBox="0 0 100 100" aria-hidden="true">
-                <path d={v.wax} fill="rgba(2,24,32,.5)" transform="translate(0 2.6)" />
-                <path d={v.wax} fill="url(#dWax)" />
-                <ellipse cx="36" cy="28" rx="14" ry="6" transform="rotate(-28 36 28)" fill="#FFFFFF" fillOpacity="0.3" />
-                <text x="50" y="59.2" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="40" fill="#05505E" fillOpacity="0.7">{"ح"}</text>
-                <text x="50" y="58" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="40" fill="#FFFFFF">{"ح"}</text>
-              </svg>
-              <span style={{ fontFamily: "TD, serif", fontSize: "26px", lineHeight: "1" }}>حيّــاك</span>
+              <Mark size={40} />
+              <span style={{ fontFamily: "TD, TDx, serif", fontSize: "26px", lineHeight: "1" }}>حيّــاك</span>
             </span>
             <A href="Create.dc.html" data-tour="1" style={{ height: "50px", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", borderRadius: "999px", background: "#0E97AE", color: "#FFFFFF", textDecoration: "none", fontWeight: "700", fontSize: "15px", boxShadow: "0 10px 24px rgba(14,151,174,.35)" }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
@@ -154,7 +149,7 @@ export default function SettingsView({ v }) {
             </div>
             <header data-t="t0" className="in">
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <h1 className="h1m" style={{ margin: "0", fontFamily: "TS, sans-serif", fontWeight: "700", fontSize: "42px", lineHeight: "1.15" }}>الإعدادات</h1>
+                <h1 className="h1m" style={{ margin: "0", fontFamily: "TS, 'IBM Plex Sans Arabic', sans-serif", fontWeight: "700", fontSize: "42px", lineHeight: "1.15" }}>الإعدادات</h1>
                 <p style={{ margin: "0", fontSize: "15px", color: "#3A4B58" }}>بياناتك وأمان حسابك والإشعارات</p>
               </div>
             </header>
@@ -270,7 +265,7 @@ export default function SettingsView({ v }) {
                   <span style={{ fontSize: "13px", color: "#4A5B68", lineHeight: "1.8" }}>المشرف يسوي الدعوات ويرسلها ويفتح الحضور. والمشاهد يشوف الأرقام والقوائم بس</span>
                   {(v.members || []).map((m, $i7) => (
                     <div key={m?.key ?? $i7} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px 14px", borderRadius: "20px", background: "rgba(255,255,255,.65)" }}>
-                        <span style={{ width: "42px", height: "42px", borderRadius: "50%", background: "#DCE4E8", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "TD, serif", fontSize: "16px", flex: "none" }}>{m?.i}</span>
+                        <span style={{ width: "42px", height: "42px", borderRadius: "50%", background: "#DCE4E8", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "TD, TDx, serif", fontSize: "16px", flex: "none" }}>{m?.i}</span>
                         <span style={{ flex: "1", minWidth: "0", display: "flex", flexDirection: "column" }}>
                           <b style={{ fontSize: "14px", overflow: "hidden", textOverflow: "ellipsis" }}>{m?.n}</b>
                           <span style={{ fontSize: "12px", color: "#4A5B68", overflow: "hidden", textOverflow: "ellipsis" }}>{m?.mail}</span>

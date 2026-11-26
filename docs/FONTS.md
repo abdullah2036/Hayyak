@@ -1,12 +1,14 @@
 # Fonts
 
-| Name in the code | Design | Where it comes from |
-|---|---|---|
-| `TD` | Thmanyah Serif Display, Bold | uploaded in the Studio |
-| `TS` | Thmanyah Sans, Regular, Medium, Bold | uploaded in the Studio |
-| IBM Plex Sans Arabic | body text of the design | `@fontsource`, open licence |
+| Name in the code | Typeface | Used for | Where it comes from |
+|---|---|---|---|
+| `TD` | Thmanyah Serif Display, Bold | the logo, titles, names | uploaded in the Studio |
+| `TS` | Thmanyah Sans, Regular, Medium, Bold | all other text | uploaded in the Studio |
+| `TDx`, IBM Plex Sans Arabic | Markazi Text, IBM Plex Sans Arabic | stand-ins, open licences | `@fontsource` |
 
-Until the four files are uploaded, or if they cannot load, Markazi Text and IBM Plex Sans Arabic (open licences) stand in for `TD` and `TS`.
+Every font list names Thamanyah first and its stand-in second (`TD, TDx, serif` and `TS, 'IBM Plex Sans Arabic', sans-serif`). Only the uploaded faces carry the names `TD` and `TS`, so a browser can never prefer a stand-in once Thamanyah is there. Emails keep a system font: email apps do not load custom fonts.
+
+Pages ask for the typeface at a versioned address (`/api/type/<version>`) that browsers keep for a year, so it is downloaded once per device.
 
 ## What Thmanyah's licence says
 

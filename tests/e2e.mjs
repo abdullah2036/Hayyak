@@ -22,7 +22,7 @@ const DKEY = 'e2e-only-data-key-0123456789abcdef012345';
 const tmp = mkdtempSync(path.join(tmpdir(), 'hy-'));
 const MAIL = path.join(tmp, 'mail.jsonl');
 const pooler = process.env.TEST_DATABASE_URL ? await watchPooler(process.env.TEST_DATABASE_URL, PORT + 1) : null;
-const env = { ...process.env, ...(pooler ? { DB_POOL: '3' } : {}), NODE_ENV: 'production', APP_URL: BASE, STUDIO_URL: STUDIO, APP_SECRET: SECRET, DATA_KEY: DKEY, APP_ENV: '', ALLOW_EMBEDDED_DB: '1', ALLOW_DEV_SECRETS: '1', PGLITE_DIR: path.join(tmp, 'pg'), MAIL_FILE: MAIL, MAIL_SILENT: '1', TRUSTED_PROXIES: '1', CRON_SECRET: 'test-cron-secret-123456', DATABASE_URL: pooler?.url || '', SMTP_URL: '', RESEND_API_KEY: '', BREVO_API_KEY: '', CLIENT_IP_HEADER: '', PASSWORD_SLOTS: '' };
+const env = { ...process.env, ...(pooler ? { DB_POOL: '3' } : {}), NODE_ENV: 'production', APP_URL: BASE, STUDIO_URL: STUDIO, APP_SECRET: SECRET, DATA_KEY: DKEY, APP_ENV: '', ALLOW_EMBEDDED_DB: '1', ALLOW_DEV_SECRETS: '1', PGLITE_DIR: path.join(tmp, 'pg'), MAIL_FILE: MAIL, MAIL_SILENT: '1', TRUSTED_PROXIES: '1', TYPE_CACHE_MS: '0', CRON_SECRET: 'test-cron-secret-123456', DATABASE_URL: pooler?.url || '', SMTP_URL: '', RESEND_API_KEY: '', BREVO_API_KEY: '', CLIENT_IP_HEADER: '', PASSWORD_SLOTS: '' };
 
 let pass = 0;
 const fails = [];
@@ -416,6 +416,8 @@ async function main() {
   const typeForm = (list) => { const f = new FormData(); for (const [n, b] of list) f.append('file', new Blob([b]), n); return { form: f }; };
   const grab = async (base = BASE) => { const r = await fetch(`${base}/api/type`); return { s: r.status, h: r.headers, b: new Uint8Array(await r.arrayBuffer()) }; };
   check('without an upload there is no pack', (await grab()).s === 204);
+  const bare = (await v.get('/')).t;
+  check('without an upload pages neither wait nor ask for it', !bare.includes('/api/type') && !bare.includes("add('hyw')") && bare.includes('__hyType=Promise.resolve(false)'));
   check('only founders upload it', (await ds.post('/studio/type', undefined, typeForm(fonts))).s === 403 && (await ds.del('/studio/type')).s === 403 && (await ds.get('/api/studio/type')).s === 403);
   check('it is not reachable from a workspace or the public address', (await a.post('/studio/type', undefined, typeForm(fonts))).s === 404 && (await v.get('/api/studio/type')).s === 404);
   check('another site cannot upload it', (await st.post('/studio/type', undefined, { ...typeForm(fonts), origin: 'https://evil.example' })).s === 403);
@@ -432,7 +434,14 @@ async function main() {
   const faces = un();
   check('every font arrives unchanged', faces.length === 4 && faces.every(([, , b], i) => b.equals(fonts[i][1])) && faces.map(([f, w]) => `${f}${w}`).join() === '0700,1400,1500,1700', faces.map(([f, w]) => `${f}${w}`).join());
   const top = (await v.get('/')).t;
-  check('pages load it under their nonce', /<body>.*<script nonce="[^"]+"[^>]*>\(function\(w,d\)/s.test(top) && /<link rel="preload" href="\/api\/type" as="fetch"/.test(top));
+  const at = top.match(/fetch\("(\/api\/type\/[\w-]{12})"\)/)?.[1];
+  const hints = [...top.matchAll(/<link\b[^>]*>/g)].map((m) => m[0]).filter((l) => l.includes(`href="${at}"`));
+  check('pages hint and load it under their nonce, from a versioned address', hints.length >= 1 && hints.length <= 2 && /rel="preload"/.test(hints[0]) && /as="fetch"/.test(hints[0]) && /<body>.*<script nonce="[^"]+"[^>]*>\(function\(w,d\)/s.test(top) && Boolean(at) && top.includes(`fetch("${at}")`), `${at} ${JSON.stringify(hints)}`);
+  const fixed = await fetch(BASE + at);
+  check('the versioned address is kept by browsers for good', fixed.status === 200 && /immutable/.test(fixed.headers.get('cache-control')) && /max-age=31536000/.test(fixed.headers.get('cache-control')) && Buffer.from(await fixed.arrayBuffer()).equals(raw));
+  check('asking again with its tag costs nothing', (await fetch(BASE + at, { headers: { 'if-none-match': fixed.headers.get('etag') } })).status === 304);
+  const old = await fetch(BASE + '/api/type/aaaaaaaaaaaa', { redirect: 'manual' });
+  check('an old version leads to the current one, never to stale bytes', old.status === 307 && old.headers.get('location') === at);
   check('the head holds no script of ours: hosts write into it', !/<script(?![^>]*\bsrc=)[^>]*>/.test(top.split('</head>')[0]));
   check('the upload is in the log', (await st.get('/studio')).t.includes('رفع خط الهوية'));
   check('founder takes it off again', (await st.del('/studio/type')).j?.on === false && (await grab()).s === 204);

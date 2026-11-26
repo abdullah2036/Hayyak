@@ -110,17 +110,24 @@ studio('POST', '/studio/type', 'team', { raw: true, rate: [20, 600] }, async (c)
   return type.saveType({ type: 'staff', id: c.me.staff.id, name: c.me.staff.name, ip: c.ip }, files);
 });
 studio('DELETE', '/studio/type', 'team', {}, async (c) => type.dropType({ type: 'staff', id: c.me.staff.id, name: c.me.staff.name, ip: c.ip }));
-pub('GET', '/type', {}, async () => {
+const sendType = async (c: { params: Record<string, string>; req: Request }) => {
   const b = await type.typePack();
   if (!b) return new Response(null, { status: 204, headers: { 'Cache-Control': 'public, max-age=30' } });
-  return new Response(b, {
-    headers: {
-      'Content-Type': 'application/octet-stream', 'Content-Length': String(b.length), 'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
-      'Netlify-CDN-Cache-Control': 'public, durable, max-age=300, stale-while-revalidate=86400', 'X-Content-Type-Options': 'nosniff',
-      'Content-Security-Policy': "default-src 'none'; sandbox", 'Cross-Origin-Resource-Policy': 'same-origin', 'X-Robots-Tag': 'noindex',
-    },
-  });
-});
+  const v = await type.typeVersion();
+  // A versioned address always holds the same bytes, so it can be kept for a year and is never asked for again.
+  const fixed = c.params.v === v;
+  const tag = `"${v}"`;
+  const head: Record<string, string> = {
+    'Content-Type': 'application/octet-stream', ETag: tag, 'Cache-Control': fixed ? 'public, max-age=31536000, immutable' : 'public, max-age=300',
+    'Netlify-CDN-Cache-Control': fixed ? 'public, durable, max-age=31536000, immutable' : 'public, durable, max-age=300', 'X-Content-Type-Options': 'nosniff',
+    'Content-Security-Policy': "default-src 'none'; sandbox", 'Cross-Origin-Resource-Policy': 'same-origin', 'X-Robots-Tag': 'noindex',
+  };
+  if (c.req.headers.get('if-none-match') === tag) return new Response(null, { status: 304, headers: head });
+  if (c.params.v && !fixed) return new Response(null, { status: 307, headers: { Location: `/api/type/${v}`, 'Cache-Control': 'no-store' } });
+  return new Response(b, { headers: { ...head, 'Content-Length': String(b.length) } });
+};
+pub('GET', '/type', {}, sendType);
+pub('GET', '/type/:v', {}, sendType);
 pub('GET', '/assets/:id', {}, async (c) => {
   const a = await assets.read(uuid(c.params.id));
   if (!a) throw notFound();

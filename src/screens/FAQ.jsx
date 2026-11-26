@@ -13,7 +13,7 @@ export default class FAQ extends Screen {
   static View = FAQView;
 
   constructor(p) { super(p); this.state = { open: p.open === 'نعم', draft: '', typing: false, lift: false, greet: false, cat: '', next: [2, 26, 29, 7], msgs: [['b', 'هلا! أنا مساعد حيّــاك. اكتب سؤالك أو اختر موضوع']] }; this.onSc = this.onSc.bind(this); }
-  componentDidMount() { var self = this; this.tg = setTimeout(function () { if (!self.state.open) self.setState({ greet: true }); self.tg2 = setTimeout(function () { self.setState({ greet: false }); }, 9000); }, 2600); window.addEventListener('scroll', this.onSc, { passive: true }); window.addEventListener('resize', this.onSc); this.onSc(); }
+  componentDidMount() { var self = this; var seen = false; try { seen = localStorage.getItem('hyGreet') === '1'; } catch (e) { /* private mode */ } /* The greeting covers part of the page, so each device sees it once, and briefly on a phone. */ if (!seen) this.tg = setTimeout(function () { if (self.state.open) return; try { localStorage.setItem('hyGreet', '1'); } catch (e) { /* private mode */ } self.setState({ greet: true }); self.tg2 = setTimeout(function () { self.setState({ greet: false }); }, window.innerWidth < 760 ? 5000 : 9000); }, 2600); window.addEventListener('scroll', this.onSc, { passive: true }); window.addEventListener('resize', this.onSc); this.onSc(); }
   componentWillUnmount() { this.gone = true; clearTimeout(this.tt); clearTimeout(this.tg); clearTimeout(this.tg2); window.removeEventListener('scroll', this.onSc); window.removeEventListener('resize', this.onSc); }
   onSc() { var d = document.documentElement, near = window.innerHeight + window.scrollY >= d.scrollHeight - 150; if (near !== this.state.lift) this.setState({ lift: near }); }
   ask(q, idx) {

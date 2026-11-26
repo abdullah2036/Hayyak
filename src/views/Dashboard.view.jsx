@@ -1,10 +1,11 @@
 import { S, txt, A } from '@/ui/dc';
+import Mark from '@/ui/Mark';
 import Invite from '@/screens/Invite';
 import FAQ from '@/screens/FAQ';
 
 const CSS = `body{margin:0;background:#EDF1F3}
 a{color:#086577}a:hover{color:#0A2A43}
-input,button{font-family:'IBM Plex Sans Arabic',sans-serif}
+input,button{font-family:TS, 'IBM Plex Sans Arabic', sans-serif}
 .glass{background:rgba(255,255,255,.58);-webkit-backdrop-filter:blur(26px) saturate(1.4);backdrop-filter:blur(26px) saturate(1.4);border:1px solid rgba(255,255,255,.85);box-shadow:0 24px 60px rgba(10,42,67,.08),inset 0 1px 0 rgba(255,255,255,.9)}
 .lift{transition:transform .25s ease,box-shadow .25s ease}.lift:hover{transform:translateY(-3px);box-shadow:0 30px 70px rgba(10,42,67,.13),inset 0 1px 0 rgba(255,255,255,.9)}
 .nav{transition:background .2s ease}.nav:hover{background:rgba(14,151,174,.08)}
@@ -33,13 +34,13 @@ h1,h2,h3,h4,p,li,label{text-wrap:balance}span,b,a,button{text-wrap:pretty}
 .tin{animation:tIn .45s cubic-bezier(.2,.8,.2,1) both}
 @keyframes tIn{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
 @media (max-width: 599px){.tourb{height:42px;padding:0 14px;font-size:13px}}
-h2,h3{font-family:TS,'IBM Plex Sans Arabic',sans-serif;font-weight:700}`;
+h2,h3{font-family:TS, 'IBM Plex Sans Arabic', sans-serif;font-weight:700}`;
 
 export default function DashboardView({ v }) {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
-      <div dir="rtl" style={{ minHeight: "1560px", position: "relative", overflow: "hidden", fontFamily: "'IBM Plex Sans Arabic', TS, sans-serif", color: "#0A2A43", background: "radial-gradient(55% 40% at 88% 4%, #CBEFF5 0%, rgba(203,239,245,0) 70%), radial-gradient(45% 40% at 6% 96%, #DCE4E8 0%, rgba(220,228,232,0) 70%), #EDF1F3" }}>
+      <div dir="rtl" style={{ minHeight: "1560px", position: "relative", overflow: "hidden", fontFamily: "TS, 'IBM Plex Sans Arabic', sans-serif", color: "#0A2A43", background: "radial-gradient(55% 40% at 88% 4%, #CBEFF5 0%, rgba(203,239,245,0) 70%), radial-gradient(45% 40% at 6% 96%, #DCE4E8 0%, rgba(220,228,232,0) 70%), #EDF1F3" }}>
         {" "}
         <svg width="0" height="0" aria-hidden="true" style={{ position: "absolute" }}>
           <defs>
@@ -61,14 +62,8 @@ export default function DashboardView({ v }) {
         <div className="pg" style={{ position: "relative", display: "flex", gap: "24px", padding: "20px", boxSizing: "border-box", minHeight: "1560px" }}>
           <nav aria-label="التنقل الرئيسي" className="glass side" style={{ flex: "0 0 250px", boxSizing: "border-box", padding: "24px 16px", borderRadius: "28px", display: "flex", flexDirection: "column", gap: "22px" }}>
             <span style={{ display: "inline-flex", alignItems: "center", gap: "10px", padding: "0 6px" }}>
-              <svg width="40" height="40" viewBox="0 0 100 100" aria-hidden="true">
-                <path d={v.wax} fill="rgba(2,24,32,.5)" transform="translate(0 2.6)" />
-                <path d={v.wax} fill="url(#dWax)" />
-                <ellipse cx="36" cy="28" rx="14" ry="6" transform="rotate(-28 36 28)" fill="#FFFFFF" fillOpacity="0.3" />
-                <text x="50" y="59.2" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="40" fill="#05505E" fillOpacity="0.7">{"ح"}</text>
-                <text x="50" y="58" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="40" fill="#FFFFFF">{"ح"}</text>
-              </svg>
-              <span style={{ fontFamily: "TD, serif", fontSize: "26px", lineHeight: "1" }}>حيّــاك</span>
+              <Mark size={40} />
+              <span style={{ fontFamily: "TD, TDx, serif", fontSize: "26px", lineHeight: "1" }}>حيّــاك</span>
             </span>
             <A href="Create.dc.html" data-tour="1" style={{ height: "50px", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", borderRadius: "999px", background: "#0E97AE", color: "#FFFFFF", textDecoration: "none", fontWeight: "700", fontSize: "15px", boxShadow: "0 10px 24px rgba(14,151,174,.35)" }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
@@ -140,7 +135,7 @@ export default function DashboardView({ v }) {
           <main className="mn" style={{ flex: "1 1 auto", minWidth: "0", boxSizing: "border-box", padding: "24px 14px 40px", display: "flex", flexDirection: "column", gap: "22px" }}>
             <header className="in" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: "20px", flexWrap: "wrap" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <h1 className="h1m" style={{ margin: "0", fontFamily: "TS, sans-serif", fontWeight: "700", fontSize: "42px", lineHeight: "1.15" }}>{"أهلًا، "}{v.hello}</h1>
+                <h1 className="h1m" style={{ margin: "0", fontFamily: "TS, 'IBM Plex Sans Arabic', sans-serif", fontWeight: "700", fontSize: "42px", lineHeight: "1.15" }}>{"أهلًا، "}{v.hello}</h1>
                 <p style={{ margin: "0", fontSize: "15px", color: "#3A4B58" }}>{v.headline}</p>
               </div>
               <div style={{ display: "flex", gap: "10px", alignItems: "center", flexWrap: "wrap" }}>
@@ -166,7 +161,7 @@ export default function DashboardView({ v }) {
                     <circle cx="21" cy="21" r="17" fill="none" stroke="#86DCEA" strokeWidth="4" strokeLinecap="round" strokeDasharray={v.ringDa} />
                   </svg>
                   <span style={{ position: "absolute", inset: "0", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                    <b style={{ fontFamily: "TD, serif", fontSize: "32px", lineHeight: "1" }}>{v.left}</b>
+                    <b style={{ fontFamily: "TD, TDx, serif", fontSize: "32px", lineHeight: "1" }}>{v.left}</b>
                     <span style={{ fontSize: "11px", color: "#B8D4DE" }}>باقية</span>
                   </span>
                 </div>
@@ -191,7 +186,7 @@ export default function DashboardView({ v }) {
                         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke={k?.fg} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={k?.ic} /></svg>
                       </span>
                     </span>
-                    <b style={{ fontFamily: "TD, serif", fontSize: "40px", lineHeight: "1", color: "#0A2A43" }}>{k?.v}</b>
+                    <b style={{ fontFamily: "TD, TDx, serif", fontSize: "40px", lineHeight: "1", color: "#0A2A43" }}>{k?.v}</b>
                     <span style={{ fontSize: "12px", color: "#4A5B68" }}>{k?.d}</span>
                     <span style={{ height: "6px", borderRadius: "6px", background: "rgba(14,151,174,.12)", overflow: "hidden", display: "block" }}>
                       <span className="growX" style={S(`display: block; height: 100%; width: ${txt(k?.pct)}; border-radius: 6px; background: ${txt(k?.fg)};`)} />
@@ -213,8 +208,8 @@ export default function DashboardView({ v }) {
                     <span style={{ alignSelf: "flex-start", display: "inline-flex", alignItems: "center", gap: "6px", padding: "6px 12px", borderRadius: "999px", background: "rgba(255,255,255,.12)", border: "1px solid rgba(255,255,255,.22)", fontSize: "12px" }}><span style={{ width: "7px", height: "7px", borderRadius: "50%", background: "#86DCEA" }} />{v.nx?.badge}</span>
                     <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                       <span style={{ fontSize: "14px", color: "#CFE7EE" }}>{v.nx?.when}</span>
-                      <A href={v.nx?.href} style={{ color: "#FFFFFF", textDecoration: "none" }}><h2 style={{ margin: "0", fontFamily: "TD, serif", fontSize: "44px", lineHeight: "1.15" }}>{v.nx?.title}</h2></A>
-                      <span style={{ fontFamily: "TD, serif", letterSpacing: "4px", fontSize: "12px", opacity: ".7", direction: "ltr", textAlign: "right" }}>{v.nx?.latin}</span>
+                      <A href={v.nx?.href} style={{ color: "#FFFFFF", textDecoration: "none" }}><h2 style={{ margin: "0", fontFamily: "TD, TDx, serif", fontSize: "44px", lineHeight: "1.15" }}>{v.nx?.title}</h2></A>
+                      <span style={{ fontFamily: "TD, TDx, serif", letterSpacing: "4px", fontSize: "12px", opacity: ".7", direction: "ltr", textAlign: "right" }}>{v.nx?.latin}</span>
                     </div>
                   </div>
                   <div className="hidem" style={{ position: "relative", width: "190px", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -230,7 +225,7 @@ export default function DashboardView({ v }) {
                 <div className="ust" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0,1fr))", gap: "10px", padding: "14px 6px 4px" }}>
                   {(v.ust || []).map((u, $i5) => (
                     <span key={u?.key ?? $i5} style={{ borderRadius: "20px", background: "rgba(255,255,255,.7)", padding: "12px 14px", display: "flex", flexDirection: "column", gap: "2px" }}>
-                        <b style={S(`font-family: TD, serif; font-size: 28px; line-height: 1.1; color: ${txt(u?.c)};`)}>{u?.v}</b>
+                        <b style={S(`font-family: TD, TDx, serif; font-size: 28px; line-height: 1.1; color: ${txt(u?.c)};`)}>{u?.v}</b>
                         <span style={{ fontSize: "12px", color: "#4A5B68" }}>{u?.l}</span>
                       </span>
                   ))}
@@ -253,7 +248,7 @@ export default function DashboardView({ v }) {
                 </div>
                 {(v.pending || []).map((p, $i6) => (
                   <div key={p?.key ?? $i6} className="row" style={{ display: "flex", gap: "10px", alignItems: "center", padding: "8px", borderRadius: "16px" }}>
-                      <span style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#DCE4E8", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "TD, serif", fontSize: "15px", flexShrink: "0" }}>{p?.init}</span>
+                      <span style={{ width: "36px", height: "36px", borderRadius: "50%", background: "#DCE4E8", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "TD, TDx, serif", fontSize: "15px", flexShrink: "0" }}>{p?.init}</span>
                       <span style={{ flex: "1", minWidth: "0", display: "flex", flexDirection: "column" }}>
                         <b style={{ fontSize: "14px" }}>{p?.name}</b>
                         <span style={{ fontSize: "12px", color: "#4A5B68" }}>{p?.st}</span>
@@ -322,7 +317,7 @@ export default function DashboardView({ v }) {
                       </svg>
                       {" "}
                       <div style={{ position: "absolute", inset: "0", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                        <span style={{ fontFamily: "TD, serif", fontSize: "34px", lineHeight: "1" }}>{v.total}</span>
+                        <span style={{ fontFamily: "TD, TDx, serif", fontSize: "34px", lineHeight: "1" }}>{v.total}</span>
                         <span style={{ fontSize: "12px", color: "#4A5B68" }}>دعوة انرسلت</span>
                       </div>
                       {" "}
@@ -403,9 +398,9 @@ export default function DashboardView({ v }) {
                   <path d={v.wax} fill="url(#tgS)" />
                   <circle cx="50" cy="50" r="31" fill="none" stroke="#05505E" strokeOpacity=".45" strokeWidth="2.5" />
                   <ellipse cx="36" cy="28" rx="14" ry="6" transform="rotate(-28 36 28)" fill="#FFFFFF" fillOpacity=".3" />
-                  <text x="50" y="58.8" textAnchor="middle" fontFamily="TD" fontSize="42" fill="#FFFFFF">{"ح"}</text>
+                  <text x="50" y="58.8" textAnchor="middle" fontFamily="TD, TDx, serif" fontSize="42" fill="#FFFFFF">{"ح"}</text>
                 </svg>
-                <b style={{ fontFamily: "TD, serif", fontSize: "30px", lineHeight: "1.3" }}>أهلًا في لوحتك 👋</b>
+                <b style={{ fontFamily: "TD, TDx, serif", fontSize: "30px", lineHeight: "1.3" }}>أهلًا في لوحتك 👋</b>
                 <span style={{ fontSize: "15px", color: "#3A4B58", lineHeight: "1.8" }}>تبي نعرّفك عليها خطوة بخطوة في أقل من دقيقة، ولا تستكشفها بنفسك؟</span>
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", marginTop: "6px" }}>
                   <button type="button" onClick={v.tourGo} style={{ height: "54px", border: "0", borderRadius: "999px", background: "#0A2A43", color: "#FFFFFF", fontFamily: "inherit", fontSize: "16px", fontWeight: "700", cursor: "pointer" }}>عرّفني عليها</button>

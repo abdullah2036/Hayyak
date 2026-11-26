@@ -22,10 +22,10 @@ export default class Invite extends Screen {
   static View = InviteView;
 
 constructor(p) { super(p); this.state = { phase: 'load', run: 0, gname: '', gmail: '', rsvp: p.rsvp || '', sheet: '', saved: '', cal: false, nudge: false, touched: false, settled: false, gateMsg: '', gateBusy: false, saveErr: '', qr: null }; this.ptr = { x: -1, y: -1, t: 0 }; this.ori = { b: 0, g: 0, t: 0 }; }
-componentDidMount() { var self = this; this.onOri = function (e) { if (e.gamma == null) return; self.ori = { b: e.beta || 0, g: e.gamma || 0, t: performance.now() }; }; window.addEventListener('deviceorientation', this.onOri); this.arm(); if (!this.px().thumb) loadQr().then(function (q) { if (!self.gone) self.setState({ qr: q }); }); }
+componentDidMount() { var self = this; this.onOri = function (e) { if (e.gamma == null) return; self.ori = { b: e.beta || 0, g: e.gamma || 0, t: performance.now() }; }; window.addEventListener('deviceorientation', this.onOri); this.watch(); this.arm(); if (!this.px().thumb) loadQr().then(function (q) { if (!self.gone) self.setState({ qr: q }); }); }
 componentDidUpdate(pp) { var k = this.fxKey(this.px()); if (k !== this.lastKey) { this.lastKey = k; if (this.state.phase === 'open') this.startFx(); } if (pp.rsvp !== this.props.rsvp && this.props.rsvp !== undefined) this.setState({ rsvp: this.props.rsvp || '' }); }
 fxKey(P) { return [P.pattern, P.color, P.title, P.latin, JSON.stringify(P.customColors || 0), JSON.stringify(P.engine || 0)].join('|'); }
-componentWillUnmount() { this.gone = true; clearTimeout(this.t); clearTimeout(this.ts); clearTimeout(this.tn); window.removeEventListener('deviceorientation', this.onOri); this.stopFx(); }
+componentWillUnmount() { this.gone = true; if (this.io) this.io.disconnect(); clearTimeout(this.t); clearTimeout(this.ts); clearTimeout(this.tn); window.removeEventListener('deviceorientation', this.onOri); this.stopFx(); }
 
 /** One shape for both ways of using the card: demo props, or a saved invitation's look and details. */
 px() {
@@ -38,6 +38,20 @@ px() {
   };
 }
 general() { return this.px().audience === 'عامة'; }
+/** Phones die when a page runs many of these at once: a thumbnail draws only while it can be seen, and only once. */
+watch() {
+  var self = this;
+  if (!this.px().thumb) { this.vis = true; return; }
+  this.vis = false;
+  if (typeof IntersectionObserver === 'undefined' || !this.root) { this.vis = true; return; }
+  this.io = new IntersectionObserver(function (es) {
+    var on = es[es.length - 1].isIntersecting;
+    if (on === self.vis) return;
+    self.vis = on;
+    if (!on) self.stopFx(); else if (self.state.phase === 'open' && !self.fxDone) self.startFx();
+  }, { rootMargin: '120px' });
+  this.io.observe(this.root);
+}
 arm() { var self = this; clearTimeout(this.t); this.stopFx(); this.clearCanvas(); this.t = setTimeout(function () { var ph = self.general() ? 'gate' : 'open'; self.setState({ phase: ph, run: self.state.run + 1, settled: false }); if (ph === 'open') self.startFx(); }, self.px().thumb ? 60 : 2800); }
 pid() { var map = { 'لمّة نجوم': 'ptext', 'اسمك من نجوم': 'ptext', 'لمعة لؤلؤ': 'holo', 'من القلب': 'warp', 'ألعاب نارية': 'fireworks', 'رشّة فرح': 'confetti', 'انفتح الستار': 'curtain', 'مرّ شهاب': 'meteors', 'فقاعات': 'meteors', 'سجادة الحفل': 'meteors', 'فلاشات الحفل': 'meteors', 'ضوء يلحقك': 'dust', 'سدو ينتسج': 'sadu', 'سدو': 'sadu', 'العنوان من نجوم': 'ptext', 'هولوغرام': 'holo', 'انطلاقة': 'warp', 'احتفال': 'confetti', 'ستارة': 'curtain', 'شهب': 'meteors', 'غبار ضوء': 'dust', 'السدو': 'sadu', 'صورة خاصة': 'photo', 'محرك': 'pe' }; return map[this.px().pattern] || 'ptext'; }
 pal() {
@@ -77,15 +91,16 @@ clearCanvas() { var c = this.cv; if (!c) return; var x = c.getContext('2d'); x.s
 stopFx() { if (this.raf) cancelAnimationFrame(this.raf); this.raf = 0; if (this.root) { this.root.style.removeProperty('--tiltX'); this.root.style.removeProperty('--tiltY'); } }
 startFx() {
   var self = this; this.stopFx();
+  var thumb = this.px().thumb; if (thumb && (!this.vis || this.fxDone)) return;
   var c = this.cv; if (!c) return; c.style.transition = 'none'; c.style.opacity = '';
-  var W = 390, H = 844, dpr = Math.min(2, window.devicePixelRatio || 1);
+  var W = 390, H = 844, dpr = thumb ? 1 : Math.min(2, window.devicePixelRatio || 1);
   c.width = W * dpr; c.height = H * dpr;
   var x = c.getContext('2d'); x.setTransform(dpr, 0, 0, dpr, 0, 0); x.clearRect(0, 0, W, H);
   var pal = this.pal(), id = this.pid(), cols = [pal.c1, pal.c2, pal.c3, pal.tx];
   if (id === 'curtain' || id === 'sadu' || id === 'photo') return;
   if (pal.fx) cols = pal.fx;
-  var interactive = id === 'holo' || id === 'dust';
-  var LIMIT = id === 'fireworks' ? 15000 : 10000, EASE = id === 'fireworks' ? 2200 : 2600;
+  var interactive = !thumb && (id === 'holo' || id === 'dust');
+  var LIMIT = thumb ? 3200 : id === 'fireworks' ? 15000 : 10000, EASE = thumb ? 1400 : id === 'fireworks' ? 2200 : 2600;
   var R = Math.random, t0 = performance.now(), last = t0, clk = 0, S = {}, settledSent = false;
   function rc() { return cols[(R() * cols.length) | 0]; }
   function fade(a) { x.save(); x.globalCompositeOperation = 'destination-out'; x.fillStyle = 'rgba(0,0,0,' + Math.min(1, a) + ')'; x.fillRect(0, 0, W, H); x.restore(); }
@@ -95,7 +110,7 @@ startFx() {
     var word = this.px().title;
     var build = function () {
       var o = document.createElement('canvas'); o.width = W; o.height = 250; var ox = o.getContext('2d');
-      var fs = 62; ox.font = '700 ' + fs + 'px TD, serif'; while (ox.measureText(word).width > W - 70 && fs > 28) { fs -= 2; ox.font = '700 ' + fs + 'px TD, serif'; }
+      var fs = 62; ox.font = '700 ' + fs + 'px TD, TDx, serif'; while (ox.measureText(word).width > W - 70 && fs > 28) { fs -= 2; ox.font = '700 ' + fs + 'px TD, TDx, serif'; }
       ox.fillStyle = '#fff'; ox.textAlign = 'center'; ox.textBaseline = 'middle'; ox.direction = 'rtl'; ox.fillText(word, W / 2, 100);
       var d = ox.getImageData(0, 0, W, 250).data, pts = [];
       for (var yy = 0; yy < 250; yy += 3) for (var xx = 0; xx < W; xx += 3) if (d[(yy * W + xx) * 4 + 3] > 140) pts.push([xx + (R() - .5), yy + 75 + (R() - .5)]);
@@ -103,7 +118,7 @@ startFx() {
       S.p = pts.map(function (q) { var a = R() * Math.PI * 2, rr = 300 + R() * 300; return { x: W / 2 + Math.cos(a) * rr, y: 200 + Math.sin(a) * rr, vx: 0, vy: 0, tx: q[0], ty: q[1], r: 0.85 + R() * 0.9, c: rc(), p: R() * 6, d: R() * 900 }; });
       S.ready = true;
     };
-    fontReady('700 80px TD').then(build);
+    fontReady('700 80px TD, TDx, serif').then(build);
   } else if (id === 'pe') {
     S.en = this.px().engine; S.P = []; S.nb = 0;
   } else if (id === 'warp') {
@@ -124,8 +139,7 @@ startFx() {
   function frame(now) {
     var el = now - t0, rawdt = Math.min(40, now - last); last = now;
     var spd = interactive ? 1 : (el < LIMIT ? 1 : Math.max(0, 1 - (el - LIMIT) / EASE));
-    if (id === 'fireworks') spd = 1;
-    if (id === 'confetti') spd = 1;
+    if (!thumb && (id === 'fireworks' || id === 'confetti')) spd = 1;
     spd = spd * spd * (3 - 2 * spd);
     clk += rawdt * spd; var dt = rawdt * spd / 16.67, T = clk;
     if (id === 'ptext') {
@@ -240,7 +254,7 @@ startFx() {
       else if (now - o.t < 1500) { tx2 = Math.max(-12, Math.min(12, o.g * 0.4)); ty2 = Math.max(-10, Math.min(10, (o.b - 45) * -0.3)); hp = 50 + o.g * 1.4; }
       if (self.root) { self.root.style.setProperty('--tiltY', tx2.toFixed(2) + 'deg'); self.root.style.setProperty('--tiltX', ty2.toFixed(2) + 'deg'); self.root.style.setProperty('--hp', hp.toFixed(1) + '%'); self.root.style.setProperty('--ha', (hp * 3.6).toFixed(0) + 'deg'); }
     }
-    if (interactive || spd > 0) self.raf = requestAnimationFrame(frame); else { self.raf = 0; if (!settledSent) { settledSent = true; self.setState({ settled: true }); } }
+    if (interactive || spd > 0) self.raf = requestAnimationFrame(frame); else { self.raf = 0; if (thumb) self.fxDone = true; if (!settledSent) { settledSent = true; self.setState({ settled: true }); } }
   }
   this.raf = requestAnimationFrame(frame);
 }
@@ -258,7 +272,7 @@ if (!this.uid) this.uid = Math.random().toString(36).slice(2, 8);
 var gid = 'ivWax-' + this.uid;
 var opened = s.phase === 'open';
 var strips = []; for (var si2 = 0; si2 < 10; si2++) { var tIn = si2 / 9; ['left', 'right'].forEach(function (side) { var sg = side === 'left' ? -1 : 1; strips.push({ st: 'position:absolute;top:-4px;' + side + ':' + (si2 * 20 - 5) + 'px;width:27px;height:560px;transform-origin:50% 0;border-radius:0 0 14px 14px;--dx:' + (sg * 16 * si2) + 'px;--rt:' + (-sg * (1 + tIn * 4)).toFixed(2) + 'deg;--sw:' + (sg * (0.4 + tIn * 0.9)).toFixed(2) + 'deg;background:linear-gradient(90deg,rgba(0,0,0,.42),rgba(255,255,255,.14) 48%,rgba(0,0,0,.42)),linear-gradient(180deg,var(--cu) 0%,var(--cu) 82%,rgba(0,0,0,0) 100%);' + (si2 === 9 ? 'box-shadow:' + (sg * -10) + 'px 0 22px rgba(0,0,0,.35);' : '') + 'animation:stripOpen 2.7s cubic-bezier(.65,0,.25,1) .5s both,swayS 5s ease-in-out 3.2s 2' }); }); }
-var wmOn = P.preview; var wmRows = []; for (var wr = 0; wr < 14; wr++) wmRows.push({ t: 'معاينة · حيّــاك © · معاينة · حيّــاك © · معاينة · حيّــاك ©', st: 'white-space:nowrap;font-family:TD,serif;font-size:22px;color:#FFFFFF;' + (wr % 2 ? 'margin-right:-90px' : '') });
+var wmOn = P.preview; var wmRows = []; for (var wr = 0; wr < 14; wr++) wmRows.push({ t: 'معاينة · حيّــاك © · معاينة · حيّــاك © · معاينة · حيّــاك ©', st: 'white-space:nowrap;font-family:TD, TDx, serif;font-size:22px;color:#FFFFFF;' + (wr % 2 ? 'margin-right:-90px' : '') });
 var gold = []; for (var gq = 0; gq < 26; gq++) { var gz = 3 + rnd(gq + 700) * 4; gold.push({ st: 'position:absolute;top:' + (50 + rnd(gq + 710) * 30).toFixed(0) + 'px;left:' + (8 + rnd(gq + 720) * 84).toFixed(1) + '%;width:' + gz.toFixed(1) + 'px;height:' + (gz * 1.6).toFixed(1) + 'px;border-radius:1px;background:' + (gq % 3 ? 'var(--c1)' : '#FFFFFF') + ';opacity:0;animation:goldFall ' + (3 + rnd(gq + 730) * 2.5).toFixed(1) + 's linear ' + (1.4 + rnd(gq + 740) * 2.2).toFixed(2) + 's 2' }); }
 var sadu = []; if (v.sd) { var A = v.sd[0], Bk = v.sd[1], Cc = v.sd[2], Dd = v.sd[3];
   var MT = [{ h: 20, bg: 'linear-gradient(135deg,' + A + ' 25%,transparent 25%) -10px 0/20px 20px,linear-gradient(225deg,' + A + ' 25%,transparent 25%) -10px 0/20px 20px,' + Bk }, { h: 6, bg: 'repeating-linear-gradient(90deg,' + Dd + ' 0 8px,' + Cc + ' 8px 12px)' }, { h: 24, bg: 'linear-gradient(45deg,transparent 38%,' + Dd + ' 38% 62%,transparent 62%) 0 0/24px 24px,linear-gradient(-45deg,transparent 38%,' + Dd + ' 38% 62%,transparent 62%) 0 0/24px 24px,' + Bk }, { h: 6, bg: A }, { h: 18, bg: 'linear-gradient(45deg,' + Cc + ' 25%,transparent 25%) 0 0/18px 18px,linear-gradient(-45deg,' + Cc + ' 25%,transparent 25%) 0 0/18px 18px,' + A }, { h: 6, bg: 'repeating-linear-gradient(90deg,' + Bk + ' 0 4px,' + Cc + ' 4px 8px)' }];

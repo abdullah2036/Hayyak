@@ -30,7 +30,7 @@ export default class Landing extends Screen {
       var r = h1.getBoundingClientRect(), sr = sec.getBoundingClientRect(), fs = parseFloat(getComputedStyle(h1).fontSize);
       var cx = r.left - sr.left + r.width / 2, cy = r.top - sr.top + r.height / 2;
       var o = document.createElement('canvas'); o.width = W; o.height = H; var ox = o.getContext('2d');
-      ox.font = '700 ' + fs + 'px TD'; ox.direction = 'rtl'; ox.textAlign = 'center'; ox.textBaseline = 'middle'; ox.fillStyle = '#fff'; ox.fillText('حيّــاك', cx, cy + fs * 0.04);
+      ox.font = '700 ' + fs + 'px TD, TDx, serif'; ox.direction = 'rtl'; ox.textAlign = 'center'; ox.textBaseline = 'middle'; ox.fillStyle = '#fff'; ox.fillText('حيّــاك', cx, cy + fs * 0.04);
       var d = ox.getImageData(0, 0, W, H).data, step = Math.max(3, Math.round(fs / 70)), pts = [];
       var y0 = Math.max(0, Math.floor(cy - fs)), y1 = Math.min(H, Math.ceil(cy + fs)), x0 = Math.max(0, Math.floor(cx - r.width)), x1 = Math.min(W, Math.ceil(cx + r.width));
       for (var yy = y0; yy < y1; yy += step) for (var xx = x0; xx < x1; xx += step) if (d[(yy * W + xx) * 4 + 3] > 120) pts.push([xx, yy]);
@@ -40,7 +40,7 @@ export default class Landing extends Screen {
       P.forEach(function (p) { p.sx = p.x; p.sy = p.y; });
       var P2 = [], tspans = self.root.querySelectorAll('.tag2 .wd'), TD0 = [1900, 2150, 2450];
       for (var si = 0; si < tspans.length; si++) { var sp = tspans[si], rr2 = sp.getBoundingClientRect(), fs2 = parseFloat(getComputedStyle(sp).fontSize), ccx = rr2.left - sr.left + rr2.width / 2, ccy = rr2.top - sr.top + rr2.height / 2;
-        var o2 = document.createElement('canvas'); o2.width = W; o2.height = H; var x2 = o2.getContext('2d'); x2.font = '700 ' + fs2 + 'px TD'; x2.direction = 'rtl'; x2.textAlign = 'center'; x2.textBaseline = 'middle'; x2.fillStyle = '#fff'; x2.fillText(sp.textContent, ccx, ccy + fs2 * 0.04);
+        var o2 = document.createElement('canvas'); o2.width = W; o2.height = H; var x2 = o2.getContext('2d'); x2.font = '700 ' + fs2 + 'px TD, TDx, serif'; x2.direction = 'rtl'; x2.textAlign = 'center'; x2.textBaseline = 'middle'; x2.fillStyle = '#fff'; x2.fillText(sp.textContent, ccx, ccy + fs2 * 0.04);
         var d2 = x2.getImageData(Math.max(0, Math.floor(rr2.left - sr.left - 10)), Math.max(0, Math.floor(rr2.top - sr.top - 10)), Math.ceil(rr2.width + 20), Math.ceil(rr2.height + 20)), ww = d2.width, st2 = Math.max(2, Math.round(fs2 / 34)), q2 = [];
         for (var yy2 = 0; yy2 < d2.height; yy2 += st2) for (var xx2 = 0; xx2 < ww; xx2 += st2) if (d2.data[(yy2 * ww + xx2) * 4 + 3] > 120) q2.push([xx2 + Math.max(0, Math.floor(rr2.left - sr.left - 10)), yy2 + Math.max(0, Math.floor(rr2.top - sr.top - 10))]);
         while (q2.length > 1400) q2.splice((Math.random() * q2.length) | 0, 1);
@@ -63,7 +63,7 @@ export default class Landing extends Screen {
       self.hraf = requestAnimationFrame(frame);
     };
     var started = false; function st() { if (started) return; started = true; go(); }
-    fontReady('700 100px TD', 1500).then(st); setTimeout(st, 1800);
+    fontReady('700 100px TD, TDx, serif', 1500).then(st); setTimeout(st, 1800);
   }
   renderVals() {
     var self = this, s = this.state;

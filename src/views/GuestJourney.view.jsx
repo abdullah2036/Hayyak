@@ -2,7 +2,7 @@ import { S, txt, A } from '@/ui/dc';
 
 const CSS = `body{margin:0;background:#EDF1F3}
 a{color:#086577}a:hover{color:#0A2A43}
-input,button,textarea{font-family:'IBM Plex Sans Arabic',sans-serif}
+input,button,textarea{font-family:TS, 'IBM Plex Sans Arabic', sans-serif}
 .glass{background:rgba(255,255,255,.58);-webkit-backdrop-filter:blur(26px) saturate(1.4);backdrop-filter:blur(26px) saturate(1.4);border:1px solid rgba(255,255,255,.85);box-shadow:0 24px 60px rgba(10,42,67,.08),inset 0 1px 0 rgba(255,255,255,.9)}
 .nav{transition:background .2s ease}.nav:hover{background:rgba(14,151,174,.08)}
 .row{transition:background .2s ease}.row:hover{background:rgba(255,255,255,.6)}
@@ -30,7 +30,7 @@ h1,h2,h3,h4,p,li,label{text-wrap:balance}span,b,a,button{text-wrap:pretty}
 .chip{transition:background .2s ease,color .2s ease}
 .tg{position:relative;width:52px;height:30px;border-radius:999px;border:0;cursor:pointer;transition:background .25s ease;flex:none}
 .tg span{position:absolute;top:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.2);transition:right .25s ease}
-.fld{height:50px;border-radius:999px;border:1px solid rgba(10,42,67,.16);background:#fff;padding:0 20px;font-size:15px;color:#0A2A43;width:100%;box-sizing:border-box;font-family:'IBM Plex Sans Arabic',sans-serif}
+.fld{height:50px;border-radius:999px;border:1px solid rgba(10,42,67,.16);background:#fff;padding:0 20px;font-size:15px;color:#0A2A43;width:100%;box-sizing:border-box;font-family:TS, 'IBM Plex Sans Arabic', sans-serif}
 .fld:focus,.ta:focus{outline:none;border-color:#0E97AE;box-shadow:0 0 0 4px rgba(14,151,174,.14)}
 .ta{border-radius:22px;border:1px solid rgba(10,42,67,.16);background:#fff;padding:14px 18px;font-size:15px;line-height:1.8;color:#0A2A43;width:100%;box-sizing:border-box;resize:vertical;min-height:110px}
 .btn{height:48px;padding:0 20px;border-radius:999px;border:1px solid rgba(10,42,67,.18);background:rgba(255,255,255,.75);color:#0A2A43;text-decoration:none;font-weight:700;font-size:14px;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
@@ -39,7 +39,7 @@ h1,h2,h3,h4,p,li,label{text-wrap:balance}span,b,a,button{text-wrap:pretty}
 .btn:hover,.btnp:hover,.btnd:hover{filter:brightness(1.05)}
 .lbl{display:flex;flex-direction:column;gap:6px;font-size:13px;color:#4A5B68}
 .sub{font-size:13px;color:#4A5B68;line-height:1.7}
-h2,h3{font-family:TS,'IBM Plex Sans Arabic',sans-serif;font-weight:700}
+h2,h3{font-family:TS, 'IBM Plex Sans Arabic', sans-serif;font-weight:700}
 @media (max-width: 1240px){.gj{width:auto !important}.gjr{padding:32px 24px !important;gap:28px !important}}
 @media (max-width: 900px){.gjr{flex-direction:column;align-items:center;padding:16px 14px 40px !important}.gjr > *{width:100%;flex:none !important}.gjr > .gjp{width:min(408px,100%) !important}.gj h1{font-size:30px !important}}`;
 
@@ -47,7 +47,7 @@ export default function GuestJourneyView({ v }) {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
-      <div dir="rtl" className="gj" style={{ width: "1200px", minHeight: "100vh", margin: "0 auto", position: "relative", overflow: "hidden", fontFamily: "'IBM Plex Sans Arabic', TS, sans-serif", color: "#0A2A43", background: "radial-gradient(55% 50% at 88% 4%, #CBEFF5 0%, rgba(203,239,245,0) 70%), radial-gradient(45% 40% at 6% 96%, #DCE4E8 0%, rgba(220,228,232,0) 70%), #EDF1F3" }}>
+      <div dir="rtl" className="gj" style={{ width: "1200px", minHeight: "100vh", margin: "0 auto", position: "relative", overflow: "hidden", fontFamily: "TS, 'IBM Plex Sans Arabic', sans-serif", color: "#0A2A43", background: "radial-gradient(55% 50% at 88% 4%, #CBEFF5 0%, rgba(203,239,245,0) 70%), radial-gradient(45% 40% at 6% 96%, #DCE4E8 0%, rgba(220,228,232,0) 70%), #EDF1F3" }}>
         {" "}
         <svg width="0" height="0" aria-hidden="true" style={{ position: "absolute" }}>
           <defs>
@@ -74,7 +74,7 @@ export default function GuestJourneyView({ v }) {
                   دلّني
                 </button>
               </span>
-              <h1 style={{ margin: "0", fontFamily: "TS, sans-serif", fontWeight: "700", fontSize: "42px", lineHeight: "1.2" }}>رحلة المدعو</h1>
+              <h1 style={{ margin: "0", fontFamily: "TS, 'IBM Plex Sans Arabic', sans-serif", fontWeight: "700", fontSize: "42px", lineHeight: "1.2" }}>رحلة المدعو</h1>
               <span className="sub" style={{ fontSize: "15px" }}>كل شي يصير في نفس رابط الدعوة: يأكّد، يسجّل حضوره، وتوصله شهادته. جرّب الجوال بنفسك</span>
             </div>
             <div data-t="4" style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
@@ -97,7 +97,7 @@ export default function GuestJourneyView({ v }) {
               ))}
             </ol>
             <span style={{ marginTop: "auto", display: "flex", gap: "10px", alignItems: "center", padding: "14px 18px", borderRadius: "20px", background: "rgba(231,200,115,.25)", color: "#5B4A12", fontSize: "14px", lineHeight: "1.7" }}>
-              <b style={{ fontFamily: "TD, serif", fontSize: "22px", direction: "ltr" }}>4827</b>
+              <b style={{ fontFamily: "TD, TDx, serif", fontSize: "22px", direction: "ltr" }}>4827</b>
               كود الحضور في المعاينة. جرّب تكتب رقم غلط بعد وشوف وش يصير
             </span>
           </div>
@@ -112,9 +112,9 @@ export default function GuestJourneyView({ v }) {
                   <path d={v.wax} fill="rgba(2,24,32,.5)" transform="translate(0 2.6)" />
                   <path d={v.wax} fill="url(#dWax)" />
                   <circle cx="50" cy="50" r="31" fill="none" stroke="#05505E" strokeOpacity=".45" strokeWidth="2.5" />
-                  <text x="50" y="57" textAnchor="middle" fontFamily="TD" fontSize="22" fill="#FFFFFF">مدعو</text>
+                  <text x="50" y="57" textAnchor="middle" fontFamily="TD, TDx, serif" fontSize="22" fill="#FFFFFF">مدعو</text>
                 </svg>
-                <b style={{ position: "relative", fontFamily: "TD, serif", fontSize: "32px", lineHeight: "1.2" }}>{v.evTitle}</b>
+                <b style={{ position: "relative", fontFamily: "TD, TDx, serif", fontSize: "32px", lineHeight: "1.2" }}>{v.evTitle}</b>
                 <span style={{ position: "relative", fontSize: "13px", color: "#CFE7EE" }}>{v.evLine}</span>
               </div>
               <div style={{ flex: "1", minHeight: "0", overflow: "auto", padding: "18px", display: "flex", flexDirection: "column", gap: "14px" }}>
@@ -169,7 +169,7 @@ export default function GuestJourneyView({ v }) {
                         {v.livePill}
                       </span>
                       <div style={{ padding: "20px 18px", borderRadius: "26px", background: "#FFFFFF", boxShadow: "0 8px 24px rgba(10,42,67,.06)", display: "flex", flexDirection: "column", gap: "12px", textAlign: "center" }}>
-                        <b style={{ fontFamily: "TD, serif", fontSize: "28px" }}>سجّل حضورك</b>
+                        <b style={{ fontFamily: "TD, TDx, serif", fontSize: "28px" }}>سجّل حضورك</b>
                         <span style={{ fontSize: "14px", color: "#3A4B58" }}>{v.codeHint}</span>
                         <input value={v.code ?? ''} onChange={v.onCode} onKeyDown={v.codeKey} inputMode="numeric" maxLength="4" aria-label="كود الحضور" placeholder="• • • •" style={S(`${txt(v.codeSt)}`)} />
                         {v.err ? (
@@ -200,7 +200,7 @@ export default function GuestJourneyView({ v }) {
                       <span style={{ width: "92px", height: "92px", borderRadius: "50%", background: "#0E97AE", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 16px 40px rgba(14,151,174,.35)", animation: "pop .55s cubic-bezier(.2,.8,.2,1) both" }}>
                         <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10" /></svg>
                       </span>
-                      <b style={{ fontFamily: "TD, serif", fontSize: "30px", lineHeight: "1.3" }}>{"حيّاك يا "}{v.first}</b>
+                      <b style={{ fontFamily: "TD, TDx, serif", fontSize: "30px", lineHeight: "1.3" }}>{"حيّاك يا "}{v.first}</b>
                       <span style={{ fontSize: "14px", color: "#3A4B58" }}>انسجل حضورك الساعة 7:43 م</span>
                       <div style={{ width: "100%", boxSizing: "border-box", padding: "16px", borderRadius: "24px", background: "#FFFFFF", boxShadow: "0 8px 24px rgba(10,42,67,.06)", display: "flex", gap: "12px", alignItems: "center", textAlign: "right" }}>
                         <span style={{ width: "44px", height: "44px", borderRadius: "14px", background: "rgba(231,200,115,.35)", display: "flex", alignItems: "center", justifyContent: "center", flex: "none" }}>
@@ -216,17 +216,17 @@ export default function GuestJourneyView({ v }) {
                 ) : null}
                 {v.s3 ? (
                   <div style={{ display: "flex", flexDirection: "column", gap: "14px", animation: "rise .35s ease-out both" }}>
-                      <b style={{ fontFamily: "TD, serif", fontSize: "28px", textAlign: "center" }}>شهادتك جاهزة</b>
+                      <b style={{ fontFamily: "TD, TDx, serif", fontSize: "28px", textAlign: "center" }}>شهادتك جاهزة</b>
                       <div style={{ position: "relative", aspectRatio: "1.41", borderRadius: "12px", background: "radial-gradient(80% 90% at 50% 0%, #FFFFFF, #F8FAFB 60%, #F0F4F5)", boxShadow: "0 12px 30px rgba(10,42,67,.14)", overflow: "hidden", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "12px 18px", boxSizing: "border-box" }}>
                         <svg viewBox="0 0 1123 794" preserveAspectRatio="none" aria-hidden="true" style={{ position: "absolute", inset: "0", width: "100%", height: "100%" }}>
                           <path d="M34 154 V34 H154 M1089 154 V34 H969 M34 640 V760 H154 M1089 640 V760 H969" fill="none" stroke="#0E97AE" strokeWidth="6" strokeLinecap="round" />
                         </svg>
                         <svg viewBox="0 0 100 100" aria-hidden="true" style={{ position: "absolute", left: "-40px", bottom: "-50px", width: "150px", height: "150px", opacity: ".07" }}><path d={v.wax} fill="#0E97AE" /></svg>
-                        <b style={{ fontFamily: "TD, serif", fontSize: "22px", color: "#0E97AE", lineHeight: "1.2" }}>شهادة حضور</b>
+                        <b style={{ fontFamily: "TD, TDx, serif", fontSize: "22px", color: "#0E97AE", lineHeight: "1.2" }}>شهادة حضور</b>
                         <span style={{ fontSize: "8px", color: "#4A5B68" }}>{v.certLine}</span>
-                        <b style={{ fontFamily: "TD, serif", fontSize: "19px", lineHeight: "1.5" }}>{v.name}</b>
+                        <b style={{ fontFamily: "TD, TDx, serif", fontSize: "19px", lineHeight: "1.5" }}>{v.name}</b>
                         <span style={{ fontSize: "7px", color: "#1E3A4E" }}>{v.certPara}</span>
-                        <span style={{ position: "absolute", top: "9px", right: "12px", display: "inline-flex", alignItems: "center", gap: "3px", fontFamily: "TD, serif", fontSize: "9px" }}>
+                        <span style={{ position: "absolute", top: "9px", right: "12px", display: "inline-flex", alignItems: "center", gap: "3px", fontFamily: "TD, TDx, serif", fontSize: "9px" }}>
                           <svg viewBox="0 0 100 100" aria-hidden="true" style={{ width: "14px", height: "14px" }}><path d={v.wax} fill="url(#dWax)" /></svg>
                           حيّــاك
                         </span>

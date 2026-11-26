@@ -1,9 +1,10 @@
 import { S, txt, A } from '@/ui/dc';
+import Mark from '@/ui/Mark';
 import FAQ from '@/screens/FAQ';
 
 const CSS = `body{margin:0;background:#EDF1F3}
 a{color:#086577}a:hover{color:#0A2A43}
-input,button,textarea{font-family:'IBM Plex Sans Arabic',sans-serif}
+input,button,textarea{font-family:TS, 'IBM Plex Sans Arabic', sans-serif}
 .glass{background:rgba(255,255,255,.58);-webkit-backdrop-filter:blur(26px) saturate(1.4);backdrop-filter:blur(26px) saturate(1.4);border:1px solid rgba(255,255,255,.85);box-shadow:0 24px 60px rgba(10,42,67,.08),inset 0 1px 0 rgba(255,255,255,.9)}
 .nav{transition:background .2s ease}.nav:hover{background:rgba(14,151,174,.08)}
 .row{transition:background .2s ease}.row:hover{background:rgba(255,255,255,.6)}
@@ -31,7 +32,7 @@ h1,h2,h3,h4,p,li,label{text-wrap:balance}span,b,a,button{text-wrap:pretty}
 .chip{transition:background .2s ease,color .2s ease}
 .tg{position:relative;width:52px;height:30px;border-radius:999px;border:0;cursor:pointer;transition:background .25s ease;flex:none}
 .tg span{position:absolute;top:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.2);transition:right .25s ease}
-.fld{height:50px;border-radius:999px;border:1px solid rgba(10,42,67,.16);background:#fff;padding:0 20px;font-size:15px;color:#0A2A43;width:100%;box-sizing:border-box;font-family:'IBM Plex Sans Arabic',sans-serif}
+.fld{height:50px;border-radius:999px;border:1px solid rgba(10,42,67,.16);background:#fff;padding:0 20px;font-size:15px;color:#0A2A43;width:100%;box-sizing:border-box;font-family:TS, 'IBM Plex Sans Arabic', sans-serif}
 .fld:focus,.ta:focus{outline:none;border-color:#0E97AE;box-shadow:0 0 0 4px rgba(14,151,174,.14)}
 .ta{border-radius:22px;border:1px solid rgba(10,42,67,.16);background:#fff;padding:14px 18px;font-size:15px;line-height:1.8;color:#0A2A43;width:100%;box-sizing:border-box;resize:vertical;min-height:110px}
 .btn{height:48px;padding:0 20px;border-radius:999px;border:1px solid rgba(10,42,67,.18);background:rgba(255,255,255,.75);color:#0A2A43;text-decoration:none;font-weight:700;font-size:14px;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
@@ -40,13 +41,13 @@ h1,h2,h3,h4,p,li,label{text-wrap:balance}span,b,a,button{text-wrap:pretty}
 .btn:hover,.btnp:hover,.btnd:hover{filter:brightness(1.05)}
 .lbl{display:flex;flex-direction:column;gap:6px;font-size:13px;color:#4A5B68}
 .sub{font-size:13px;color:#4A5B68;line-height:1.7}
-h2,h3{font-family:TS,'IBM Plex Sans Arabic',sans-serif;font-weight:700}`;
+h2,h3{font-family:TS, 'IBM Plex Sans Arabic', sans-serif;font-weight:700}`;
 
 export default function AttendanceView({ v }) {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
-      <div dir="rtl" style={{ minHeight: "100vh", position: "relative", overflow: "hidden", fontFamily: "'IBM Plex Sans Arabic', TS, sans-serif", color: "#0A2A43", background: "radial-gradient(55% 40% at 88% 4%, #CBEFF5 0%, rgba(203,239,245,0) 70%), radial-gradient(45% 40% at 6% 96%, #DCE4E8 0%, rgba(220,228,232,0) 70%), #EDF1F3" }}>
+      <div dir="rtl" style={{ minHeight: "100vh", position: "relative", overflow: "hidden", fontFamily: "TS, 'IBM Plex Sans Arabic', sans-serif", color: "#0A2A43", background: "radial-gradient(55% 40% at 88% 4%, #CBEFF5 0%, rgba(203,239,245,0) 70%), radial-gradient(45% 40% at 6% 96%, #DCE4E8 0%, rgba(220,228,232,0) 70%), #EDF1F3" }}>
         {" "}
         <svg width="0" height="0" aria-hidden="true" style={{ position: "absolute" }}>
           <defs>
@@ -68,14 +69,8 @@ export default function AttendanceView({ v }) {
         <div className="pg" style={{ position: "relative", display: "flex", gap: "24px", padding: "20px", boxSizing: "border-box", minHeight: "100vh" }}>
           <nav aria-label="التنقل الرئيسي" className="glass side" style={{ flex: "0 0 250px", boxSizing: "border-box", padding: "24px 16px", borderRadius: "28px", display: "flex", flexDirection: "column", gap: "22px", alignSelf: "flex-start", position: "sticky", top: "20px" }}>
             <span style={{ display: "inline-flex", alignItems: "center", gap: "10px", padding: "0 6px" }}>
-              <svg width="40" height="40" viewBox="0 0 100 100" aria-hidden="true">
-                <path d={v.wax} fill="rgba(2,24,32,.5)" transform="translate(0 2.6)" />
-                <path d={v.wax} fill="url(#dWax)" />
-                <ellipse cx="36" cy="28" rx="14" ry="6" transform="rotate(-28 36 28)" fill="#FFFFFF" fillOpacity="0.3" />
-                <text x="50" y="59.2" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="40" fill="#05505E" fillOpacity="0.7">{"ح"}</text>
-                <text x="50" y="58" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="40" fill="#FFFFFF">{"ح"}</text>
-              </svg>
-              <span style={{ fontFamily: "TD, serif", fontSize: "26px", lineHeight: "1" }}>حيّــاك</span>
+              <Mark size={40} />
+              <span style={{ fontFamily: "TD, TDx, serif", fontSize: "26px", lineHeight: "1" }}>حيّــاك</span>
             </span>
             <A href="Create.dc.html" style={{ height: "50px", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", borderRadius: "999px", background: "#0E97AE", color: "#FFFFFF", textDecoration: "none", fontWeight: "700", fontSize: "15px", boxShadow: "0 10px 24px rgba(14,151,174,.35)" }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
@@ -154,7 +149,7 @@ export default function AttendanceView({ v }) {
             </div>
             <header className="in" data-t="1" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: "16px", flexWrap: "wrap" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <h1 className="h1m" style={{ margin: "0", fontFamily: "TS, sans-serif", fontWeight: "700", fontSize: "42px", lineHeight: "1.2" }}>الحضور والشهادات</h1>
+                <h1 className="h1m" style={{ margin: "0", fontFamily: "TS, 'IBM Plex Sans Arabic', sans-serif", fontWeight: "700", fontSize: "42px", lineHeight: "1.2" }}>الحضور والشهادات</h1>
                 <span style={{ fontSize: "15px", color: "#4A5B68" }}>{v.title}{" · "}{v.when}</span>
               </div>
             </header>
@@ -216,7 +211,7 @@ export default function AttendanceView({ v }) {
                         </span>
                         <span className="code" style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
                           <span style={{ fontSize: "13px", color: "#B8D4DE" }}>{v.codeLabel}</span>
-                          <b style={{ fontFamily: "TD, serif", fontSize: "58px", letterSpacing: ".18em", lineHeight: "1", direction: "ltr", textAlign: "right" }}>{v.code}</b>
+                          <b style={{ fontFamily: "TD, TDx, serif", fontSize: "58px", letterSpacing: ".18em", lineHeight: "1", direction: "ltr", textAlign: "right" }}>{v.code}</b>
                           <span style={{ fontSize: "14px", color: "#CFE7EE" }}>
                             {"يتسكّر بعد "}
                             <b style={{ fontSize: "16px", color: "#FFFFFF", direction: "ltr", display: "inline-block" }}>{v.clock}</b>
@@ -287,7 +282,7 @@ export default function AttendanceView({ v }) {
               {(v.kpis || []).map((k, $i8) => (
                 <div key={k?.key ?? $i8} className="glass" style={{ borderRadius: "24px", padding: "16px 18px", display: "flex", flexDirection: "column", gap: "4px" }}>
                     <span style={{ fontSize: "13px", color: "#4A5B68" }}>{k?.l}</span>
-                    <span style={S(`font-family: TD, serif; font-size: 36px; line-height: 1.1; color: ${txt(k?.c)};`)}>{k?.v}</span>
+                    <span style={S(`font-family: TD, TDx, serif; font-size: 36px; line-height: 1.1; color: ${txt(k?.c)};`)}>{k?.v}</span>
                     <span style={{ fontSize: "12px", color: "#4A5B68" }}>{k?.s}</span>
                   </div>
               ))}
@@ -308,7 +303,7 @@ export default function AttendanceView({ v }) {
                     <div className="g2" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0,1fr))", gap: "10px", marginTop: "4px" }}>
                       {(v.rates || []).map((r, $i10) => (
                         <div key={r?.key ?? $i10} style={{ padding: "14px", borderRadius: "20px", background: "rgba(255,255,255,.7)", display: "flex", flexDirection: "column", gap: "2px" }}>
-                            <b style={{ fontFamily: "TD, serif", fontSize: "28px", color: "#086577" }}>{r?.v}</b>
+                            <b style={{ fontFamily: "TD, TDx, serif", fontSize: "28px", color: "#086577" }}>{r?.v}</b>
                             <span style={{ fontSize: "12px", color: "#4A5B68", lineHeight: "1.6" }}>{r?.l}</span>
                           </div>
                       ))}
@@ -362,7 +357,7 @@ export default function AttendanceView({ v }) {
               {(v.rows || []).map((g, $i14) => (
                 <div key={g?.key ?? $i14} className="row gt" style={{ display: "grid", gridTemplateColumns: "minmax(0,1.4fr) 90px minmax(0,1fr) auto", gap: "14px", alignItems: "center", padding: "10px", borderRadius: "18px" }}>
                     <span style={{ display: "flex", alignItems: "center", gap: "12px", minWidth: "0" }}>
-                      <span style={{ width: "40px", height: "40px", borderRadius: "50%", background: "#DCE4E8", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "TD, serif", fontSize: "16px", flex: "none" }}>{g?.i}</span>
+                      <span style={{ width: "40px", height: "40px", borderRadius: "50%", background: "#DCE4E8", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "TD, TDx, serif", fontSize: "16px", flex: "none" }}>{g?.i}</span>
                       <span style={{ display: "flex", flexDirection: "column", minWidth: "0" }}>
                         <b style={{ fontSize: "15px" }}>{g?.n}</b>
                         <span style={{ fontSize: "12px", color: "#4A5B68" }}>{"رد: "}{g?.r}</span>
@@ -413,7 +408,7 @@ export default function AttendanceView({ v }) {
             {v.proj ? (
               <div role="dialog" aria-label="شاشة العرض" style={{ position: "fixed", inset: "0", zIndex: "85", background: "radial-gradient(70% 60% at 80% 0%, #123E5C, #0A2A43 55%, #04121F)", color: "#FFFFFF", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "28px", padding: "32px", boxSizing: "border-box", textAlign: "center", animation: "rise .4s ease-out both" }}>
                   <button type="button" onClick={v.hideProj} style={{ position: "absolute", top: "20px", left: "20px", height: "44px", padding: "0 18px", borderRadius: "999px", border: "1px solid rgba(255,255,255,.3)", background: "rgba(255,255,255,.1)", color: "#FFFFFF", fontSize: "14px", fontWeight: "700", cursor: "pointer" }}>رجوع</button>
-                  <h2 style={{ margin: "0", fontFamily: "TD, serif", fontSize: "52px", lineHeight: "1.2" }}>سجّل حضورك</h2>
+                  <h2 style={{ margin: "0", fontFamily: "TD, TDx, serif", fontSize: "52px", lineHeight: "1.2" }}>سجّل حضورك</h2>
                   <div style={{ display: "flex", gap: "40px", alignItems: "center", flexWrap: "wrap", justifyContent: "center" }}>
                     <span style={{ width: "230px", height: "230px", borderRadius: "30px", background: "#FFFFFF", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <svg width="196" height="196" viewBox={v.qrBox} role="img" aria-label="باركود الحضور">
@@ -424,7 +419,7 @@ export default function AttendanceView({ v }) {
                     </span>
                     <span style={{ display: "flex", flexDirection: "column", gap: "10px", alignItems: "center" }}>
                       <span style={{ fontSize: "18px", color: "#B8D4DE" }}>أو اكتب الكود في رابط دعوتك</span>
-                      <b style={{ fontFamily: "TD, serif", fontSize: "120px", letterSpacing: ".14em", lineHeight: "1", direction: "ltr" }}>{v.code}</b>
+                      <b style={{ fontFamily: "TD, TDx, serif", fontSize: "120px", letterSpacing: ".14em", lineHeight: "1", direction: "ltr" }}>{v.code}</b>
                     </span>
                   </div>
                   <div style={{ display: "flex", gap: "14px", flexWrap: "wrap", justifyContent: "center", fontSize: "17px" }}>

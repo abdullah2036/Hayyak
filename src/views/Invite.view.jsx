@@ -1,8 +1,10 @@
 import { S, txt, A, Still } from '@/ui/dc';
+import Mark from '@/ui/Mark';
 
-const CSS = `body{margin:0}
-input,button{font-family:'IBM Plex Sans Arabic',TS,sans-serif}
-.lat{font-family:TD,serif;font-weight:700;letter-spacing:4px;direction:ltr}
+const CSS = `[data-thumb],[data-thumb] *{-webkit-backdrop-filter:none !important;backdrop-filter:none !important;animation-duration:1ms !important;animation-delay:0s !important;animation-iteration-count:1 !important;transition:none !important}
+body{margin:0}
+input,button{font-family:TS, 'IBM Plex Sans Arabic', sans-serif,TS,sans-serif}
+.lat{font-family:TD, TDx, serif;font-weight:700;letter-spacing:4px;direction:ltr}
 .field:focus{outline:none;border-color:var(--c1) !important;box-shadow:0 0 0 4px rgba(134,220,234,.18)}
 .inA{animation:inA .6s cubic-bezier(.2,.8,.2,1) both}.inB{animation:inB .6s cubic-bezier(.2,.8,.2,1) both}
 .nmA{animation:maskA .9s cubic-bezier(.4,0,.2,1) .9s both}.nmB{animation:maskB .9s cubic-bezier(.4,0,.2,1) .9s both}
@@ -67,7 +69,7 @@ export default function InviteView({ v }) {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
-      <div dir="rtl" ref={v.setRoot} onPointerMove={v.onMove} onPointerDown={v.onDown} style={S(`width: 390px; height: 844px; position: relative; overflow: hidden; touch-action: pan-y; font-family: 'IBM Plex Sans Arabic', TS, sans-serif; color: var(--tx); ${txt(v.vs)}`)}>
+      <div dir="rtl" ref={v.setRoot} data-thumb={v.thumb ? "1" : undefined} onPointerMove={v.onMove} onPointerDown={v.onDown} style={S(`width: 390px; height: 844px; position: relative; overflow: hidden; touch-action: pan-y; font-family: TS, 'IBM Plex Sans Arabic', sans-serif; color: var(--tx); ${txt(v.vs)}`)}>
         {" "}
         <svg width="0" height="0" aria-hidden="true" style={{ position: "absolute" }}>
           <defs>
@@ -203,13 +205,8 @@ export default function InviteView({ v }) {
         <div data-front="1" style={{ position: "relative", height: "100%", boxSizing: "border-box", padding: "18px 20px 22px", display: "flex", flexDirection: "column", gap: "14px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <span style={{ display: "inline-flex", alignItems: "center", gap: "8px", padding: "5px 14px 5px 6px", borderRadius: "999px", background: "var(--gl)", border: "1px solid var(--ln)", WebkitBackdropFilter: "blur(12px)", backdropFilter: "blur(12px)" }}>
-              <svg width="30" height="30" viewBox="0 0 100 100" aria-hidden="true">
-                <path d={v.wax} fill="rgba(2,24,32,.5)" transform="translate(0 2.6)" />
-                <path d={v.wax} fill="url(#hyMk)" />
-                <text x="50" y="59.2" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="40" fill="#05505E" fillOpacity="0.7">{"ح"}</text>
-                <text x="50" y="58" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="40" fill="#FFFFFF">{"ح"}</text>
-              </svg>
-              <span style={{ fontFamily: "TD, serif", fontSize: "16px" }}>حيّــاك</span>
+              <Mark size={30} />
+              <span style={{ fontFamily: "TD, TDx, serif", fontSize: "16px" }}>حيّــاك</span>
             </span>
             <span style={{ display: "flex", gap: "8px" }}>
               <Btn type="button" data-nocap="1" onClick={v.openSave} aria-label="حفظ الدعوة" style={{ height: "42px", padding: "0 14px", borderRadius: "999px", border: "1px solid var(--ln)", background: "var(--gl)", color: "var(--tx)", display: "flex", alignItems: "center", gap: "6px", fontSize: "13px", cursor: "pointer", WebkitBackdropFilter: "blur(12px)", backdropFilter: "blur(12px)" }}>
@@ -255,8 +252,8 @@ export default function InviteView({ v }) {
                         <g transform="scale(0.42) translate(-50 -50)">
                           <path d={v.wax} fill="url(#hyMk)" stroke="var(--ring)" strokeWidth="6" filter="url(#ivSh)" />
                           <ellipse cx="36" cy="28" rx="15" ry="7" transform="rotate(-28 36 28)" fill="#FFFFFF" fillOpacity="0.3" />
-                          <text x="50" y="59.2" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="40" fill="#05505E" fillOpacity="0.7">{"ح"}</text>
-                          <text x="50" y="58" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="40" fill="#FFFFFF">{"ح"}</text>
+                          <text x="50" y="59.2" textAnchor="middle" fontFamily="TD, TDx, serif" fontWeight="700" fontSize="40" fill="#05505E" fillOpacity="0.7">{"ح"}</text>
+                          <text x="50" y="58" textAnchor="middle" fontFamily="TD, TDx, serif" fontWeight="700" fontSize="40" fill="#FFFFFF">{"ح"}</text>
                         </g>
                       </g>
                     </g>
@@ -270,7 +267,7 @@ export default function InviteView({ v }) {
                 ) : null}
                 {v.loadNamed ? (
                   <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                      <span style={{ fontFamily: "TD, serif", fontSize: "30px", lineHeight: "1.3", animation: "lname .9s cubic-bezier(.4,0,.2,1) 1.1s both" }}>{v.loadHello}</span>
+                      <span style={{ fontFamily: "TD, TDx, serif", fontSize: "30px", lineHeight: "1.3", animation: "lname .9s cubic-bezier(.4,0,.2,1) 1.1s both" }}>{v.loadHello}</span>
                       <span style={{ fontSize: "14px", opacity: ".8", animation: "blink 2s ease-in-out infinite" }}>نجهّز دعوتك…</span>
                     </div>
                 ) : null}
@@ -288,7 +285,7 @@ export default function InviteView({ v }) {
                   <span style={{ alignSelf: "flex-start", display: "inline-flex", alignItems: "center", gap: "8px", padding: "6px 14px", borderRadius: "999px", fontSize: "14px", fontWeight: "500", background: "var(--gl)", border: "1px solid var(--ln)", WebkitBackdropFilter: "blur(12px)", backdropFilter: "blur(12px)" }}><span style={{ width: "7px", height: "7px", borderRadius: "50%", background: "var(--c2)" }} />{v.eventLabel}</span>
                 ) : null}
                 {v.showTitle ? (
-                  <><span style={{ fontFamily: "TD, serif", fontSize: "46px", lineHeight: "1.2", textShadow: "0 2px 22px var(--scA), 0 0 3px var(--scA)" }}>{v.title}</span>
+                  <><span style={{ fontFamily: "TD, TDx, serif", fontSize: "46px", lineHeight: "1.2", textShadow: "0 2px 22px var(--scA), 0 0 3px var(--scA)" }}>{v.title}</span>
                   {v.hasLatin ? (
                       <span className="lat" style={{ fontSize: "13px", opacity: ".75", textAlign: "right", textShadow: "0 1px 8px var(--scA)" }}>{v.latin}</span>
                     ) : null}</>
@@ -297,7 +294,7 @@ export default function InviteView({ v }) {
           ) : null}
           {v.isGate ? (
             <div className={v.inK} style={{ borderRadius: "28px", padding: "22px 20px", background: "var(--gl)", WebkitBackdropFilter: "blur(24px) saturate(1.3)", backdropFilter: "blur(24px) saturate(1.3)", border: "1px solid var(--ln)", display: "flex", flexDirection: "column", gap: "12px", animationDelay: ".25s" }}>
-                <h1 style={{ margin: "0", fontFamily: "TD, serif", fontSize: "26px", lineHeight: "1.35" }}>{"عندك دعوة من "}{v.entity}</h1>
+                <h1 style={{ margin: "0", fontFamily: "TD, TDx, serif", fontSize: "26px", lineHeight: "1.35" }}>{"عندك دعوة من "}{v.entity}</h1>
                 <p style={{ margin: "0", fontSize: "14px", lineHeight: "1.7", opacity: ".82" }}>سجّل اسمك وبريدك لتفتح الدعوة، وبيظهر اسمك داخلها</p>
                 <label style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "12px", opacity: ".9" }}>
                   الاسم
@@ -325,7 +322,7 @@ export default function InviteView({ v }) {
                     ) : null}
                     <div style={{ position: "relative", display: "flex", flexDirection: "column", gap: "6px", paddingLeft: "84px", minHeight: "64px" }}>
                       <span style={{ fontSize: "13px", lineHeight: "1.5", color: "#4A5B68" }}>نتشرّف بدعوة</span>
-                      <span className={`nm${txt(v.k)}`} style={{ fontFamily: "TD, serif", fontSize: "28px", lineHeight: "1.3" }}>{v.shownName}</span>
+                      <span className={`nm${txt(v.k)}`} style={{ fontFamily: "TD, TDx, serif", fontSize: "28px", lineHeight: "1.3" }}>{v.shownName}</span>
                       <span className={`nm${txt(v.k)}`} style={{ fontSize: "13px", lineHeight: "1.5", color: "#3A4B58" }}>{v.shownOrg}</span>
                     </div>
                     <div style={{ position: "relative", display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: "10px", fontSize: "13px", lineHeight: "1.5", paddingTop: "11px", borderTop: "1px solid #DCE4E8" }}>
@@ -442,7 +439,7 @@ export default function InviteView({ v }) {
                     </svg>
                     {" "}
                     <span style={{ position: "absolute", inset: "0", display: "flex", alignItems: "center", justifyContent: "center", paddingBottom: "4px" }}>
-                      <span className={`lb${txt(v.k)}`} style={S(`display: inline-block; font-family: TD, serif; font-weight: 700; font-size: ${txt(v.seal?.fs)}; line-height: 1.6; padding: 0 2px; color: #FFFFFF; text-shadow: 0 1.5px 0 rgba(0,0,0,.3); will-change: transform, opacity;`)}>
+                      <span className={`lb${txt(v.k)}`} style={S(`display: inline-block; font-family: TD, TDx, serif; font-weight: 700; font-size: ${txt(v.seal?.fs)}; line-height: 1.6; padding: 0 2px; color: #FFFFFF; text-shadow: 0 1.5px 0 rgba(0,0,0,.3); will-change: transform, opacity;`)}>
                         {v.sealLogo ? (
                           <img src={v.sealLogo} alt="" style={{ width: "58px", height: "58px", objectFit: "contain" }} />
                         ) : null}
@@ -510,7 +507,7 @@ export default function InviteView({ v }) {
           <div data-nocap="1" style={{ position: "absolute", inset: "0", zIndex: "5", background: "rgba(4,18,31,.55)", display: "flex", alignItems: "flex-end" }}>
               <div style={{ width: "100%", borderRadius: "28px 28px 0 0", background: "#FAFBFC", color: "#0A2A43", padding: "22px 20px 26px", boxSizing: "border-box", display: "flex", flexDirection: "column", gap: "12px", animation: "sheetUp .35s cubic-bezier(.2,.8,.2,1) both" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <b style={{ fontFamily: "TS, sans-serif", fontSize: "18px" }}>{v.sheetTitle}</b>
+                  <b style={{ fontFamily: "TS, 'IBM Plex Sans Arabic', sans-serif", fontSize: "18px" }}>{v.sheetTitle}</b>
                   <Btn type="button" onClick={v.closeSave} aria-label="إغلاق" style={{ width: "36px", height: "36px", border: "0", borderRadius: "50%", background: "#EDF1F3", color: "#0A2A43", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
                     <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 2l10 10M12 2L2 12" stroke="#0A2A43" strokeWidth="2" strokeLinecap="round" /></svg>
                   </Btn>

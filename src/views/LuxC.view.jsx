@@ -1,9 +1,10 @@
 import { S, txt, A } from '@/ui/dc';
+import Mark from '@/ui/Mark';
 import FAQ from '@/screens/FAQ';
 
 const CSS = `body{margin:0;background:#072538}
 a{color:inherit}
-button{font-family:'IBM Plex Sans Arabic',sans-serif}
+button{font-family:TS, 'IBM Plex Sans Arabic', sans-serif}
 @keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 @keyframes cardIn{0%{opacity:0;transform:perspective(800px) rotateX(55deg) translateY(60px);filter:brightness(0)}100%{opacity:1;transform:none;filter:brightness(1)}}
 @keyframes litSweep{0%{transform:translateX(160%) rotate(20deg);opacity:0}20%{opacity:1}100%{transform:translateX(-160%) rotate(20deg);opacity:0}}
@@ -80,7 +81,7 @@ html{scroll-behavior:smooth}
 .w2{display:inline-block;animation:w2in 1s cubic-bezier(.2,.7,.2,1) both;transform-origin:50% 100%}
 @keyframes w2in{0%{opacity:0;transform:translateY(40px) rotateX(70deg) scale(.9);filter:blur(10px)}60%{opacity:1;filter:blur(0)}100%{opacity:1;transform:none;filter:blur(0)}}
 .hlw{display:inline-block;animation:hlg 4s ease-in-out 2s infinite}
-@keyframes hlg{0%,100%{text-shadow:0 0 0 rgba(134,220,234,0)}50%{text-shadow:0 0 28px rgba(134,220,234,.55)}}
+.hlww{color:#FFFFFF;animation-name:hlgw}@keyframes hlgw{0%,100%{text-shadow:0 0 10px rgba(255,255,255,.5),0 0 24px rgba(134,220,234,.35),0 1px 2px rgba(10,42,67,.3)}50%{text-shadow:0 0 16px rgba(255,255,255,.75),0 0 34px rgba(134,220,234,.5),0 1px 2px rgba(10,42,67,.3)}}@keyframes hlg{0%,100%{text-shadow:0 0 0 rgba(134,220,234,0)}50%{text-shadow:0 0 28px rgba(134,220,234,.55)}}
 .dustL{position:absolute;left:0;top:-200px;width:2px;height:2px;border-radius:50%;pointer-events:none;animation:dustUp 40s linear infinite;opacity:.7}
 .dustL.d2{width:1.5px;height:1.5px;animation-duration:60s;opacity:.5}
 @keyframes dustUp{from{transform:translateY(0)}to{transform:translateY(-600px)}}
@@ -99,8 +100,8 @@ span,b,a{text-wrap:pretty}
 .eflap{bottom:auto;top:38%;height:34%;border-radius:0;background:linear-gradient(180deg,#EEF2F4,#D3DEE3);clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:50% 0;z-index:4}
 .epaper{position:absolute;left:7%;right:7%;bottom:4%;height:74%;z-index:2;border-radius:18px;background:linear-gradient(165deg,#FFFFFF,#EEF3F5);box-shadow:0 18px 40px rgba(4,18,31,.25);display:flex;flex-direction:column;align-items:center;gap:9px;padding-top:9%;overflow:visible;transform-origin:50% 100%}
 .epaper > .rv:first-of-type{}
-.epaper .pk{font-family:TD,serif;font-size:clamp(13px,1.1vw,16px);color:#0E97AE;letter-spacing:1px}
-.epaper .pt{font-family:TD,serif;font-size:clamp(34px,3.3vw,46px);line-height:1.1;color:#0A2A43}
+.epaper .pk{font-family:TD, TDx, serif;font-size:clamp(13px,1.1vw,16px);color:#0E97AE;letter-spacing:1px}
+.epaper .pt{font-family:TD, TDx, serif;font-size:clamp(34px,3.3vw,46px);line-height:1.1;color:#0A2A43}
 .epaper .pn{font-size:clamp(13px,1.1vw,15px);color:#4A5B68;font-weight:700}
 .ml{display:block;height:7px;border-radius:6px;background:#0A2A43;opacity:.12}
 .epaper{overflow:hidden}
@@ -108,7 +109,7 @@ span,b,a{text-wrap:pretty}
 .eink{position:absolute;left:50%;bottom:22%;width:34%;aspect-ratio:1;margin-left:-17%;border-radius:50%;border:2px solid #86DCEA}
 .mini{position:absolute;width:clamp(120px,11vw,160px);aspect-ratio:3/4;rotate:var(--r)}
 .mini .mp{position:absolute;inset:0;border-radius:18px;background:linear-gradient(165deg,rgba(255,255,255,.96),rgba(220,228,232,.92));box-shadow:0 30px 60px rgba(0,0,0,.42);display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:16%}
-.mini .mp b{font-family:TD,serif;font-size:clamp(14px,1.25vw,18px);color:#0A2A43;margin:2px 0}
+.mini .mp b{font-family:TD, TDx, serif;font-size:clamp(14px,1.25vw,18px);color:#0A2A43;margin:2px 0}
 .mini .ms{position:absolute;left:50%;bottom:-12%;width:52%;translate:-50% 0;filter:drop-shadow(0 10px 14px rgba(0,0,0,.35))}
 .cons{position:relative;display:flex;justify-content:center;gap:clamp(10px,2vw,30px);margin-bottom:26px;width:100%;max-width:980px}
 .cs{display:block;width:clamp(46px,6vw,84px);translate:0 var(--y);filter:drop-shadow(0 14px 18px rgba(0,0,0,.4))}
@@ -121,7 +122,7 @@ span,b,a{text-wrap:pretty}
 @keyframes csIn{0%{opacity:0;scale:.4}100%{opacity:1;scale:1}}
 .cs{animation-fill-mode:both}
 @media (max-width: 1000px){.mB{display:none}.mini.mA{top:2% !important}}
-@media (max-width: 760px){.scene{height:520px}.mini{width:104px}.mini.mA{top:0 !important}.mini[style*="left"]{left:-2% !important}.mini[style*="right"]{right:-2% !important}.envw{width:250px}.cons{gap:6px}.cons .cs:nth-child(1),.cons .cs:nth-child(8){display:none}.fblend{padding-top:640px !important;padding-bottom:600px !important}}
+@media (max-width: 760px){.scene{height:520px}.mini{width:104px}.mini.mA{top:0 !important}.mini[style*="left"]{left:-2% !important}.mini[style*="right"]{right:-2% !important}.envw{width:250px}.cons{gap:6px}.cons .cs:nth-child(1),.cons .cs:nth-child(8){display:none}.fblend{padding-top:330px !important;padding-bottom:310px !important}}
 
 .sbox{position:relative;background:#FFFFFF;border-radius:32px;border:1px solid #E3EAEE;box-shadow:0 30px 70px rgba(10,42,67,.12);padding:26px;min-height:440px;box-sizing:border-box;overflow:hidden}
 .sw{position:relative;display:grid;grid-template-columns:1fr 1fr;height:52px;border-radius:999px;background:#EDF1F3;padding:5px;box-sizing:border-box;font-size:16px;font-weight:700;text-align:center;align-items:center}
@@ -185,7 +186,7 @@ span,b,a{text-wrap:pretty}
 .ribt{display:flex;gap:22px;width:max-content;padding:20px 0 30px;animation:mqR 60s linear infinite}
 .rbc{direction:rtl;position:relative;width:132px;height:186px;flex:none;border-radius:22px;box-shadow:0 20px 40px rgba(0,0,0,.35),inset 0 0 0 1px rgba(255,255,255,.14);display:flex;flex-direction:column;align-items:center;gap:8px;padding-top:30px;box-sizing:border-box;animation:rbF 6s ease-in-out infinite}
 .rbc:nth-child(2n){animation-delay:-3s;margin-top:18px}
-.rbt{font-family:TD,serif;font-size:17px;font-weight:700}
+.rbt{font-family:TD, TDx, serif;font-size:17px;font-weight:700}
 .rbl{display:block;width:62%;height:5px;border-radius:4px;opacity:.35}
 .rbs{position:absolute;bottom:-14px;left:50%;translate:-50% 0;height:30px;padding:0 12px;border-radius:999px;color:#FFFFFF;font-size:12px;font-weight:700;display:flex;align-items:center;box-shadow:0 8px 16px rgba(0,0,0,.3)}
 @keyframes rbF{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
@@ -217,20 +218,20 @@ span,b,a{text-wrap:pretty}
 .msc{box-sizing:border-box;position:absolute;inset:0;opacity:0;animation:mscIn 12s ease-in-out infinite;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:40px 22px 24px;text-align:center;color:#B9CCD6;font-size:15px}
 .msc.m2{padding-left:12px;padding-right:12px}
 .msc .ck{font-size:13px;letter-spacing:2px;color:#86DCEA}
-.msc .ct{font-family:TD,serif;font-size:28px;color:#FAFBFC;line-height:1.3}
+.msc .ct{font-family:TD, TDx, serif;font-size:28px;color:#FAFBFC;line-height:1.3}
 .ccode{display:flex;gap:8px;direction:ltr}
-.ccode i{font-style:normal;width:42px;height:54px;border-radius:14px;background:rgba(134,220,234,.12);border:1px solid rgba(134,220,234,.25);display:grid;place-items:center;font-family:TS,'IBM Plex Sans Arabic',sans-serif;font-weight:700;font-size:26px;color:#FAFBFC;animation:cdig 12s ease-out infinite both}
+.ccode i{font-style:normal;width:42px;height:54px;border-radius:14px;background:rgba(134,220,234,.12);border:1px solid rgba(134,220,234,.25);display:grid;place-items:center;font-family:TS, 'IBM Plex Sans Arabic', sans-serif;font-weight:700;font-size:26px;color:#FAFBFC;animation:cdig 12s ease-out infinite both}
 .ccode i:nth-child(2){animation-delay:.35s}.ccode i:nth-child(3){animation-delay:.7s}.ccode i:nth-child(4){animation-delay:1.05s}
 @keyframes cdig{0%,3%{opacity:0;transform:translateY(8px)}6%,31%{opacity:1;transform:none}34%,100%{opacity:0}}
 .cok{display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 16px;border-radius:999px;background:#0E97AE;color:#fff;font-weight:700;font-size:14px;animation:cok 12s ease-out infinite both}
 @keyframes cok{0%,13%{opacity:0;transform:scale(.8)}16%,31%{opacity:1;transform:none}34%,100%{opacity:0}}
 .cpaper{position:relative;width:220px;height:156px;border-radius:10px;background:#F6F1E7;color:#0A2A43;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-shadow:0 18px 40px rgba(0,0,0,.4)}
 .cpaper:before{content:"";position:absolute;inset:7px;border:1px solid rgba(184,137,42,.6);border-radius:5px}
-.cpaper b{font-family:TD,serif;font-size:19px}.cpaper span{font-size:10px;color:#4A5B68}.cpaper em{font-style:normal;font-family:TD,serif;font-size:23px}
+.cpaper b{font-family:TD, TDx, serif;font-size:19px}.cpaper span{font-size:10px;color:#4A5B68}.cpaper em{font-style:normal;font-family:TD, TDx, serif;font-size:23px}
 .cpaper svg{position:absolute;left:12px;bottom:10px;width:40px;height:40px}
 .ccert{display:block;width:100%;height:auto;border-radius:6px;box-shadow:0 18px 40px rgba(0,0,0,.45),0 0 0 1px rgba(134,220,234,.2)}
 .cdl{display:inline-flex;align-items:center;height:38px;padding:0 18px;border-radius:999px;background:#FAFBFC;color:#0A2A43;font-weight:700;font-size:14px}
-.cpct{font-family:TD,serif;font-size:76px;line-height:1;color:#86DCEA;text-shadow:0 0 30px rgba(134,220,234,.4)}
+.cpct{font-family:TD, TDx, serif;font-size:76px;line-height:1;color:#86DCEA;text-shadow:0 0 30px rgba(134,220,234,.4)}
 .cbars{display:flex;align-items:flex-end;gap:10px;height:90px}
 .cbars i{width:22px;border-radius:7px 7px 3px 3px;background:linear-gradient(180deg,#86DCEA,#0E97AE)}
 .cpdf{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 16px;border-radius:999px;border:1px solid rgba(134,220,234,.4);color:#86DCEA;font-size:13px}
@@ -238,8 +239,8 @@ span,b,a{text-wrap:pretty}
 .cst{box-sizing:border-box;position:relative;display:flex;gap:18px;align-items:flex-start;padding:22px 24px;border-radius:26px;border:1px solid rgba(134,220,234,.12);overflow:hidden;animation:cstOn 12s linear infinite}
 .cst.c2{animation-delay:-8s}.cst.c3{animation-delay:-4s}
 @keyframes cstOn{0%,30%{opacity:1;background:rgba(134,220,234,.09);border-color:rgba(134,220,234,.4)}34%,96%{opacity:.42;background:rgba(134,220,234,0);border-color:rgba(134,220,234,.12)}100%{opacity:1;background:rgba(134,220,234,.09);border-color:rgba(134,220,234,.4)}}
-.cst .cn{font-family:TD,serif;font-size:26px;color:#86DCEA;flex:none;line-height:1.3}
-.cst b{display:block;font-family:TD,serif;font-size:30px;line-height:1.3;color:#FAFBFC;margin-bottom:6px}
+.cst .cn{font-family:TD, TDx, serif;font-size:26px;color:#86DCEA;flex:none;line-height:1.3}
+.cst b{display:block;font-family:TD, TDx, serif;font-size:30px;line-height:1.3;color:#FAFBFC;margin-bottom:6px}
 .cst span.cd{font-size:18px;line-height:1.8;color:#B9CCD6}
 .cst .cbar{position:absolute;right:0;bottom:0;height:3px;width:100%;background:#86DCEA;transform-origin:100% 50%;animation:cbar 12s linear infinite}
 .cst.c2 .cbar{animation-delay:-8s}.cst.c3 .cbar{animation-delay:-4s}
@@ -252,7 +253,7 @@ export default function LuxCView({ v }) {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
-      <div dir="rtl" ref={v.setRoot} onPointerMove={v.onMove} style={{ position: "relative", overflow: "hidden", fontFamily: "'IBM Plex Sans Arabic', sans-serif", fontWeight: "300", color: "#DCE4E8", background: "#072538", "--mx": "0", "--my": "0", "--px": "50%", "--py": "40%" }}>
+      <div dir="rtl" ref={v.setRoot} onPointerMove={v.onMove} style={{ position: "relative", overflow: "hidden", fontFamily: "TS, 'IBM Plex Sans Arabic', sans-serif", fontWeight: "300", color: "#DCE4E8", background: "#072538", "--mx": "0", "--my": "0", "--px": "50%", "--py": "40%" }}>
         {" "}
         <svg width="0" height="0" aria-hidden="true" style={{ position: "absolute" }}>
           <defs>
@@ -270,7 +271,7 @@ export default function LuxCView({ v }) {
             <pattern id="lcPat" width="150" height="150" patternUnits="userSpaceOnUse">
               <g transform="translate(18 18) scale(.42)">
                 <path d={v.wax} fill="none" stroke="#86DCEA" strokeWidth="2.2" />
-                <text x="50" y="62" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="40" fill="#86DCEA">{"ح"}</text>
+                <text x="50" y="62" textAnchor="middle" fontFamily="TD, TDx, serif" fontWeight="700" fontSize="40" fill="#86DCEA">{"ح"}</text>
               </g>
               <g transform="translate(98 92) scale(.3) rotate(-14 50 50)"><path d={v.wax} fill="none" stroke="#86DCEA" strokeWidth="2.6" /></g>
             </pattern>
@@ -310,13 +311,8 @@ export default function LuxCView({ v }) {
         {" "}
         <nav className="pad topnav" style={{ position: "sticky", top: "0", zIndex: "30", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "22px 64px", fontSize: "16px", background: "linear-gradient(180deg, rgba(7,37,56,.85), rgba(7,37,56,0))", WebkitBackdropFilter: "blur(6px)", backdropFilter: "blur(6px)", animation: "up 1s ease-out 3.6s both" }}>
           <A href="LuxC.dc.html" style={{ display: "inline-flex", alignItems: "center", gap: "10px", textDecoration: "none" }}>
-            <svg width="34" height="34" viewBox="0 0 100 100" aria-hidden="true">
-              <path d={v.wax} fill="rgba(2,24,32,.5)" transform="translate(0 2.6)" />
-              <path d={v.wax} fill="url(#lcT)" />
-              <text x="50" y="59.2" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="40" fill="#05505E" fillOpacity="0.7">{"ح"}</text>
-              <text x="50" y="58" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="40" fill="#FFFFFF">{"ح"}</text>
-            </svg>
-            <span style={{ fontFamily: "TD, serif", fontSize: "20px", color: "#FAFBFC" }}>حيّــاك</span>
+            <Mark size={34} />
+            <span style={{ fontFamily: "TD, TDx, serif", fontSize: "20px", color: "#FAFBFC" }}>حيّــاك</span>
           </A>
           <span className="navl" style={{ display: "flex", gap: "38px", color: "#DCE4E8", fontSize: "17px" }}>
             <A href="#features" style={{ textDecoration: "none" }}>المميزات</A>
@@ -357,7 +353,7 @@ export default function LuxCView({ v }) {
           <div className="pad" style={{ position: "absolute", inset: "0", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "80px 40px 60px" }}>
             <div style={{ position: "relative", display: "inline-flex", flexDirection: "column", alignItems: "stretch", transform: "translate(calc(var(--mx) * 14px), calc(var(--my) * 8px))", transition: "transform .4s ease-out" }}>
               <span aria-hidden="true" style={{ position: "absolute", left: "-25%", right: "-25%", top: "-20%", bottom: "-10%", background: "radial-gradient(ellipse 50% 42% at 50% 50%, rgba(14,151,174,.42), rgba(14,151,174,0) 72%)", animation: "bloomSoft 3s ease-out 1.2s both", pointerEvents: "none" }} />
-              <h1 className="word" style={{ position: "relative", margin: "0", fontFamily: "TD, serif", fontWeight: "700", fontSize: "clamp(110px, min(31vw, 40vh), 540px)", lineHeight: "1.12", color: "#FAFBFC", textShadow: "0 0 22px rgba(134,220,234,.35)", animation: "wordFade 1.8s ease-out .1s both, breatheW 6s ease-in-out 3s infinite", cursor: "default" }}>حيّــاك</h1>
+              <h1 className="word" style={{ position: "relative", margin: "0", fontFamily: "TD, TDx, serif", fontWeight: "700", fontSize: "clamp(110px, min(31vw, 40vh), 540px)", lineHeight: "1.12", color: "#FAFBFC", textShadow: "0 0 22px rgba(134,220,234,.35)", animation: "wordFade 1.8s ease-out .1s both, breatheW 6s ease-in-out 3s infinite", cursor: "default" }}>حيّــاك</h1>
               <span aria-hidden="true" style={{ position: "absolute", top: "0", bottom: "30%", width: "140px", background: "linear-gradient(90deg, rgba(134,220,234,0), rgba(255,255,255,.8), rgba(134,220,234,0))", filter: "blur(18px)", mixBlendMode: "screen", animation: "sweep 1.8s cubic-bezier(.5,0,.2,1) 2.6s both" }} />
               <span className="lat" style={{ position: "relative", display: "flex", justifyContent: "space-between", marginTop: "clamp(12px, 2.4vh, 40px)", fontFamily: "TS, 'IBM Plex Sans Arabic', sans-serif", fontWeight: "700", fontSize: "clamp(26px, min(5vw, 6.4vh), 78px)", letterSpacing: "0", direction: "ltr", color: "#86DCEA" }}>
                 {(v.lat || []).map((l, $i1) => (
@@ -365,7 +361,7 @@ export default function LuxCView({ v }) {
                 ))}
               </span>
             </div>
-            <p className="tag2" style={{ margin: "clamp(26px, 4.4vh, 80px) 0 0", display: "flex", alignItems: "center", justifyContent: "center", gap: ".32em", flexWrap: "wrap", fontFamily: "TD, serif", fontWeight: "700", fontSize: "clamp(36px, 4.4vw, 68px)", lineHeight: "1.3", color: "#FAFBFC" }}>
+            <p className="tag2" style={{ margin: "clamp(26px, 4.4vh, 80px) 0 0", display: "flex", alignItems: "center", justifyContent: "center", gap: ".32em", flexWrap: "wrap", fontFamily: "TD, TDx, serif", fontWeight: "700", fontSize: "clamp(36px, 4.4vw, 68px)", lineHeight: "1.3", color: "#FAFBFC" }}>
               <span className="wd" style={{ animationDelay: "2.85s" }}>كل حضور</span>
               <span className="wd" style={{ animationDelay: "3.1s" }}>يبدأ</span>
               <span className="wd" style={{ position: "relative", display: "inline-block", color: "#86DCEA", textShadow: "0 0 28px rgba(134,220,234,.6)", animationDelay: "3.4s" }}>بدعوة</span>
@@ -385,7 +381,7 @@ export default function LuxCView({ v }) {
           {" "}
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "16px", marginBottom: "36px" }}>
             <span className="rv kick" style={{ animation: "up .9s ease-out .2s both" }}>الدعوة</span>
-            <h2 className="h2m fit" style={{ margin: "0", fontFamily: "TD, serif", "--fs": "min(92px, 7.6vw)", fontSize: "var(--fs)", whiteSpace: "nowrap", lineHeight: "1.3", color: "#FAFBFC" }}>
+            <h2 className="h2m fit" style={{ margin: "0", fontFamily: "TD, TDx, serif", "--fs": "min(92px, 7.6vw)", fontSize: "var(--fs)", whiteSpace: "nowrap", lineHeight: "1.3", color: "#FAFBFC" }}>
               <span className="rv w2" style={{ animationDelay: "0.35s" }}>لكل</span>
               {" "}
               <span className="rv w2" style={{ animationDelay: "0.47s" }}>مناسبة</span>
@@ -423,7 +419,7 @@ export default function LuxCView({ v }) {
                     <path d={v.wax} fill="url(#mg1)" />
                     <circle cx="50" cy="50" r="31" fill="none" stroke="#7E5B14" strokeOpacity=".5" strokeWidth="2.5" />
                     <ellipse cx="36" cy="28" rx="14" ry="6" transform="rotate(-28 36 28)" fill="#FFFFFF" fillOpacity=".3" />
-                    <text x="50" y="59.4" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="26" fill="#FFFFFF">VIP</text>
+                    <text x="50" y="59.4" textAnchor="middle" fontFamily="TD, TDx, serif" fontWeight="700" fontSize="26" fill="#FFFFFF">VIP</text>
                   </svg>
                 </span>
               </div>
@@ -447,7 +443,7 @@ export default function LuxCView({ v }) {
                     <path d={v.wax} fill="url(#mg2)" />
                     <circle cx="50" cy="50" r="31" fill="none" stroke="#04121F" strokeOpacity=".5" strokeWidth="2.5" />
                     <ellipse cx="36" cy="28" rx="14" ry="6" transform="rotate(-28 36 28)" fill="#FFFFFF" fillOpacity=".3" />
-                    <text x="50" y="57.6" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="21" fill="#FFFFFF">متحدث</text>
+                    <text x="50" y="57.6" textAnchor="middle" fontFamily="TD, TDx, serif" fontWeight="700" fontSize="21" fill="#FFFFFF">متحدث</text>
                   </svg>
                 </span>
               </div>
@@ -471,7 +467,7 @@ export default function LuxCView({ v }) {
                     <path d={v.wax} fill="url(#mg3)" />
                     <circle cx="50" cy="50" r="31" fill="none" stroke="#1A3A60" strokeOpacity=".5" strokeWidth="2.5" />
                     <ellipse cx="36" cy="28" rx="14" ry="6" transform="rotate(-28 36 28)" fill="#FFFFFF" fillOpacity=".3" />
-                    <text x="50" y="59.4" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="26" fill="#FFFFFF">ضيف</text>
+                    <text x="50" y="59.4" textAnchor="middle" fontFamily="TD, TDx, serif" fontWeight="700" fontSize="26" fill="#FFFFFF">ضيف</text>
                   </svg>
                 </span>
               </div>
@@ -495,7 +491,7 @@ export default function LuxCView({ v }) {
                     <path d={v.wax} fill="url(#mg4)" />
                     <circle cx="50" cy="50" r="31" fill="none" stroke="#52253C" strokeOpacity=".5" strokeWidth="2.5" />
                     <ellipse cx="36" cy="28" rx="14" ry="6" transform="rotate(-28 36 28)" fill="#FFFFFF" fillOpacity=".3" />
-                    <text x="50" y="58.6" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="24" fill="#FFFFFF">راعي</text>
+                    <text x="50" y="58.6" textAnchor="middle" fontFamily="TD, TDx, serif" fontWeight="700" fontSize="24" fill="#FFFFFF">راعي</text>
                   </svg>
                 </span>
               </div>
@@ -526,8 +522,8 @@ export default function LuxCView({ v }) {
                     <circle cx="50" cy="50" r="31" fill="none" stroke="#05505E" strokeOpacity="0.45" strokeWidth="2.5" />
                     <circle cx="50" cy="50.8" r="31" fill="none" stroke="#FFFFFF" strokeOpacity="0.45" strokeWidth="1.2" />
                     <ellipse cx="36" cy="28" rx="15" ry="7" transform="rotate(-28 36 28)" fill="#FFFFFF" fillOpacity="0.3" />
-                    <text x="50" y="59.2" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="40" fill="#05505E" fillOpacity="0.7">{"ح"}</text>
-                    <text x="50" y="58" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="40" fill="#FFFFFF">{"ح"}</text>
+                    <text x="50" y="59.2" textAnchor="middle" fontFamily="TD, TDx, serif" fontWeight="700" fontSize="40" fill="#05505E" fillOpacity="0.7">{"ح"}</text>
+                    <text x="50" y="58" textAnchor="middle" fontFamily="TD, TDx, serif" fontWeight="700" fontSize="40" fill="#FFFFFF">{"ح"}</text>
                   </svg>
                   {" "}
                 </div>
@@ -541,7 +537,7 @@ export default function LuxCView({ v }) {
           {" "}
         </section>
         {" "}
-        <section id="features" className="pad fblend" style={{ position: "relative", overflow: "hidden", padding: "760px 64px 640px", background: "radial-gradient(40% 900px at 85% 1400px, rgba(134,220,234,.4), rgba(134,220,234,0) 70%), radial-gradient(40% 25% at 5% 55%, rgba(14,151,174,.16), rgba(14,151,174,0) 70%), linear-gradient(180deg, #0B3550 0px, #0B3550 190px, #103B57 280px, #1E4A65 370px, #366178 460px, #557D91 550px, #7C9EAE 640px, #A5BFCA 730px, #CBDAE1 820px, #E4ECF0 900px, #F3F6F8 980px, #FAFBFC 40%, #F3F6F8 calc(100% - 940px), #E2EAEE calc(100% - 860px), #C6D6DD calc(100% - 770px), #9DB8C4 calc(100% - 670px), #7395A6 calc(100% - 570px), #4D7488 calc(100% - 470px), #2F5A71 calc(100% - 370px), #1A4862 calc(100% - 260px), #0F3F5B calc(100% - 140px), #0A3A55 100%)", color: "#0A2A43", display: "flex", flexDirection: "column", gap: "130px" }}>
+        <section id="features" className="pad fblend" style={{ position: "relative", overflow: "hidden", padding: "440px 64px 360px", background: "radial-gradient(40% 900px at 85% 1000px, rgba(134,220,234,.4), rgba(134,220,234,0) 70%), radial-gradient(40% 25% at 5% 55%, rgba(14,151,174,.16), rgba(14,151,174,0) 70%), linear-gradient(180deg, #0B3550 0px, #0B3550 110px, #103B57 160px, #1E4A65 215px, #366178 280px, #557D91 360px, #7C9EAE 480px, #A5BFCA 570px, #CBDAE1 630px, #E4ECF0 680px, #F3F6F8 730px, #FAFBFC 40%, #F3F6F8 calc(100% - 526px), #E2EAEE calc(100% - 482px), #C6D6DD calc(100% - 431px), #9DB8C4 calc(100% - 375px), #7395A6 calc(100% - 319px), #4D7488 calc(100% - 263px), #2F5A71 calc(100% - 207px), #1A4862 calc(100% - 146px), #0F3F5B calc(100% - 78px), #0A3A55 100%)", color: "#0A2A43", display: "flex", flexDirection: "column", gap: "130px" }}>
           <div className="mqw" aria-hidden="true" style={{ position: "absolute", left: "0", right: "0", top: "40px", width: "100%" }}>
             <div className="mqr m1">
               <div className="mqt">
@@ -587,7 +583,7 @@ export default function LuxCView({ v }) {
           <span aria-hidden="true" className="drift" style={{ left: "-8%", top: "20%", width: "700px", height: "700px", background: "radial-gradient(closest-side, rgba(134,220,234,.4), rgba(134,220,234,0))" }} />
           <span aria-hidden="true" className="drift" style={{ right: "-10%", top: "55%", width: "760px", height: "760px", background: "radial-gradient(closest-side, rgba(14,151,174,.16), rgba(14,151,174,0))", animationDuration: "28s", animationDirection: "reverse" }} />
           <div data-rv="1" style={{ display: "flex", flexDirection: "column", gap: "16px", alignItems: "center", textAlign: "center" }}>
-            <h2 className="h2m fit" style={{ margin: "0", fontFamily: "TD, serif", "--fs": "min(76px, 6.1vw)", fontSize: "var(--fs)", whiteSpace: "nowrap", lineHeight: "1.3", color: "#0A2A43" }}>
+            <h2 className="h2m fit" style={{ margin: "0", fontFamily: "TD, TDx, serif", "--fs": "min(76px, 6.1vw)", fontSize: "var(--fs)", whiteSpace: "nowrap", lineHeight: "1.3", color: "#0A2A43" }}>
               <span className="rv w2" style={{ animationDelay: "0.30s" }}>كل</span>
               {" "}
               <span className="rv w2" style={{ animationDelay: "0.42s" }}>اللي</span>
@@ -596,7 +592,7 @@ export default function LuxCView({ v }) {
               {" "}
               <span className="rv w2" style={{ animationDelay: "0.66s" }}>دعوتك</span>
               {" "}
-              <span className="hlw" style={{ color: "#0E97AE" }}>
+              <span className="hlw hlww">
                 <span className="rv w2" style={{ animationDelay: "0.78s" }}>في</span>
                 {" "}
                 <span className="rv w2" style={{ animationDelay: "0.90s" }}>مكان</span>
@@ -608,9 +604,9 @@ export default function LuxCView({ v }) {
           <div data-rv="1" className="frow" style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(0,1.15fr)", gap: "70px", alignItems: "center" }}>
             <div className="rv" style={{ direction: "rtl", display: "flex", flexDirection: "column", gap: "18px", animation: "up .9s cubic-bezier(.2,.7,.2,1) .1s both" }}>
               <span style={{ display: "inline-flex", alignItems: "center", gap: "12px" }}>
-                <span style={{ width: "46px", height: "46px", borderRadius: "50%", background: "#0A2A43", color: "#86DCEA", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "TD, serif", fontSize: "20px" }}>{"1"}</span>
+                <span style={{ width: "46px", height: "46px", borderRadius: "50%", background: "#0A2A43", color: "#86DCEA", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "TD, TDx, serif", fontSize: "20px" }}>{"1"}</span>
               </span>
-              <h3 style={{ margin: "0", fontFamily: "TD, serif", fontSize: "56px", fontWeight: "700", lineHeight: "1.25", color: "#0A2A43" }}>من ملف واحد دعوة لكل ضيف</h3>
+              <h3 style={{ margin: "0", fontFamily: "TD, TDx, serif", fontSize: "56px", fontWeight: "700", lineHeight: "1.25", color: "#0A2A43" }}>من ملف واحد دعوة لكل ضيف</h3>
               <p style={{ margin: "0", fontSize: "23px", lineHeight: "1.85", color: "#3A4B58", maxWidth: "520px" }}>ارفع قائمة ضيوفك مرة وحدة، ونجهّز لكل واحد دعوته باسمه وبالختم اللي يناسبه</p>
               <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                 <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", height: "42px", padding: "0 18px", borderRadius: "999px", background: "#E6F6F9", color: "#086577", fontSize: "18px", fontWeight: "500" }}><span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#0E97AE" }} />Excel أو CSV</span>
@@ -649,12 +645,12 @@ export default function LuxCView({ v }) {
                     {(v.xc || []).map((c, $i3) => (
                       <div key={c?.key ?? $i3} style={S(`${txt(c?.st)}`)}>
                           <span style={{ fontSize: "9px", color: "#4A5B68", letterSpacing: "1px" }}>نتشرّف بدعوة</span>
-                          <b style={{ fontFamily: "TD, serif", fontSize: "18px", fontWeight: "700", color: "#0A2A43" }}>{c?.n}</b>
+                          <b style={{ fontFamily: "TD, TDx, serif", fontSize: "18px", fontWeight: "700", color: "#0A2A43" }}>{c?.n}</b>
                           <span style={{ height: "4px", width: "60%", borderRadius: "3px", background: "#DCE4E8" }} />
                           <svg width="40" height="40" viewBox="0 0 100 100" aria-hidden="true" style={{ position: "absolute", left: "-12px", bottom: "-12px" }}>
                             <path d={v.wax} fill="rgba(2,24,32,.5)" transform="translate(0 2.6)" />
                             <path d={v.wax} fill={c?.c} />
-                            <text x="50" y="59" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize={c?.fs} fill="#FFFFFF">{c?.s}</text>
+                            <text x="50" y="59" textAnchor="middle" fontFamily="TD, TDx, serif" fontWeight="700" fontSize={c?.fs} fill="#FFFFFF">{c?.s}</text>
                           </svg>
                         </div>
                     ))}
@@ -667,9 +663,9 @@ export default function LuxCView({ v }) {
           <div data-rv="1" className="frow" style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(0,1.15fr)", gap: "70px", alignItems: "center", direction: "ltr" }}>
             <div className="rv" style={{ direction: "rtl", display: "flex", flexDirection: "column", gap: "18px", animation: "up .9s cubic-bezier(.2,.7,.2,1) .1s both" }}>
               <span style={{ display: "inline-flex", alignItems: "center", gap: "12px" }}>
-                <span style={{ width: "46px", height: "46px", borderRadius: "50%", background: "#0A2A43", color: "#86DCEA", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "TD, serif", fontSize: "20px" }}>{"2"}</span>
+                <span style={{ width: "46px", height: "46px", borderRadius: "50%", background: "#0A2A43", color: "#86DCEA", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "TD, TDx, serif", fontSize: "20px" }}>{"2"}</span>
               </span>
-              <h3 style={{ margin: "0", fontFamily: "TD, serif", fontSize: "56px", fontWeight: "700", lineHeight: "1.25", color: "#0A2A43" }}>ترسلها بالطريقة اللي تناسبك</h3>
+              <h3 style={{ margin: "0", fontFamily: "TD, TDx, serif", fontSize: "56px", fontWeight: "700", lineHeight: "1.25", color: "#0A2A43" }}>ترسلها بالطريقة اللي تناسبك</h3>
               <p style={{ margin: "0", fontSize: "23px", lineHeight: "1.85", color: "#3A4B58", maxWidth: "520px" }}>رابط خاص لكل ضيف ترسله من أي تطبيق تبيه، أو خلّ حيّــاك ترسلها عنك بالواتساب أو الإيميل</p>
               <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                 <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", height: "42px", padding: "0 18px", borderRadius: "999px", background: "#E6F6F9", color: "#086577", fontSize: "18px", fontWeight: "500" }}><span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#0E97AE" }} />رابط لكل ضيف</span>
@@ -772,9 +768,9 @@ export default function LuxCView({ v }) {
           <div data-rv="1" className="frow" style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(0,1.15fr)", gap: "70px", alignItems: "center" }}>
             <div className="rv" style={{ direction: "rtl", display: "flex", flexDirection: "column", gap: "18px", animation: "up .9s cubic-bezier(.2,.7,.2,1) .1s both" }}>
               <span style={{ display: "inline-flex", alignItems: "center", gap: "12px" }}>
-                <span style={{ width: "46px", height: "46px", borderRadius: "50%", background: "#0A2A43", color: "#86DCEA", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "TD, serif", fontSize: "20px" }}>{"3"}</span>
+                <span style={{ width: "46px", height: "46px", borderRadius: "50%", background: "#0A2A43", color: "#86DCEA", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "TD, TDx, serif", fontSize: "20px" }}>{"3"}</span>
               </span>
-              <h3 style={{ margin: "0", fontFamily: "TD, serif", fontSize: "56px", fontWeight: "700", lineHeight: "1.25", color: "#0A2A43" }}>ردّه يوصلك في لحظته</h3>
+              <h3 style={{ margin: "0", fontFamily: "TD, TDx, serif", fontSize: "56px", fontWeight: "700", lineHeight: "1.25", color: "#0A2A43" }}>ردّه يوصلك في لحظته</h3>
               <p style={{ margin: "0", fontSize: "23px", lineHeight: "1.85", color: "#3A4B58", maxWidth: "520px" }}>ضيفك يأكّد بلمسة، وأنت تشوف أول بأول مين أكّد ومين اعتذر ومين باقي</p>
               <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                 <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", height: "42px", padding: "0 18px", borderRadius: "999px", background: "#E6F6F9", color: "#086577", fontSize: "18px", fontWeight: "500" }}><span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#0E97AE" }} />تحديث مباشر</span>
@@ -795,7 +791,7 @@ export default function LuxCView({ v }) {
                     </span>
                   </span>
                   <span style={{ display: "flex", alignItems: "baseline", gap: "10px" }}>
-                    <b className="cnt" style={{ fontFamily: "TD, serif", fontSize: "72px", lineHeight: "1", color: "#0E97AE" }} />
+                    <b className="cnt" style={{ fontFamily: "TD, TDx, serif", fontSize: "72px", lineHeight: "1", color: "#0E97AE" }} />
                     <span style={{ fontSize: "18px", color: "#0A2A43" }}>أكّدوا حضورهم</span>
                     <span style={{ fontSize: "16px", color: "#4A5B68", marginRight: "auto" }}>من 120</span>
                   </span>
@@ -929,7 +925,7 @@ export default function LuxCView({ v }) {
                   <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                     {(v.rep || []).map((t, $i4) => (
                       <div key={t?.key ?? $i4} style={S(`${txt(t?.st)}`)}>
-                          <span style={S(`width: 34px; height: 34px; border-radius: 50%; background: ${txt(t?.c)}; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-family: TD, serif; font-size: 16px; flex-shrink: 0;`)}>{t?.i}</span>
+                          <span style={S(`width: 34px; height: 34px; border-radius: 50%; background: ${txt(t?.c)}; color: #FFFFFF; display: flex; align-items: center; justify-content: center; font-family: TD, TDx, serif; font-size: 16px; flex-shrink: 0;`)}>{t?.i}</span>
                           <b style={{ flex: "1", fontSize: "16px", fontWeight: "500", color: "#0A2A43" }}>{t?.n}</b>
                           <span style={S(`${txt(t?.bs)}`)}>{t?.m}</span>
                           <span style={{ fontSize: "13px", color: "#8FA0AC", width: "54px", textAlign: "left" }}>{t?.w}</span>
@@ -944,9 +940,9 @@ export default function LuxCView({ v }) {
           <div data-rv="1" className="frow" style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(0,1.15fr)", gap: "70px", alignItems: "center", direction: "ltr" }}>
             <div className="rv" style={{ direction: "rtl", display: "flex", flexDirection: "column", gap: "18px", animation: "up .9s cubic-bezier(.2,.7,.2,1) .1s both" }}>
               <span style={{ display: "inline-flex", alignItems: "center", gap: "12px" }}>
-                <span style={{ width: "46px", height: "46px", borderRadius: "50%", background: "#0A2A43", color: "#86DCEA", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "TD, serif", fontSize: "20px" }}>{"4"}</span>
+                <span style={{ width: "46px", height: "46px", borderRadius: "50%", background: "#0A2A43", color: "#86DCEA", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "TD, TDx, serif", fontSize: "20px" }}>{"4"}</span>
               </span>
-              <h3 style={{ margin: "0", fontFamily: "TD, serif", fontSize: "56px", fontWeight: "700", lineHeight: "1.25", color: "#0A2A43" }}>تذكير في وقته</h3>
+              <h3 style={{ margin: "0", fontFamily: "TD, TDx, serif", fontSize: "56px", fontWeight: "700", lineHeight: "1.25", color: "#0A2A43" }}>تذكير في وقته</h3>
               <p style={{ margin: "0", fontSize: "23px", lineHeight: "1.85", color: "#3A4B58", maxWidth: "520px" }}>قبل ما ترسل تختار: حيّــاك تذكّر ضيوفك، أو ننبّهك وقت التذكير وترسله أنت برسالة جاهزة</p>
               <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                 <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", height: "42px", padding: "0 18px", borderRadius: "999px", background: "#E6F6F9", color: "#086577", fontSize: "18px", fontWeight: "500" }}><span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#0E97AE" }} />قبل بيوم</span>
@@ -989,9 +985,9 @@ export default function LuxCView({ v }) {
           <div data-rv="1" className="frow" style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(0,1.15fr)", gap: "70px", alignItems: "center" }}>
             <div className="rv" style={{ direction: "rtl", display: "flex", flexDirection: "column", gap: "18px", animation: "up .9s cubic-bezier(.2,.7,.2,1) .1s both" }}>
               <span style={{ display: "inline-flex", alignItems: "center", gap: "12px" }}>
-                <span style={{ width: "46px", height: "46px", borderRadius: "50%", background: "#0A2A43", color: "#86DCEA", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "TD, serif", fontSize: "20px" }}>{"5"}</span>
+                <span style={{ width: "46px", height: "46px", borderRadius: "50%", background: "#0A2A43", color: "#86DCEA", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "TD, TDx, serif", fontSize: "20px" }}>{"5"}</span>
               </span>
-              <h3 style={{ margin: "0", fontFamily: "TD, serif", fontSize: "56px", fontWeight: "700", lineHeight: "1.25", color: "#0A2A43" }}>عدّل متى ما احتجت</h3>
+              <h3 style={{ margin: "0", fontFamily: "TD, TDx, serif", fontSize: "56px", fontWeight: "700", lineHeight: "1.25", color: "#0A2A43" }}>عدّل متى ما احتجت</h3>
               <p style={{ margin: "0", fontSize: "23px", lineHeight: "1.85", color: "#3A4B58", maxWidth: "520px" }}>لو تغيّر الموعد أو المكان عدّله مرة وحدة، ويوصل التحديث لكل ضيوفك على نفس الرابط</p>
               <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                 <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", height: "42px", padding: "0 18px", borderRadius: "999px", background: "#E6F6F9", color: "#086577", fontSize: "18px", fontWeight: "500" }}><span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#0E97AE" }} />بدون إعادة إرسال</span>
@@ -1031,9 +1027,9 @@ export default function LuxCView({ v }) {
           <div data-rv="1" className="frow" style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(0,1.15fr)", gap: "70px", alignItems: "center", direction: "ltr" }}>
             <div className="rv" style={{ direction: "rtl", display: "flex", flexDirection: "column", gap: "18px", animation: "up .9s cubic-bezier(.2,.7,.2,1) .1s both" }}>
               <span style={{ display: "inline-flex", alignItems: "center", gap: "12px" }}>
-                <span style={{ width: "46px", height: "46px", borderRadius: "50%", background: "#0A2A43", color: "#86DCEA", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "TD, serif", fontSize: "20px" }}>{"6"}</span>
+                <span style={{ width: "46px", height: "46px", borderRadius: "50%", background: "#0A2A43", color: "#86DCEA", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "TD, TDx, serif", fontSize: "20px" }}>{"6"}</span>
               </span>
-              <h3 style={{ margin: "0", fontFamily: "TD, serif", fontSize: "56px", fontWeight: "700", lineHeight: "1.25", color: "#0A2A43" }}>تبقى معه بعد ما يفتحها</h3>
+              <h3 style={{ margin: "0", fontFamily: "TD, TDx, serif", fontSize: "56px", fontWeight: "700", lineHeight: "1.25", color: "#0A2A43" }}>تبقى معه بعد ما يفتحها</h3>
               <p style={{ margin: "0", fontSize: "23px", lineHeight: "1.85", color: "#3A4B58", maxWidth: "520px" }}>يضيف الموعد لتقويمه، ويوصل للمكان بلمسة، ويحفظها بحركتها يرجع لها وقت ما يبي</p>
               <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
                 <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", height: "42px", padding: "0 18px", borderRadius: "999px", background: "#E6F6F9", color: "#086577", fontSize: "18px", fontWeight: "500" }}><span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#0E97AE" }} />تقويم</span>
@@ -1221,7 +1217,7 @@ export default function LuxCView({ v }) {
           <span aria-hidden="true" className="drift" style={{ right: "-6%", top: "22%", width: "560px", height: "560px", background: "radial-gradient(closest-side, rgba(134,220,234,.2), rgba(134,220,234,0))", animationDuration: "26s", animationDirection: "reverse" }} />
           <div className="rv" style={{ display: "flex", flexDirection: "column", gap: "14px", alignItems: "center", textAlign: "center", animation: "up .9s ease-out .1s both" }}>
             <span className="kick">كيف تشتغل</span>
-            <h2 className="h2m fit" style={{ margin: "0", fontFamily: "TD, serif", "--fs": "min(76px, 7.4vw)", fontSize: "var(--fs)", whiteSpace: "nowrap", color: "#FAFBFC" }}>
+            <h2 className="h2m fit" style={{ margin: "0", fontFamily: "TD, TDx, serif", "--fs": "min(76px, 7.4vw)", fontSize: "var(--fs)", whiteSpace: "nowrap", color: "#FAFBFC" }}>
               <span className="rv w2" style={{ animationDelay: "0.30s" }}>ثلاث</span>
               {" "}
               <span className="rv w2" style={{ animationDelay: "0.42s" }}>خطوات</span>
@@ -1235,7 +1231,7 @@ export default function LuxCView({ v }) {
           </div>
           <div className="stps" style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) 50px minmax(0,1fr) 50px minmax(0,1fr)", gap: "10px", alignItems: "center", maxWidth: "1280px", width: "100%", margin: "0 auto" }}>
             <div className="rv stp" style={{ position: "relative", display: "flex", flexDirection: "column", gap: "16px", padding: "30px 30px 34px", borderRadius: "34px", background: "linear-gradient(160deg, rgba(255,255,255,.1), rgba(255,255,255,.025))", boxShadow: "inset 0 1px 0 rgba(255,255,255,.12), 0 40px 80px rgba(0,0,0,.3)", animation: "up 1s cubic-bezier(.2,.7,.2,1) 0.30s both" }}>
-              <span style={{ position: "absolute", top: "22px", left: "26px", fontFamily: "TD, serif", fontSize: "64px", lineHeight: "1", color: "rgba(134,220,234,.28)" }}>01</span>
+              <span style={{ position: "absolute", top: "22px", left: "26px", fontFamily: "TD, TDx, serif", fontSize: "64px", lineHeight: "1", color: "rgba(134,220,234,.28)" }}>01</span>
               <div style={{ position: "relative", height: "170px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <span style={{ position: "absolute", width: "82px", height: "120px", borderRadius: "16px", background: "radial-gradient(120% 80% at 70% 0%,#123E5C,#04121F)", boxShadow: "0 16px 30px rgba(0,0,0,.35)", transform: "translateX(70px) rotate(10deg)", animation: "floatY 5s ease-in-out infinite" }} />
                 <span style={{ position: "absolute", width: "82px", height: "120px", borderRadius: "16px", background: "radial-gradient(120% 80% at 70% 0%,#3A0F18,#0A0205)", boxShadow: "0 16px 30px rgba(0,0,0,.35)", transform: "translateX(-70px) rotate(-10deg)", animation: "floatY 5s ease-in-out .8s infinite" }} />
@@ -1243,17 +1239,17 @@ export default function LuxCView({ v }) {
                 <svg width="54" height="54" viewBox="0 0 100 100" aria-hidden="true" style={{ position: "absolute", left: "calc(50% - 60px)", bottom: "10px", animation: "stampIn .9s cubic-bezier(.3,.7,.2,1) 1s both" }}>
                   <path d={v.wax} fill="rgba(2,24,32,.5)" transform="translate(0 2.6)" />
                   <path d={v.wax} fill="#B8892A" />
-                  <text x="50" y="60" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="26" fill="#FFFFFF">VIP</text>
+                  <text x="50" y="60" textAnchor="middle" fontFamily="TD, TDx, serif" fontWeight="700" fontSize="26" fill="#FFFFFF">VIP</text>
                 </svg>
               </div>
-              <b style={{ fontFamily: "TD, serif", fontSize: "34px", fontWeight: "700", color: "#FAFBFC" }}>اختر التصميم</b>
+              <b style={{ fontFamily: "TD, TDx, serif", fontSize: "34px", fontWeight: "700", color: "#FAFBFC" }}>اختر التصميم</b>
               <span style={{ fontSize: "19px", lineHeight: "1.85", color: "#DCE4E8" }}>نمط من أنماطنا أو تصميمكم، وفعّل الحضور والشهادة إذا تبيها</span>
             </div>
             <span className="rv arr" aria-hidden="true" style={{ display: "flex", alignItems: "center", justifyContent: "center", animation: "up .8s ease-out 0.55s both" }}>
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#86DCEA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ filter: "drop-shadow(0 0 10px rgba(134,220,234,.8))", animation: "nudgeX 1.6s ease-in-out infinite" }}><path d="M15 5l-7 7 7 7" /></svg>
             </span>
             <div className="rv stp" style={{ position: "relative", display: "flex", flexDirection: "column", gap: "16px", padding: "30px 30px 34px", borderRadius: "34px", background: "linear-gradient(160deg, rgba(255,255,255,.1), rgba(255,255,255,.025))", boxShadow: "inset 0 1px 0 rgba(255,255,255,.12), 0 40px 80px rgba(0,0,0,.3)", animation: "up 1s cubic-bezier(.2,.7,.2,1) 0.55s both" }}>
-              <span style={{ position: "absolute", top: "22px", left: "26px", fontFamily: "TD, serif", fontSize: "64px", lineHeight: "1", color: "rgba(134,220,234,.28)" }}>02</span>
+              <span style={{ position: "absolute", top: "22px", left: "26px", fontFamily: "TD, TDx, serif", fontSize: "64px", lineHeight: "1", color: "rgba(134,220,234,.28)" }}>02</span>
               <div style={{ position: "relative", height: "170px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <div style={{ width: "210px", borderRadius: "16px", background: "#FAFBFC", padding: "10px", display: "flex", flexDirection: "column", gap: "4px", boxShadow: "0 20px 40px rgba(0,0,0,.35)" }}>
                   <span style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "13px", color: "#0A2A43", paddingBottom: "4px" }}>
@@ -1265,19 +1261,19 @@ export default function LuxCView({ v }) {
                   ))}
                 </div>
               </div>
-              <b style={{ fontFamily: "TD, serif", fontSize: "34px", fontWeight: "700", color: "#FAFBFC" }}>أضف ضيوفك</b>
+              <b style={{ fontFamily: "TD, TDx, serif", fontSize: "34px", fontWeight: "700", color: "#FAFBFC" }}>أضف ضيوفك</b>
               <span style={{ fontSize: "19px", lineHeight: "1.85", color: "#DCE4E8" }}>ارفع ملف Excel واحد، وكل ضيف تطلع له دعوته باسمه</span>
             </div>
             <span className="rv arr" aria-hidden="true" style={{ display: "flex", alignItems: "center", justifyContent: "center", animation: "up .8s ease-out 0.80s both" }}>
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#86DCEA" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ filter: "drop-shadow(0 0 10px rgba(134,220,234,.8))", animation: "nudgeX 1.6s ease-in-out infinite" }}><path d="M15 5l-7 7 7 7" /></svg>
             </span>
             <div className="rv stp" style={{ position: "relative", display: "flex", flexDirection: "column", gap: "16px", padding: "30px 30px 34px", borderRadius: "34px", background: "linear-gradient(160deg, rgba(255,255,255,.1), rgba(255,255,255,.025))", boxShadow: "inset 0 1px 0 rgba(255,255,255,.12), 0 40px 80px rgba(0,0,0,.3)", animation: "up 1s cubic-bezier(.2,.7,.2,1) 0.80s both" }}>
-              <span style={{ position: "absolute", top: "22px", left: "26px", fontFamily: "TD, serif", fontSize: "64px", lineHeight: "1", color: "rgba(134,220,234,.28)" }}>03</span>
+              <span style={{ position: "absolute", top: "22px", left: "26px", fontFamily: "TD, TDx, serif", fontSize: "64px", lineHeight: "1", color: "rgba(134,220,234,.28)" }}>03</span>
               <div style={{ position: "relative", height: "170px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <div style={{ position: "relative", width: "86px", height: "172px", borderRadius: "20px", background: "radial-gradient(120% 70% at 70% 0%,#123E5C,#0A2A43 55%,#04121F)", boxShadow: "0 0 0 4px #031420, 0 0 0 5px rgba(134,220,234,.3), 0 20px 40px rgba(0,0,0,.4)", overflow: "hidden" }}>
                   <span style={{ position: "absolute", left: "50%", top: "7px", width: "26px", height: "7px", marginLeft: "-13px", borderRadius: "999px", background: "#020609" }} />
                   <span style={{ position: "absolute", left: "9px", right: "9px", top: "26px", height: "78px", borderRadius: "12px", background: "#FAFBFC", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "6px" }}>
-                    <span style={{ width: "22px", height: "22px", borderRadius: "999px", background: "#0E97AE", color: "#fff", fontFamily: "TD, serif", fontSize: "13px", display: "flex", alignItems: "center", justifyContent: "center" }}>{"ح"}</span>
+                    <span style={{ width: "22px", height: "22px", borderRadius: "999px", background: "#0E97AE", color: "#fff", fontFamily: "TD, TDx, serif", fontSize: "13px", display: "flex", alignItems: "center", justifyContent: "center" }}>{"ح"}</span>
                     <span style={{ width: "44px", height: "5px", borderRadius: "999px", background: "#0A2A43" }} />
                     <span style={{ width: "30px", height: "4px", borderRadius: "999px", background: "#B8C6CE" }} />
                   </span>
@@ -1285,7 +1281,7 @@ export default function LuxCView({ v }) {
                 </div>
                 <span style={{ position: "absolute", left: "calc(50% + 40px)", top: "20px", padding: "8px 12px", borderRadius: "14px", background: "#FAFBFC", color: "#0A2A43", fontSize: "12px", fontWeight: "500", boxShadow: "0 10px 24px rgba(0,0,0,.3)", whiteSpace: "nowrap", animation: "up .6s ease-out 1.9s both" }}>74 أكّدوا</span>
               </div>
-              <b style={{ fontFamily: "TD, serif", fontSize: "34px", fontWeight: "700", color: "#FAFBFC" }}>أرسل وتابع</b>
+              <b style={{ fontFamily: "TD, TDx, serif", fontSize: "34px", fontWeight: "700", color: "#FAFBFC" }}>أرسل وتابع</b>
               <span style={{ fontSize: "19px", lineHeight: "1.85", color: "#DCE4E8" }}>أرسلها بالطريقة اللي تحبها، وتابع الردود والحضور أول بأول</span>
             </div>
           </div>
@@ -1295,7 +1291,7 @@ export default function LuxCView({ v }) {
           <span aria-hidden="true" style={{ position: "absolute", left: "0", right: "0", top: "0", height: "320px", background: "linear-gradient(180deg, #082C44, rgba(8,44,68,0))", pointerEvents: "none" }} />
           <div className="rv" style={{ display: "flex", flexDirection: "column", gap: "14px", alignItems: "center", textAlign: "center", animation: "up .9s ease-out .1s both" }}>
             <span className="kick">بعد الدعوة</span>
-            <h2 className="h2m fit" style={{ margin: "0", fontFamily: "TD, serif", "--fs": "min(72px, 7vw)", fontSize: "var(--fs)", whiteSpace: "nowrap", color: "#FAFBFC" }}>
+            <h2 className="h2m fit" style={{ margin: "0", fontFamily: "TD, TDx, serif", "--fs": "min(72px, 7vw)", fontSize: "var(--fs)", whiteSpace: "nowrap", color: "#FAFBFC" }}>
               <span className="rv w2" style={{ animationDelay: "0.30s" }}>من</span>
               {" "}
               <span className="rv w2" style={{ animationDelay: "0.42s" }}>الحضور</span>
@@ -1395,7 +1391,7 @@ export default function LuxCView({ v }) {
                 <path d={v.wax} fill="url(#cg0)" />
                 <circle cx="50" cy="50" r="31" fill="none" stroke="#086577" strokeOpacity=".5" strokeWidth="2.5" />
                 <ellipse cx="36" cy="28" rx="14" ry="6" transform="rotate(-28 36 28)" fill="#FFFFFF" fillOpacity=".3" />
-                <text x="50" y="58.6" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="24" fill="#FFFFFF">مدعو</text>
+                <text x="50" y="58.6" textAnchor="middle" fontFamily="TD, TDx, serif" fontWeight="700" fontSize="24" fill="#FFFFFF">مدعو</text>
               </svg>
             </span>
             <span className="cs rv" style={{ "--y": "10px", animation: "csIn 1s cubic-bezier(.2,.8,.2,1) 0.19s both, miniF 7s ease-in-out 1.4s infinite" }}>
@@ -1411,7 +1407,7 @@ export default function LuxCView({ v }) {
                 <path d={v.wax} fill="url(#cg1)" />
                 <circle cx="50" cy="50" r="31" fill="none" stroke="#1A3A60" strokeOpacity=".5" strokeWidth="2.5" />
                 <ellipse cx="36" cy="28" rx="14" ry="6" transform="rotate(-28 36 28)" fill="#FFFFFF" fillOpacity=".3" />
-                <text x="50" y="59.4" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="26" fill="#FFFFFF">ضيف</text>
+                <text x="50" y="59.4" textAnchor="middle" fontFamily="TD, TDx, serif" fontWeight="700" fontSize="26" fill="#FFFFFF">ضيف</text>
               </svg>
             </span>
             <span className="cs rv" style={{ "--y": "0px", animation: "csIn 1s cubic-bezier(.2,.8,.2,1) 0.28s both, miniF 8s ease-in-out 1.6s infinite" }}>
@@ -1427,7 +1423,7 @@ export default function LuxCView({ v }) {
                 <path d={v.wax} fill="url(#cg2)" />
                 <circle cx="50" cy="50" r="31" fill="none" stroke="#285445" strokeOpacity=".5" strokeWidth="2.5" />
                 <ellipse cx="36" cy="28" rx="14" ry="6" transform="rotate(-28 36 28)" fill="#FFFFFF" fillOpacity=".3" />
-                <text x="50" y="59.4" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="26" fill="#FFFFFF">عضو</text>
+                <text x="50" y="59.4" textAnchor="middle" fontFamily="TD, TDx, serif" fontWeight="700" fontSize="26" fill="#FFFFFF">عضو</text>
               </svg>
             </span>
             <span className="cs rv" style={{ "--y": "-6px", animation: "csIn 1s cubic-bezier(.2,.8,.2,1) 0.37s both, miniF 6s ease-in-out 1.8s infinite" }}>
@@ -1443,7 +1439,7 @@ export default function LuxCView({ v }) {
                 <path d={v.wax} fill="url(#cg3)" />
                 <circle cx="50" cy="50" r="31" fill="none" stroke="#04121F" strokeOpacity=".5" strokeWidth="2.5" />
                 <ellipse cx="36" cy="28" rx="14" ry="6" transform="rotate(-28 36 28)" fill="#FFFFFF" fillOpacity=".3" />
-                <text x="50" y="57.6" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="21" fill="#FFFFFF">متحدث</text>
+                <text x="50" y="57.6" textAnchor="middle" fontFamily="TD, TDx, serif" fontWeight="700" fontSize="21" fill="#FFFFFF">متحدث</text>
               </svg>
             </span>
             <span className="cs rv" style={{ "--y": "-6px", animation: "csIn 1s cubic-bezier(.2,.8,.2,1) 0.46s both, miniF 7s ease-in-out 2.0s infinite" }}>
@@ -1459,7 +1455,7 @@ export default function LuxCView({ v }) {
                 <path d={v.wax} fill="url(#cg4)" />
                 <circle cx="50" cy="50" r="31" fill="none" stroke="#7E5B14" strokeOpacity=".5" strokeWidth="2.5" />
                 <ellipse cx="36" cy="28" rx="14" ry="6" transform="rotate(-28 36 28)" fill="#FFFFFF" fillOpacity=".3" />
-                <text x="50" y="59.4" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="26" fill="#FFFFFF">VIP</text>
+                <text x="50" y="59.4" textAnchor="middle" fontFamily="TD, TDx, serif" fontWeight="700" fontSize="26" fill="#FFFFFF">VIP</text>
               </svg>
             </span>
             <span className="cs rv" style={{ "--y": "0px", animation: "csIn 1s cubic-bezier(.2,.8,.2,1) 0.55s both, miniF 8s ease-in-out 2.2s infinite" }}>
@@ -1475,7 +1471,7 @@ export default function LuxCView({ v }) {
                 <path d={v.wax} fill="url(#cg5)" />
                 <circle cx="50" cy="50" r="31" fill="none" stroke="#52253C" strokeOpacity=".5" strokeWidth="2.5" />
                 <ellipse cx="36" cy="28" rx="14" ry="6" transform="rotate(-28 36 28)" fill="#FFFFFF" fillOpacity=".3" />
-                <text x="50" y="58.6" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="24" fill="#FFFFFF">راعي</text>
+                <text x="50" y="58.6" textAnchor="middle" fontFamily="TD, TDx, serif" fontWeight="700" fontSize="24" fill="#FFFFFF">راعي</text>
               </svg>
             </span>
             <span className="cs rv" style={{ "--y": "10px", animation: "csIn 1s cubic-bezier(.2,.8,.2,1) 0.64s both, miniF 6s ease-in-out 2.4s infinite" }}>
@@ -1491,7 +1487,7 @@ export default function LuxCView({ v }) {
                 <path d={v.wax} fill="url(#cg6)" />
                 <circle cx="50" cy="50" r="31" fill="none" stroke="#2E2B5A" strokeOpacity=".5" strokeWidth="2.5" />
                 <ellipse cx="36" cy="28" rx="14" ry="6" transform="rotate(-28 36 28)" fill="#FFFFFF" fillOpacity=".3" />
-                <text x="50" y="58.6" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="24" fill="#FFFFFF">شريك</text>
+                <text x="50" y="58.6" textAnchor="middle" fontFamily="TD, TDx, serif" fontWeight="700" fontSize="24" fill="#FFFFFF">شريك</text>
               </svg>
             </span>
             <span className="cs rv" style={{ "--y": "34px", animation: "csIn 1s cubic-bezier(.2,.8,.2,1) 0.73s both, miniF 7s ease-in-out 2.6s infinite" }}>
@@ -1507,11 +1503,11 @@ export default function LuxCView({ v }) {
                 <path d={v.wax} fill="url(#cg7)" />
                 <circle cx="50" cy="50" r="31" fill="none" stroke="#5C1A22" strokeOpacity=".5" strokeWidth="2.5" />
                 <ellipse cx="36" cy="28" rx="14" ry="6" transform="rotate(-28 36 28)" fill="#FFFFFF" fillOpacity=".3" />
-                <text x="50" y="57.9" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="22" fill="#FFFFFF">تحكيم</text>
+                <text x="50" y="57.9" textAnchor="middle" fontFamily="TD, TDx, serif" fontWeight="700" fontSize="22" fill="#FFFFFF">تحكيم</text>
               </svg>
             </span>
           </div>
-          <h2 className="h2m fit" style={{ margin: "0", fontFamily: "TD, serif", "--fs": "min(80px, 6.4vw)", fontSize: "var(--fs)", whiteSpace: "nowrap", lineHeight: "1.3", color: "#FAFBFC", textShadow: "0 0 40px rgba(134,220,234,.35)" }}>
+          <h2 className="h2m fit" style={{ margin: "0", fontFamily: "TD, TDx, serif", "--fs": "min(80px, 6.4vw)", fontSize: "var(--fs)", whiteSpace: "nowrap", lineHeight: "1.3", color: "#FAFBFC", textShadow: "0 0 40px rgba(134,220,234,.35)" }}>
             <span className="rv w2" style={{ animationDelay: "0.20s" }}>مناسبتك</span>
             {" "}
             <span className="rv w2" style={{ animationDelay: "0.32s" }}>الجاية</span>
@@ -1540,12 +1536,7 @@ export default function LuxCView({ v }) {
               <A href="https://www.tiktok.com/@its_hayyak" target="_blank" rel="noopener" style={{ textDecoration: "none" }}>تيك توك</A>
               <A href="mailto:hayyakinfo@gmail.com" style={{ textDecoration: "none" }}>الإيميل</A>
             </span>
-            <svg width="30" height="30" viewBox="0 0 100 100" aria-label="ختم حيّــاك">
-              <path d={v.wax} fill="rgba(2,24,32,.5)" transform="translate(0 2.6)" />
-              <path d={v.wax} fill="url(#lcT)" />
-              <text x="50" y="59.2" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="40" fill="#05505E" fillOpacity="0.7">{"ح"}</text>
-              <text x="50" y="58" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="40" fill="#FFFFFF">{"ح"}</text>
-            </svg>
+            <Mark size={30} />
           </div>
         </section>
         <FAQ open="لا" />

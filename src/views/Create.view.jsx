@@ -1,10 +1,11 @@
 import { S, txt, A } from '@/ui/dc';
+import Mark from '@/ui/Mark';
 import Invite from '@/screens/Invite';
 import FAQ from '@/screens/FAQ';
 
 const CSS = `body{margin:0;background:#EDF1F3}
 a{color:#086577}
-input,button,select,textarea{font-family:'IBM Plex Sans Arabic',sans-serif}
+input,button,select,textarea{font-family:TS, 'IBM Plex Sans Arabic', sans-serif}
 .glass{background:rgba(255,255,255,.62);-webkit-backdrop-filter:blur(26px) saturate(1.4);backdrop-filter:blur(26px) saturate(1.4);border:1px solid rgba(255,255,255,.85);box-shadow:0 24px 60px rgba(10,42,67,.08),inset 0 1px 0 rgba(255,255,255,.9)}
 .nav{transition:background .2s ease}.nav:hover{background:rgba(14,151,174,.08)}
 .fld{height:48px;border-radius:14px;border:1px solid #CFD9DF;background:#FFFFFF;color:#0A2A43;padding:0 14px;font-size:15px;box-sizing:border-box;width:100%}
@@ -35,13 +36,13 @@ h1,h2,h3,h4,p,li,label{text-wrap:balance}span,b,a,button{text-wrap:pretty}
 .ttip{position:fixed;z-index:91;box-sizing:border-box;border-radius:26px;background:#FAFBFC;padding:18px 20px;display:flex;flex-direction:column;gap:10px;color:#0A2A43;box-shadow:0 30px 70px rgba(0,0,0,.35);transition:top .45s cubic-bezier(.2,.8,.2,1),left .45s cubic-bezier(.2,.8,.2,1);animation:tIn .4s ease-out both}
 @keyframes tIn{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
 @media (max-width: 599px){.tourb{height:42px;padding:0 14px;font-size:13px}}
-h2,h3{font-family:TS,'IBM Plex Sans Arabic',sans-serif;font-weight:700}`;
+h2,h3{font-family:TS, 'IBM Plex Sans Arabic', sans-serif;font-weight:700}`;
 
 export default function CreateView({ v }) {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
-      <div dir="rtl" style={{ minHeight: "1300px", position: "relative", fontFamily: "'IBM Plex Sans Arabic', TS, sans-serif", color: "#0A2A43", background: "radial-gradient(55% 40% at 88% 4%, #CBEFF5 0%, rgba(203,239,245,0) 70%), #EDF1F3" }}>
+      <div dir="rtl" style={{ minHeight: "1300px", position: "relative", fontFamily: "TS, 'IBM Plex Sans Arabic', sans-serif", color: "#0A2A43", background: "radial-gradient(55% 40% at 88% 4%, #CBEFF5 0%, rgba(203,239,245,0) 70%), #EDF1F3" }}>
         {" "}
         <svg width="0" height="0" aria-hidden="true" style={{ position: "absolute" }}>
           <defs>
@@ -56,13 +57,8 @@ export default function CreateView({ v }) {
         <div className="pg" style={{ display: "flex", gap: "24px", padding: "20px", boxSizing: "border-box", minHeight: "1300px" }}>
           <nav aria-label="التنقل الرئيسي" className="glass side" style={{ flex: "0 0 250px", boxSizing: "border-box", padding: "24px 16px", borderRadius: "28px", display: "flex", flexDirection: "column", gap: "22px", alignSelf: "flex-start", position: "sticky", top: "20px", minHeight: "860px" }}>
             <span style={{ display: "inline-flex", alignItems: "center", gap: "10px", padding: "0 6px" }}>
-              <svg width="40" height="40" viewBox="0 0 100 100" aria-hidden="true">
-                <path d={v.wax} fill="rgba(2,24,32,.5)" transform="translate(0 2.6)" />
-                <path d={v.wax} fill="url(#cWax)" />
-                <text x="50" y="59.2" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="40" fill="#05505E" fillOpacity="0.7">{"ح"}</text>
-                <text x="50" y="58" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="40" fill="#FFFFFF">{"ح"}</text>
-              </svg>
-              <span className="lbl" style={{ fontFamily: "TD, serif", fontSize: "26px", lineHeight: "1" }}>حيّــاك</span>
+              <Mark size={40} />
+              <span className="lbl" style={{ fontFamily: "TD, TDx, serif", fontSize: "26px", lineHeight: "1" }}>حيّــاك</span>
             </span>
             <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
               {(v.nav || []).map((n, $i0) => (
@@ -99,7 +95,7 @@ export default function CreateView({ v }) {
             <header data-t="t0" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: "16px", flexWrap: "wrap" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                 <A href="Dashboard.dc.html" style={{ fontSize: "13px", textDecoration: "none" }}>→ الدعوات</A>
-                <h1 className="h1m" style={{ margin: "0", fontFamily: "TS, sans-serif", fontWeight: "700", fontSize: "42px", lineHeight: "1.2" }}>دعوة جديدة</h1>
+                <h1 className="h1m" style={{ margin: "0", fontFamily: "TS, 'IBM Plex Sans Arabic', sans-serif", fontWeight: "700", fontSize: "42px", lineHeight: "1.2" }}>دعوة جديدة</h1>
               </div>
               <span style={{ fontSize: "12px", color: "#4A5B68" }}>{v.saveState}</span>
             </header>
@@ -115,7 +111,7 @@ export default function CreateView({ v }) {
                   <span style={{ width: "64px", height: "64px", borderRadius: "50%", background: "#0E97AE", display: "flex", alignItems: "center", justifyContent: "center" }}>
                     <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" /></svg>
                   </span>
-                  <h2 style={{ margin: "0", fontFamily: "TD, serif", fontSize: "32px" }}>{v.doneTitle}</h2>
+                  <h2 style={{ margin: "0", fontFamily: "TD, TDx, serif", fontSize: "32px" }}>{v.doneTitle}</h2>
                   <span style={{ fontSize: "14px", color: "#3A4B58", lineHeight: "1.8", maxWidth: "460px" }}>{v.doneSub}</span>
                   <span style={{ display: "flex", gap: "10px", flexWrap: "wrap", justifyContent: "center" }}>
                     <A href={v.doneHref} style={{ height: "46px", padding: "0 20px", borderRadius: "999px", background: "#0A2A43", color: "#FFFFFF", fontWeight: "700", textDecoration: "none", display: "inline-flex", alignItems: "center" }}>تابع الردود</A>
@@ -237,7 +233,7 @@ export default function CreateView({ v }) {
                                       <path d={v.wax} fill={g?.hex} />
                                       <circle cx="50" cy="50" r="33" fill="none" stroke="rgba(0,0,0,.2)" strokeWidth="2.4" />
                                     </svg>
-                                    <span style={{ position: "absolute", inset: "0", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "TD, serif", fontSize: "12px", color: "#FFFFFF" }}>{g?.n}</span>
+                                    <span style={{ position: "absolute", inset: "0", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "TD, TDx, serif", fontSize: "12px", color: "#FFFFFF" }}>{g?.n}</span>
                                     {g?.lock ? (
                                       <span style={{ position: "absolute", left: "-4px", top: "-4px", width: "22px", height: "22px", borderRadius: "50%", background: "#0A2A43", border: "2px solid #FFFFFF", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 3px 8px rgba(10,42,67,.3)" }}>
                                           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.6" strokeLinecap="round" aria-hidden="true"><path d="M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4" /></svg>
@@ -682,7 +678,7 @@ export default function CreateView({ v }) {
                     <div className="pvbox" style={{ position: "relative", width: "312px", height: "675px", borderRadius: "40px", overflow: "hidden", boxShadow: "0 30px 60px rgba(10,42,67,.25), 0 0 0 8px #0A2A43" }}>
                       {" "}
                       <div className="pvwrap" style={{ position: "absolute", left: "0", top: "0", width: "390px", height: "844px", transform: "scale(.8)", transformOrigin: "0 0" }}>
-                        <Invite info={v.pv?.info} look={v.pv?.look} pattern={v.pv?.pattern} color={v.pv?.color} seal={v.pv?.seal} title={v.pv?.title} latin={v.pv?.latin} eventLabel={v.pv?.evl} place={v.pv?.place} platform={v.pv?.platform} linkStatus={v.pv?.link} audience={v.pv?.aud} bgImage={v.pv?.bg} preview="نعم" />
+                        {v.wide ? <Invite info={v.pv?.info} look={v.pv?.look} pattern={v.pv?.pattern} color={v.pv?.color} seal={v.pv?.seal} title={v.pv?.title} latin={v.pv?.latin} eventLabel={v.pv?.evl} place={v.pv?.place} platform={v.pv?.platform} linkStatus={v.pv?.link} audience={v.pv?.aud} bgImage={v.pv?.bg} preview="نعم" /> : null}
                       </div>
                       {" "}
                     </div>

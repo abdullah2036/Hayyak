@@ -52,7 +52,16 @@ export default class Create extends Screen {
     };
   }
 
+  // On phones the side preview is hidden; it is only made where it can be seen.
+  componentDidMount() {
+    this.mq = window.matchMedia('(min-width: 901px)');
+    this.onMq = () => this.setState({ wide: this.mq.matches });
+    this.onMq();
+    this.mq.addEventListener?.('change', this.onMq);
+  }
+
   componentWillUnmount() {
+    this.mq?.removeEventListener?.('change', this.onMq);
     clearTimeout(this.tto);
     clearTimeout(this.tsave);
     clearTimeout(this.tcp);
@@ -253,6 +262,7 @@ export default class Create extends Screen {
     const upRow = (r, o) => ui({ rows: s.rows.map((y) => (y === r ? { ...y, ...o } : y)) });
     const shown = [...bad, ...s.rows.filter((r) => !r.bad)].slice(0, Math.max(5, bad.length));
     return {
+      wide: Boolean(s.wide),
       ...base('الدعوات', shell), saveState: s.save || 'تنحفظ مسودة تلقائي', today: inputDate(new Date()), err: s.err, busy: s.busy,
       steps: ST.map((l, i) => { const on = s.step === i; const past = s.step > i; return { key: l, n: past ? '✓' : String(i + 1), label: l, go: () => { if (i <= s.step) ui({ step: i, err: '' }); else this.next(); }, st: `width:100%;height:46px;border:0;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:14px;cursor:pointer;${on ? 'background:#0A2A43;color:#FFFFFF;font-weight:700' : 'background:transparent;color:#0A2A43'}`, num: `width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;${on || past ? 'background:#0E97AE;color:#FFFFFF' : 'background:rgba(10,42,67,.08);color:#0A2A43'}` }; }),
       s0: s.step === 0, s1: s.step === 1, s2: s.step === 2, s3: s.step === 3, done: Boolean(done), notDone: !done, doneHref: this.id ? `/app/invitations/${this.id}` : '/app',

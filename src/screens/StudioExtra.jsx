@@ -37,7 +37,7 @@ function Days({ labels, s }) {
     <section style={{ ...card, padding: 20, gap: 8 }} aria-label={TITLES[s.key]}>
       <span style={{ fontSize: 14, color: C.soft }}>{TITLES[s.key]}</span>
       <span style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
-        <b style={{ fontFamily: 'TD, serif', fontSize: 34, lineHeight: 1.1 }}>{fmt(s.total)}</b>
+        <b style={{ fontFamily: 'TD, TDx, serif', fontSize: 34, lineHeight: 1.1 }}>{fmt(s.total)}</b>
         <span style={{ fontSize: 13, color: C.mute }}>{s.before || s.total ? `${diff > 0 ? '▲' : diff < 0 ? '▼' : '='} ${fmt(Math.abs(diff))} عن الفترة قبلها` : 'ما فيه شي للحين'}</span>
       </span>
       <div style={{ position: 'relative' }} onPointerLeave={() => setAt(-1)}>
@@ -109,7 +109,7 @@ export function StudioAnalytics() {
       {!d ? <span style={{ color: C.mute }}>لحظة…</span> : (
         <>
           <div className="g4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0,1fr))', gap: 14 }}>
-            {tiles.map(([t, v, n]) => <section key={t} style={{ ...card, padding: 20, gap: 4 }}><span style={{ fontSize: 14, color: C.soft }}>{t}</span><b style={{ fontFamily: 'TD, serif', fontSize: 32, lineHeight: 1.15 }}>{v}</b><span style={{ fontSize: 12, color: C.mute }}>{n}</span></section>)}
+            {tiles.map(([t, v, n]) => <section key={t} style={{ ...card, padding: 20, gap: 4 }}><span style={{ fontSize: 14, color: C.soft }}>{t}</span><b style={{ fontFamily: 'TD, TDx, serif', fontSize: 32, lineHeight: 1.15 }}>{v}</b><span style={{ fontSize: 12, color: C.mute }}>{n}</span></section>)}
           </div>
           {table ? (
             <section style={{ ...card, overflowX: 'auto' }}>

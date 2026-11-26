@@ -146,10 +146,10 @@ export async function saveCertStory(node, name, title) {
   x.direction = 'rtl';
   x.textAlign = 'center';
   x.fillStyle = '#FFFFFF';
-  await fontReady('700 80px TD');
-  x.font = '700 76px TD, serif';
+  await fontReady('700 80px TD, TDx, serif');
+  x.font = '700 76px TD, TDx, serif';
   x.fillText('حيّــاك', 540, 330);
-  x.font = "500 40px 'IBM Plex Sans Arabic', sans-serif";
+  x.font = "500 40px TS, 'IBM Plex Sans Arabic', sans-serif";
   x.fillStyle = '#CFE7EE';
   x.fillText(title, 540, 420, 960);
   saveBlob(await blobOf(s, 'image/png'), name + '.png');

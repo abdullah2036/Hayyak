@@ -16,16 +16,16 @@ export default function TermsView({ v }) {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
-      <div dir="rtl" style={{ fontFamily: "'IBM Plex Sans Arabic', sans-serif", color: "#0A2A43", background: "#EDF1F3", minHeight: "100vh" }}>
+      <div dir="rtl" style={{ fontFamily: "TS, 'IBM Plex Sans Arabic', sans-serif", color: "#0A2A43", background: "#EDF1F3", minHeight: "100vh" }}>
         {" "}
         <header className="hd" style={{ position: "relative", overflow: "hidden", padding: "34px 48px 150px", background: "radial-gradient(60% 60% at 18% 10%, rgba(14,151,174,.42), rgba(14,151,174,0) 70%), radial-gradient(50% 60% at 85% 90%, rgba(134,220,234,.2), rgba(134,220,234,0) 70%), linear-gradient(180deg, #0B3550, #072538)", color: "#FAFBFC", display: "flex", flexDirection: "column", alignItems: "center", gap: "40px" }}>
           <span aria-hidden="true" style={{ position: "absolute", left: "-8%", top: "-30%", width: "600px", height: "600px", borderRadius: "50%", background: "radial-gradient(closest-side, rgba(14,151,174,.35), rgba(14,151,174,0))", animation: "orb 18s ease-in-out infinite" }} />
           <nav style={{ position: "relative", width: "100%", maxWidth: "1200px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <A href="LuxC.dc.html" className="word" style={{ fontFamily: "TD, serif", fontWeight: "700", fontSize: "34px", textDecoration: "none", color: "#FAFBFC" }}>حيّــاك</A>
+            <A href="LuxC.dc.html" className="word" style={{ fontFamily: "TD, TDx, serif", fontWeight: "700", fontSize: "34px", textDecoration: "none", color: "#FAFBFC" }}>حيّــاك</A>
             <A href="LuxC.dc.html" className="tab" style={{ height: "44px", padding: "0 22px", borderRadius: "999px", border: "1px solid rgba(220,228,232,.45)", textDecoration: "none", display: "inline-flex", alignItems: "center", fontSize: "15px" }}>الرئيسية</A>
           </nav>
           <div style={{ position: "relative", display: "flex", flexDirection: "column", alignItems: "center", gap: "16px", textAlign: "center", animation: "up .9s ease-out .1s both" }}>
-            <h1 className="h1" style={{ margin: "0", fontFamily: "TD, serif", fontWeight: "700", fontSize: "76px", lineHeight: "1.2" }}>الشروط والأحكام</h1>
+            <h1 className="h1" style={{ margin: "0", fontFamily: "TD, TDx, serif", fontWeight: "700", fontSize: "76px", lineHeight: "1.2" }}>الشروط والأحكام</h1>
             <p style={{ margin: "0", maxWidth: "620px", fontSize: "20px", lineHeight: "1.8", color: "#DCE4E8" }}>اتفاق واضح وبسيط بينك وبين حيّــاك</p>
             <span style={{ display: "flex", gap: "8px", padding: "6px", borderRadius: "999px", background: "rgba(0,0,0,.2)", marginTop: "6px" }}>
               <span style={{ height: "44px", padding: "0 24px", borderRadius: "999px", background: "#FAFBFC", color: "#0A2A43", display: "inline-flex", alignItems: "center", fontWeight: "500" }}>الشروط</span>
@@ -70,7 +70,7 @@ export default function TermsView({ v }) {
                 <span style={{ width: "60px", height: "60px", flex: "none", borderRadius: "50%", background: "linear-gradient(155deg,#4FC9DC,#0E97AE 55%,#086577)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 12px 26px rgba(14,151,174,.3)" }}>
                   <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0" /></svg>
                 </span>
-                <h2 style={{ margin: "0", fontFamily: "TD, serif", fontWeight: "700", fontSize: "27px", lineHeight: "1.3" }}>حسابك</h2>
+                <h2 style={{ margin: "0", fontFamily: "TD, TDx, serif", fontWeight: "700", fontSize: "27px", lineHeight: "1.3" }}>حسابك</h2>
               </span>
               <p style={{ margin: "0", fontSize: "17px", lineHeight: "1.85", color: "#2C4A5C", textAlign: "right" }}>أنت مسؤول عن صحة بياناتك وسرية كلمة المرور، وبلّغنا لو لاحظت دخول غريب</p>
             </article>
@@ -81,7 +81,7 @@ export default function TermsView({ v }) {
                     <path d="M12 3l2 2.2 3-.4.6 3 2.6 1.6-1.2 2.8 1.2 2.8-2.6 1.6-.6 3-3-.4L12 21l-2-2.2-3 .4-.6-3L3.8 14.6 5 11.8 3.8 9l2.6-1.6.6-3 3 .4z" />
                   </svg>
                 </span>
-                <h2 style={{ margin: "0", fontFamily: "TD, serif", fontWeight: "700", fontSize: "27px", lineHeight: "1.3" }}>علامة حيّــاك</h2>
+                <h2 style={{ margin: "0", fontFamily: "TD, TDx, serif", fontWeight: "700", fontSize: "27px", lineHeight: "1.3" }}>علامة حيّــاك</h2>
               </span>
               <p style={{ margin: "0", fontSize: "17px", lineHeight: "1.85", color: "#2C4A5C", textAlign: "right" }}>تظهر علامة حيّــاك في كل الدعوات مهما كان رصيدك</p>
             </article>
@@ -90,7 +90,7 @@ export default function TermsView({ v }) {
                 <span style={{ width: "60px", height: "60px", flex: "none", borderRadius: "50%", background: "linear-gradient(155deg,#4FC9DC,#0E97AE 55%,#086577)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 12px 26px rgba(14,151,174,.3)" }}>
                   <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 7a4 4 0 1 1-3.5 6L5 19.5V22H2v-3l6.5-6.5A4 4 0 0 1 15 7zM16 8h.01" /></svg>
                 </span>
-                <h2 style={{ margin: "0", fontFamily: "TD, serif", fontWeight: "700", fontSize: "27px", lineHeight: "1.3" }}>الملكية</h2>
+                <h2 style={{ margin: "0", fontFamily: "TD, TDx, serif", fontWeight: "700", fontSize: "27px", lineHeight: "1.3" }}>الملكية</h2>
               </span>
               <p style={{ margin: "0", fontSize: "17px", lineHeight: "1.85", color: "#2C4A5C", textAlign: "right" }}>شعاراتك وصورك ونصوصك لك، والقوالب والأختام والحركات لحيّــاك</p>
             </article>
@@ -99,7 +99,7 @@ export default function TermsView({ v }) {
                 <span style={{ width: "60px", height: "60px", flex: "none", borderRadius: "50%", background: "linear-gradient(155deg,#4FC9DC,#0E97AE 55%,#086577)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 12px 26px rgba(14,151,174,.3)" }}>
                   <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M3 6h18v12H3zM3 10h18M7 15h4" /></svg>
                 </span>
-                <h2 style={{ margin: "0", fontFamily: "TD, serif", fontWeight: "700", fontSize: "27px", lineHeight: "1.3" }}>الرصيد والأسعار</h2>
+                <h2 style={{ margin: "0", fontFamily: "TD, TDx, serif", fontWeight: "700", fontSize: "27px", lineHeight: "1.3" }}>الرصيد والأسعار</h2>
               </span>
               <div className="tl" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0,1fr))", gap: "14px" }}>
                 <div style={{ borderRadius: "26px", padding: "22px", background: "#FFFFFF", color: "#0A2A43", display: "flex", flexDirection: "column", gap: "6px", boxShadow: "0 12px 30px rgba(10,42,67,.08)" }}>
@@ -121,7 +121,7 @@ export default function TermsView({ v }) {
                 <span style={{ width: "60px", height: "60px", flex: "none", borderRadius: "50%", background: "linear-gradient(155deg,#4FC9DC,#0E97AE 55%,#086577)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 12px 26px rgba(14,151,174,.3)" }}>
                   <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2" /></svg>
                 </span>
-                <h2 style={{ margin: "0", fontFamily: "TD, serif", fontWeight: "700", fontSize: "27px", lineHeight: "1.3" }}>متى تنحسب الدعوة</h2>
+                <h2 style={{ margin: "0", fontFamily: "TD, TDx, serif", fontWeight: "700", fontSize: "27px", lineHeight: "1.3" }}>متى تنحسب الدعوة</h2>
               </span>
               <p style={{ margin: "0", fontSize: "17px", lineHeight: "1.85", color: "#2C4A5C", textAlign: "right" }}>تنحسب الدعوة من رصيدك أول ما ترسلها أو يجهز رابطها لمدعو</p>
             </article>
@@ -130,7 +130,7 @@ export default function TermsView({ v }) {
                 <span style={{ width: "60px", height: "60px", flex: "none", borderRadius: "50%", background: "linear-gradient(155deg,#4FC9DC,#0E97AE 55%,#086577)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 12px 26px rgba(14,151,174,.3)" }}>
                   <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z" /></svg>
                 </span>
-                <h2 style={{ margin: "0", fontFamily: "TD, serif", fontWeight: "700", fontSize: "27px", lineHeight: "1.3" }}>حيّــاك ترسلها عنك</h2>
+                <h2 style={{ margin: "0", fontFamily: "TD, TDx, serif", fontWeight: "700", fontSize: "27px", lineHeight: "1.3" }}>حيّــاك ترسلها عنك</h2>
               </span>
               <p style={{ margin: "0", fontSize: "17px", lineHeight: "1.85", color: "#2C4A5C", textAlign: "right" }}>تأكّد الطلب وترفع الأسماء قبل المناسبة بـ 48 ساعة على الأقل، ونرسلها من حسابات حيّــاك باسمك</p>
             </article>
@@ -139,7 +139,7 @@ export default function TermsView({ v }) {
                 <span style={{ width: "60px", height: "60px", flex: "none", borderRadius: "50%", background: "linear-gradient(155deg,#4FC9DC,#0E97AE 55%,#086577)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 12px 26px rgba(14,151,174,.3)" }}>
                   <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2" /></svg>
                 </span>
-                <h2 style={{ margin: "0", fontFamily: "TD, serif", fontWeight: "700", fontSize: "27px", lineHeight: "1.3" }}>التذكير</h2>
+                <h2 style={{ margin: "0", fontFamily: "TD, TDx, serif", fontWeight: "700", fontSize: "27px", lineHeight: "1.3" }}>التذكير</h2>
               </span>
               <p style={{ margin: "0", fontSize: "17px", lineHeight: "1.85", color: "#2C4A5C", textAlign: "right" }}>تختار قبل الإرسال مين يذكّر المدعوين: حيّــاك أو أنت. ويحتاج ترسل الدعوة قبل المناسبة بيومين على الأقل</p>
             </article>
@@ -148,7 +148,7 @@ export default function TermsView({ v }) {
                 <span style={{ width: "60px", height: "60px", flex: "none", borderRadius: "50%", background: "linear-gradient(155deg,#4FC9DC,#0E97AE 55%,#086577)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 12px 26px rgba(14,151,174,.3)" }}>
                   <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5" /></svg>
                 </span>
-                <h2 style={{ margin: "0", fontFamily: "TD, serif", fontWeight: "700", fontSize: "27px", lineHeight: "1.3" }}>الاستخدام</h2>
+                <h2 style={{ margin: "0", fontFamily: "TD, TDx, serif", fontWeight: "700", fontSize: "27px", lineHeight: "1.3" }}>الاستخدام</h2>
               </span>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
                 <span style={{ minHeight: "50px", padding: "8px 20px", boxSizing: "border-box", borderRadius: "999px", background: "#FFFFFF", boxShadow: "0 6px 16px rgba(10,42,67,.06)", fontSize: "16px", fontWeight: "500", display: "inline-flex", alignItems: "center", gap: "10px" }}>

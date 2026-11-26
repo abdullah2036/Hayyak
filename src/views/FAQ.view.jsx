@@ -13,7 +13,7 @@ export default function FAQView({ v }) {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
-      <div dir="rtl" style={{ fontFamily: "'IBM Plex Sans Arabic', sans-serif", color: "#0A2A43" }}>
+      <div dir="rtl" style={{ fontFamily: "TS, 'IBM Plex Sans Arabic', sans-serif", color: "#0A2A43" }}>
         {" "}
         {v.isOpen ? (
           <div className="fqw" style={S(`${txt(v.liftW)}`)}>
@@ -32,7 +32,7 @@ export default function FAQView({ v }) {
                     <path d={v.wax} fill="url(#fq42)" />
                     <circle cx="50" cy="50" r="31" fill="none" stroke="#05505E" strokeOpacity=".45" strokeWidth="2.5" />
                     <ellipse cx="36" cy="28" rx="14" ry="6" transform="rotate(-28 36 28)" fill="#FFFFFF" fillOpacity=".3" />
-                    <text x="50" y="58.8" textAnchor="middle" fontFamily="TD" fontSize="42" fill="#FFFFFF">{"ح"}</text>
+                    <text x="50" y="58.8" textAnchor="middle" fontFamily="TD, TDx, serif" fontSize="42" fill="#FFFFFF">{"ح"}</text>
                   </svg>
                   <span style={{ flex: "1", display: "flex", flexDirection: "column" }}>
                     <b style={{ fontSize: "16px" }}>مساعد حيّــاك</b>

@@ -8,7 +8,7 @@ import { saveCertPdf, saveCertStory } from '@/ui/capture';
 import { durationText, fullDate, longDate, time, weekdayDate } from '@/lib/dates';
 
 const CSS = `
-.gp{min-height:100dvh;background:#EDF1F3;font-family:'IBM Plex Sans Arabic',sans-serif;color:#0A2A43}
+.gp{min-height:100dvh;background:#EDF1F3;font-family:TS, 'IBM Plex Sans Arabic', sans-serif;color:#0A2A43}
 .gp *{box-sizing:border-box}
 .gp-stage{min-height:100dvh;display:flex;justify-content:center;align-items:center;overflow:hidden}
 .gp-col{max-width:520px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column;background:#F4F7F8}
@@ -19,7 +19,7 @@ const CSS = `
 .gp-b{min-height:48px;padding:0 18px;border-radius:999px;border:1px solid rgba(10,42,67,.16);background:rgba(255,255,255,.8);color:#0A2A43;font-family:inherit;font-weight:700;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
 .gp-f{height:50px;border-radius:999px;border:1px solid rgba(10,42,67,.16);background:#fff;padding:0 20px;font-size:16px;color:#0A2A43;width:100%;font-family:inherit}
 .gp-l{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500}
-.gp-code{height:64px;border-radius:20px;border:2px solid #CFD9DF;background:#F4F7F8;text-align:center;font-family:TD,serif;font-size:34px;letter-spacing:.4em;color:#0A2A43;direction:ltr;width:100%}
+.gp-code{height:64px;border-radius:20px;border:2px solid #CFD9DF;background:#F4F7F8;text-align:center;font-family:TD, TDx, serif;font-size:34px;letter-spacing:.4em;color:#0A2A43;direction:ltr;width:100%}
 .gp-pulse{width:8px;height:8px;border-radius:50%;background:#0E97AE;animation:gpPulse 1.4s ease-in-out infinite}
 .gp-sheet{position:fixed;inset:0;z-index:40;background:rgba(4,18,31,.55);display:flex;align-items:flex-end;justify-content:center}
 .gp-sheet>div{width:100%;max-width:520px;border-radius:28px 28px 0 0;background:#FAFBFC;padding:22px 20px calc(26px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:12px;animation:gpUp .4s cubic-bezier(.2,.8,.2,1) both}
@@ -121,9 +121,9 @@ function Shell({ title, sub, seal = 'مدعو', children }) {
             <path d={WAX} fill="rgba(2,24,32,.5)" transform="translate(0 2.6)" />
             <path d={WAX} fill="url(#gpWax)" />
             <circle cx="50" cy="50" r="31" fill="none" stroke="#05505E" strokeOpacity=".45" strokeWidth="2.5" />
-            <text x="50" y="57" textAnchor="middle" fontFamily="TD" fontSize="22" fill="#FFFFFF">{seal}</text>
+            <text x="50" y="57" textAnchor="middle" fontFamily="TD, TDx, serif" fontSize="22" fill="#FFFFFF">{seal}</text>
           </svg>
-          <b style={{ position: 'relative', fontFamily: 'TD, serif', fontSize: 32, lineHeight: 1.2 }}>{title}</b>
+          <b style={{ position: 'relative', fontFamily: 'TD, TDx, serif', fontSize: 32, lineHeight: 1.2 }}>{title}</b>
           <span style={{ position: 'relative', fontSize: 13, color: '#CFE7EE' }}>{sub}</span>
         </div>
         <div className="gp-body">{children}</div>
@@ -240,7 +240,7 @@ function Attend({ view }) {
     <>
       <span style={{ alignSelf: 'center', display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 14px', borderRadius: 999, background: 'rgba(14,151,174,.14)', color: '#086577', fontSize: 13, fontWeight: 700 }}><span className="gp-pulse" />{online ? 'اللقاء شغّال' : session.phase === 'start' ? 'الفعالية بدأت' : 'التسجيل مفتوح'}</span>
       <div className="gp-card" style={{ textAlign: 'center' }}>
-        <b style={{ fontFamily: 'TD, serif', fontSize: 28 }}>سجّل حضورك</b>
+        <b style={{ fontFamily: 'TD, TDx, serif', fontSize: 28 }}>سجّل حضورك</b>
         <span style={{ fontSize: 14, color: '#3A4B58' }}>{online ? 'اكتب الكود اللي نزل في الشات' : 'اكتب الكود اللي على الشاشة'}</span>
         <input className="gp-code" value={code} inputMode="numeric" maxLength={4} aria-label="كود الحضور" placeholder="• • • •" autoComplete="off" style={err ? { borderColor: '#8A2D3B' } : undefined} onChange={(e) => { setErr(''); setCode(e.target.value.replace(/[٠-٩]/g, (d) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d))).replace(/\D/g, '').slice(0, 4)); }} onKeyDown={(e) => e.key === 'Enter' && submit()} />
         {err ? <span role="alert" style={{ fontSize: 13, fontWeight: 700, color: '#8A2D3B' }}>{err}</span> : null}
@@ -299,7 +299,7 @@ function Done({ view }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'center', textAlign: 'center', paddingTop: 10 }}>
       <span style={{ width: 92, height: 92, borderRadius: '50%', background: '#0E97AE', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 16px 40px rgba(14,151,174,.35)', animation: 'gpPop .55s cubic-bezier(.2,.8,.2,1) both' }}><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10" /></svg></span>
-      <b style={{ fontFamily: 'TD, serif', fontSize: 30, lineHeight: 1.3 }}>حيّاك يا {first}</b>
+      <b style={{ fontFamily: 'TD, TDx, serif', fontSize: 30, lineHeight: 1.3 }}>حيّاك يا {first}</b>
       {view.attendedAt ? <span style={{ fontSize: 14, color: '#3A4B58' }}>انسجل حضورك الساعة {time(view.attendedAt)}</span> : view.partial ? <span style={{ fontSize: 14, color: '#3A4B58' }}>انسجل كود البداية، وباقي كود النهاية</span> : null}
       {view.attendedAt ? <div className="gp-card" style={{ width: '100%', textAlign: 'right', gap: 2 }}><b style={{ fontSize: 15 }}>شهادتك جاية</b><span style={{ fontSize: 13, color: '#3A4B58' }}>تطلع لك هنا في نفس الرابط أول ما تجهز</span></div> : null}
     </div>
@@ -317,7 +317,7 @@ function Cert({ view }) {
   const pendingReq = view.nameRequest?.status === 'pending';
   return (
     <>
-      <b style={{ fontFamily: 'TD, serif', fontSize: 28, textAlign: 'center' }}>{view.certs.length > 1 ? 'شهاداتك جاهزة' : 'شهادتك جاهزة'}</b>
+      <b style={{ fontFamily: 'TD, TDx, serif', fontSize: 28, textAlign: 'center' }}>{view.certs.length > 1 ? 'شهاداتك جاهزة' : 'شهادتك جاهزة'}</b>
       {view.certs.map((c) => <CertBlock key={c.code} c={c} onDownload={() => api.post(`/g/${guest.token}/downloaded`).catch(() => {})} />)}
       {pendingReq ? <span style={{ textAlign: 'center', fontSize: 13, color: '#4A5B68' }}>طلب تعديل الاسم إلى «{view.nameRequest.toName}» ينتظر موافقة المنظّم</span> : ask ? (
         <div className="gp-card">
@@ -362,7 +362,7 @@ export function CertPage({ cert }) {
     <div className="gp" dir="rtl">
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
       <div style={{ maxWidth: 900, margin: '0 auto', padding: '28px 16px 40px', display: 'flex', flexDirection: 'column', gap: 14 }}>
-        <b style={{ fontFamily: 'TD, serif', fontSize: 30, textAlign: 'center' }}>{cert.event.title}</b>
+        <b style={{ fontFamily: 'TD, TDx, serif', fontSize: 30, textAlign: 'center' }}>{cert.event.title}</b>
         <CertBlock c={cert} />
       </div>
     </div>

@@ -2,7 +2,7 @@ import { S, txt, A } from '@/ui/dc';
 
 const CSS = `body{margin:0;background:#EDF1F3}
 a{color:#086577}a:hover{color:#0A2A43}
-input,button,textarea{font-family:'IBM Plex Sans Arabic',sans-serif}
+input,button,textarea{font-family:TS, 'IBM Plex Sans Arabic', sans-serif}
 .glass{background:rgba(255,255,255,.58);-webkit-backdrop-filter:blur(26px) saturate(1.4);backdrop-filter:blur(26px) saturate(1.4);border:1px solid rgba(255,255,255,.85);box-shadow:0 24px 60px rgba(10,42,67,.08),inset 0 1px 0 rgba(255,255,255,.9)}
 .nav{transition:background .2s ease}.nav:hover{background:rgba(14,151,174,.08)}
 .row{transition:background .2s ease}.row:hover{background:rgba(255,255,255,.6)}
@@ -30,7 +30,7 @@ h1,h2,h3,h4,p,li,label{text-wrap:balance}span,b,a,button{text-wrap:pretty}
 .chip{transition:background .2s ease,color .2s ease}
 .tg{position:relative;width:52px;height:30px;border-radius:999px;border:0;cursor:pointer;transition:background .25s ease;flex:none}
 .tg span{position:absolute;top:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.2);transition:right .25s ease}
-.fld{height:50px;border-radius:999px;border:1px solid rgba(10,42,67,.16);background:#fff;padding:0 20px;font-size:15px;color:#0A2A43;width:100%;box-sizing:border-box;font-family:'IBM Plex Sans Arabic',sans-serif}
+.fld{height:50px;border-radius:999px;border:1px solid rgba(10,42,67,.16);background:#fff;padding:0 20px;font-size:15px;color:#0A2A43;width:100%;box-sizing:border-box;font-family:TS, 'IBM Plex Sans Arabic', sans-serif}
 .fld:focus,.ta:focus{outline:none;border-color:#0E97AE;box-shadow:0 0 0 4px rgba(14,151,174,.14)}
 .ta{border-radius:22px;border:1px solid rgba(10,42,67,.16);background:#fff;padding:14px 18px;font-size:15px;line-height:1.8;color:#0A2A43;width:100%;box-sizing:border-box;resize:vertical;min-height:110px}
 .btn{height:48px;padding:0 20px;border-radius:999px;border:1px solid rgba(10,42,67,.18);background:rgba(255,255,255,.75);color:#0A2A43;text-decoration:none;font-weight:700;font-size:14px;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
@@ -49,7 +49,7 @@ h1,h2,h3,h4,p,li,label{text-wrap:balance}span,b,a,button{text-wrap:pretty}
 @keyframes lsRip{0%,36%{opacity:0;transform:scale(1)}40%{opacity:1}80%,100%{opacity:0;transform:scale(1.9)}}
 .ls.still .press{animation:none;filter:grayscale(.55) drop-shadow(0 8px 10px rgba(0,0,0,.4));transform:rotate(-8deg)}
 .ls.still .rip{display:none}
-.lw{font-family:TD,serif;font-size:40px;line-height:1.2;background:linear-gradient(90deg,#86DCEA 0%,#FFFFFF 50%,#86DCEA 100%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:lwShine 2.6s linear infinite}
+.lw{font-family:TD, TDx, serif;font-size:40px;line-height:1.2;background:linear-gradient(90deg,#86DCEA 0%,#FFFFFF 50%,#86DCEA 100%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:lwShine 2.6s linear infinite}
 @keyframes lwShine{to{background-position:-200% 0}}
 .dots{display:inline-flex;gap:6px}.dots i{width:7px;height:7px;border-radius:50%;background:#86DCEA;animation:dt 1.2s ease-in-out infinite}.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
 @keyframes dt{0%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-5px)}}
@@ -68,7 +68,7 @@ export default function LoadingView({ v }) {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
-      <div dir="rtl" style={{ minHeight: "100vh", position: "relative", overflow: "hidden", fontFamily: "'IBM Plex Sans Arabic', TS, sans-serif", color: "#FAFBFC", background: "radial-gradient(60% 50% at 50% 42%, rgba(18,74,104,.95), rgba(7,37,56,0) 100%), radial-gradient(45% 35% at 15% 85%, rgba(14,151,174,.22), rgba(14,151,174,0) 70%), linear-gradient(180deg, #0B3550, #072538)" }}>
+      <div dir="rtl" style={{ minHeight: "100vh", position: "relative", overflow: "hidden", fontFamily: "TS, 'IBM Plex Sans Arabic', sans-serif", color: "#FAFBFC", background: "radial-gradient(60% 50% at 50% 42%, rgba(18,74,104,.95), rgba(7,37,56,0) 100%), radial-gradient(45% 35% at 15% 85%, rgba(14,151,174,.22), rgba(14,151,174,0) 70%), linear-gradient(180deg, #0B3550, #072538)" }}>
         {" "}
         <svg width="0" height="0" aria-hidden="true" style={{ position: "absolute" }}>
           <defs>
@@ -94,8 +94,8 @@ export default function LoadingView({ v }) {
               <path d={v.wax} fill="url(#dWax)" />
               <circle cx="50" cy="50" r="31" fill="none" stroke="#05505E" strokeOpacity="0.45" strokeWidth="2.5" />
               <ellipse cx="36" cy="28" rx="15" ry="7" transform="rotate(-28 36 28)" fill="#FFFFFF" fillOpacity="0.3" />
-              <text x="50" y="59.2" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="40" fill="#05505E" fillOpacity="0.7">{"ح"}</text>
-              <text x="50" y="58" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="40" fill="#FFFFFF">{"ح"}</text>
+              <text x="50" y="59.2" textAnchor="middle" fontFamily="TD, TDx, serif" fontWeight="700" fontSize="40" fill="#05505E" fillOpacity="0.7">{"ح"}</text>
+              <text x="50" y="58" textAnchor="middle" fontFamily="TD, TDx, serif" fontWeight="700" fontSize="40" fill="#FFFFFF">{"ح"}</text>
             </svg>
             {v.isOff ? (
               <span className="badge">

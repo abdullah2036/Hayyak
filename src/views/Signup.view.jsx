@@ -3,7 +3,7 @@ import FAQ from '@/screens/FAQ';
 
 const CSS = `body{margin:0;background:#072538}
 a{color:inherit}
-input,button{font-family:'IBM Plex Sans Arabic',sans-serif}
+input,button{font-family:TS, 'IBM Plex Sans Arabic', sans-serif}
 .f{height:58px;border-radius:999px;border:1px solid rgba(220,228,232,.3);background:rgba(255,255,255,.07);color:#FAFBFC;padding:0 22px;font-size:17px;width:100%;box-sizing:border-box;transition:border-color .2s ease,box-shadow .2s ease}
 .f::placeholder{color:#7FA0B2}
 .f:focus{outline:none;border-color:#86DCEA;box-shadow:0 0 0 5px rgba(134,220,234,.16)}
@@ -23,7 +23,7 @@ export default function SignupView({ v }) {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
-      <div dir="rtl" style={{ position: "relative", minHeight: "100vh", overflow: "hidden", fontFamily: "'IBM Plex Sans Arabic', sans-serif", color: "#FAFBFC", background: "radial-gradient(60% 50% at 18% 12%, rgba(14,151,174,.42), rgba(14,151,174,0) 70%), radial-gradient(55% 50% at 85% 80%, rgba(134,220,234,.22), rgba(134,220,234,0) 70%), linear-gradient(180deg, #0B3550, #072538)" }}>
+      <div dir="rtl" style={{ position: "relative", minHeight: "100vh", overflow: "hidden", fontFamily: "TS, 'IBM Plex Sans Arabic', sans-serif", color: "#FAFBFC", background: "radial-gradient(60% 50% at 18% 12%, rgba(14,151,174,.42), rgba(14,151,174,0) 70%), radial-gradient(55% 50% at 85% 80%, rgba(134,220,234,.22), rgba(134,220,234,0) 70%), linear-gradient(180deg, #0B3550, #072538)" }}>
         {" "}
         <svg width="0" height="0" aria-hidden="true" style={{ position: "absolute" }}>
           <defs>
@@ -41,8 +41,8 @@ export default function SignupView({ v }) {
         {" "}
         <div className="wrap" style={{ position: "relative", minHeight: "100vh", boxSizing: "border-box", padding: "40px 24px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "30px" }}>
           <A href="LuxC.dc.html" style={{ textDecoration: "none", display: "inline-flex", flexDirection: "column", alignItems: "stretch" }}>
-            <span className="word" style={{ fontFamily: "TD, serif", fontWeight: "700", fontSize: "96px", lineHeight: "1.15", color: "#FAFBFC", textShadow: "0 0 22px rgba(134,220,234,.35)", animation: "reveal 1.6s cubic-bezier(.5,0,.2,1) .2s both" }}>حيّــاك</span>
-            <span style={{ display: "flex", justifyContent: "space-between", marginTop: "12px", fontFamily: "TD, serif", fontWeight: "700", fontSize: "20px", direction: "ltr", color: "#86DCEA", animation: "up .8s ease-out 1s both" }}><span>{"H"}</span><span>{"A"}</span><span>{"Y"}</span><span>{"Y"}</span><span>{"A"}</span><span>{"K"}</span></span>
+            <span className="word" style={{ fontFamily: "TD, TDx, serif", fontWeight: "700", fontSize: "96px", lineHeight: "1.15", color: "#FAFBFC", textShadow: "0 0 22px rgba(134,220,234,.35)", animation: "reveal 1.6s cubic-bezier(.5,0,.2,1) .2s both" }}>حيّــاك</span>
+            <span style={{ display: "flex", justifyContent: "space-between", marginTop: "12px", fontFamily: "TD, TDx, serif", fontWeight: "700", fontSize: "20px", direction: "ltr", color: "#86DCEA", animation: "up .8s ease-out 1s both" }}><span>{"H"}</span><span>{"A"}</span><span>{"Y"}</span><span>{"Y"}</span><span>{"A"}</span><span>{"K"}</span></span>
           </A>
           <div className="card in" style={{ width: "100%", maxWidth: "480px", boxSizing: "border-box", borderRadius: "36px", padding: "34px 32px", background: "linear-gradient(160deg, rgba(255,255,255,.12), rgba(255,255,255,.04))", WebkitBackdropFilter: "blur(24px)", backdropFilter: "blur(24px)", boxShadow: "inset 0 1px 0 rgba(255,255,255,.14), 0 40px 90px rgba(0,0,0,.35)", display: "flex", flexDirection: "column", gap: "20px", animationDelay: ".6s" }}>
             {v.showTabs ? (
@@ -55,7 +55,7 @@ export default function SignupView({ v }) {
             {v.isForm ? (
               <div style={{ display: "flex", flexDirection: "column", gap: "14px", animation: "up .5s ease-out both" }}>
                   <span style={{ display: "flex", flexDirection: "column", gap: "6px", textAlign: "right" }}>
-                    <b style={{ fontFamily: "TD, serif", fontSize: "32px", fontWeight: "700" }}>{v.formTitle}</b>
+                    <b style={{ fontFamily: "TD, TDx, serif", fontSize: "32px", fontWeight: "700" }}>{v.formTitle}</b>
                     <span style={{ fontSize: "16px", lineHeight: "1.7", color: "#DCE4E8" }}>{v.formSub}</span>
                   </span>
                   {v.isNew ? (
@@ -90,7 +90,7 @@ export default function SignupView({ v }) {
             {v.isOtp ? (
               <div style={{ display: "flex", flexDirection: "column", gap: "16px", animation: "up .5s ease-out both" }}>
                   <span style={{ display: "flex", flexDirection: "column", gap: "6px", textAlign: "right" }}>
-                    <b style={{ fontFamily: "TD, serif", fontSize: "32px", fontWeight: "700" }}>اكتب الرمز</b>
+                    <b style={{ fontFamily: "TD, TDx, serif", fontSize: "32px", fontWeight: "700" }}>اكتب الرمز</b>
                     <span style={{ fontSize: "16px", lineHeight: "1.7", color: "#DCE4E8" }}>{"أرسلنا رمز من 6 أرقام إلى "}<span style={{ direction: "ltr", display: "inline-block" }}>{v.mail}</span></span>
                   </span>
                   <div style={{ display: "flex", gap: "8px", direction: "ltr", justifyContent: "center" }}>
@@ -112,7 +112,7 @@ export default function SignupView({ v }) {
             {v.isNewPw ? (
               <div style={{ display: "flex", flexDirection: "column", gap: "14px", animation: "up .5s ease-out both" }}>
                   <span style={{ display: "flex", flexDirection: "column", gap: "6px", textAlign: "right" }}>
-                    <b style={{ fontFamily: "TD, serif", fontSize: "32px", fontWeight: "700" }}>كلمة مرور جديدة</b>
+                    <b style={{ fontFamily: "TD, TDx, serif", fontSize: "32px", fontWeight: "700" }}>كلمة مرور جديدة</b>
                     <span style={{ fontSize: "16px", lineHeight: "1.7", color: "#DCE4E8" }}>اختر كلمة مرور تتذكرها وما تستخدمها في مكان ثاني</span>
                   </span>
                   {v.showPw2 ? (
@@ -143,11 +143,11 @@ export default function SignupView({ v }) {
                       <circle cx="50" cy="50" r="31" fill="none" stroke="#05505E" strokeOpacity="0.45" strokeWidth="2.5" />
                       <circle cx="50" cy="50.8" r="31" fill="none" stroke="#FFFFFF" strokeOpacity="0.45" strokeWidth="1.2" />
                       <ellipse cx="36" cy="28" rx="15" ry="7" transform="rotate(-28 36 28)" fill="#FFFFFF" fillOpacity="0.3" />
-                      <text x="50" y="59.2" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="40" fill="#05505E" fillOpacity="0.7">{"ح"}</text>
-                      <text x="50" y="58" textAnchor="middle" fontFamily="TD" fontWeight="700" fontSize="40" fill="#FFFFFF">{"ح"}</text>
+                      <text x="50" y="59.2" textAnchor="middle" fontFamily="TD, TDx, serif" fontWeight="700" fontSize="40" fill="#05505E" fillOpacity="0.7">{"ح"}</text>
+                      <text x="50" y="58" textAnchor="middle" fontFamily="TD, TDx, serif" fontWeight="700" fontSize="40" fill="#FFFFFF">{"ح"}</text>
                     </svg>
                   </span>
-                  <b style={{ fontFamily: "TD, serif", fontSize: "34px", fontWeight: "700", animation: "up .6s ease-out .8s both" }}>{v.doneTitle}</b>
+                  <b style={{ fontFamily: "TD, TDx, serif", fontSize: "34px", fontWeight: "700", animation: "up .6s ease-out .8s both" }}>{v.doneTitle}</b>
                   <span style={{ fontSize: "17px", lineHeight: "1.8", color: "#DCE4E8", animation: "up .6s ease-out 1s both" }}>{v.doneSub}</span>
                   <A href={v.doneHref} className="btn" style={{ height: "58px", padding: "0 36px", borderRadius: "999px", background: "#FAFBFC", color: "#0A2A43", textDecoration: "none", fontWeight: "500", fontSize: "17px", display: "inline-flex", alignItems: "center", animation: "up .6s ease-out 1.2s both" }}>{v.doneCta}</A>
                 </div>

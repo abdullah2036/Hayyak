@@ -11,7 +11,7 @@ export const fontReady = (font, ms) => typeReady(ms).then(() => document.fonts?.
 export async function typeCss() {
   try {
     if (!(await typeReady())) return '';
-    const r = await fetch('/api/type');
+    const r = await fetch(window.__hyTypeUrl || '/api/type');
     if (r.status !== 200) return '';
     const url = (b) => new Promise((ok, no) => {
       const f = new FileReader();

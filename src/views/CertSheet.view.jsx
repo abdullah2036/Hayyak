@@ -1,4 +1,5 @@
 import { Fragment } from 'react';
+import Mark from '@/ui/Mark';
 import { S, txt, A } from '@/ui/dc';
 
 const CSS = ``;
@@ -23,7 +24,7 @@ export default function CertSheetView({ v }) {
       </svg>
       <div style={{ containerType: "inline-size", width: "100%" }}>
         {" "}
-        <div style={{ position: "relative", width: "100%", aspectRatio: "1123/794", borderRadius: "1cqw", overflow: "hidden", boxShadow: "0 20px 50px rgba(10,42,67,.16)", fontFamily: "'IBM Plex Sans Arabic', sans-serif", direction: "rtl" }}>
+        <div style={{ position: "relative", width: "100%", aspectRatio: "1123/794", borderRadius: "1cqw", overflow: "hidden", boxShadow: "0 20px 50px rgba(10,42,67,.16)", fontFamily: "TS, 'IBM Plex Sans Arabic', sans-serif", direction: "rtl" }}>
           {" "}
           {v.notCustom ? (
             <div style={S(`${txt(v.pBg)}`)}>
@@ -39,7 +40,7 @@ export default function CertSheetView({ v }) {
                 <svg viewBox="0 0 100 100" aria-hidden="true" style={S(`position: absolute; left: -13.4cqw; bottom: -16cqw; width: 51.6cqw; height: 51.6cqw; opacity: ${txt(v.wmOp)};`)}>
                   <path d={v.wax} fill={v.acc} />
                   <circle cx="50" cy="50" r="31.5" fill="none" stroke={v.paperC} strokeWidth="2.6" />
-                  <text x="50" y="60" textAnchor="middle" fontFamily="TD" fontSize="42" fill={v.paperC}>{"ح"}</text>
+                  <text x="50" y="60" textAnchor="middle" fontFamily="TD, TDx, serif" fontSize="42" fill={v.paperC}>{"ح"}</text>
                 </svg>
                 {" "}
                 <svg viewBox="0 0 1123 794" preserveAspectRatio="none" aria-hidden="true" style={{ position: "absolute", inset: "0", width: "100%", height: "100%" }}>
@@ -57,11 +58,11 @@ export default function CertSheetView({ v }) {
                         <path d={v.wax} fill="url(#dWax)" />
                         <circle cx="50" cy="50" r="31.5" fill="none" stroke="#05505E" strokeOpacity=".55" strokeWidth="2.6" />
                         <ellipse cx="34" cy="24" rx="16" ry="6" transform="rotate(-30 34 24)" fill="#FFFFFF" fillOpacity=".35" />
-                        <text x="50" y="59" textAnchor="middle" fontFamily="TD" fontSize="42" fill="#FFFFFF">{"ح"}</text>
+                        <text x="50" y="59" textAnchor="middle" fontFamily="TD, TDx, serif" fontSize="42" fill="#FFFFFF">{"ح"}</text>
                       </svg>
                       <span style={{ display: "flex", flexDirection: "column" }}>
                         <span style={S(`font-size: 1.34cqw; color: ${txt(v.mut)};`)}>بواسطة</span>
-                        <span style={{ fontFamily: "TD, serif", fontSize: "2.85cqw", lineHeight: "1.1" }}>حيّــاك</span>
+                        <span style={{ fontFamily: "TD, TDx, serif", fontSize: "2.85cqw", lineHeight: "1.1" }}>حيّــاك</span>
                       </span>
                     </span>
                     <span style={{ display: "flex", alignItems: "center", gap: "1cqw", flexDirection: "row-reverse" }}>
@@ -70,18 +71,18 @@ export default function CertSheetView({ v }) {
                           <img src={v.logo} alt="" style={{ width: "78%", height: "78%", objectFit: "contain" }} />
                         ) : null}
                         {v.noLogo ? (
-                          <span style={S(`font-family: TD, serif; font-size: 2.5cqw; color: ${txt(v.acc)};`)}>{v.orgInit}</span>
+                          <span style={S(`font-family: TD, TDx, serif; font-size: 2.5cqw; color: ${txt(v.acc)};`)}>{v.orgInit}</span>
                         ) : null}
                       </span>
                       <span style={{ display: "flex", flexDirection: "column", textAlign: "left" }}>
-                        <span style={{ fontFamily: "TS, sans-serif", fontWeight: "700", fontSize: "1.96cqw" }}>{v.org}</span>
+                        <span style={{ fontFamily: "TS, 'IBM Plex Sans Arabic', sans-serif", fontWeight: "700", fontSize: "1.96cqw" }}>{v.org}</span>
                         <span style={S(`font-size: 1.34cqw; color: ${txt(v.mut)};`)}>{v.orgSub}</span>
                       </span>
                     </span>
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", marginTop: "-.6cqw" }}>
-                    <span style={S(`font-family: TD, serif; font-size: 6.2cqw; line-height: 1.15; color: ${txt(v.acc)};`)}>{v.title}</span>
-                    <span style={S(`font-family: TD, serif; font-size: 1.96cqw; color: ${txt(v.mut)};`)}>{v.titleEn}</span>
+                    <span style={S(`font-family: TD, TDx, serif; font-size: 6.2cqw; line-height: 1.15; color: ${txt(v.acc)};`)}>{v.title}</span>
+                    <span style={S(`font-family: TD, TDx, serif; font-size: 1.96cqw; color: ${txt(v.mut)};`)}>{v.titleEn}</span>
                     <span style={{ display: "flex", alignItems: "center", gap: "1cqw", marginTop: "1.4cqw" }}>
                       <span style={S(`width: 9.8cqw; height: .1cqw; background: ${txt(v.gold)};`)} />
                       <span style={S(`width: .7cqw; height: .7cqw; transform: rotate(45deg); background: ${txt(v.gold)};`)} />
@@ -90,7 +91,7 @@ export default function CertSheetView({ v }) {
                     {v.isAr ? (
                       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: "5cqw" }}>
                           <span style={S(`font-size: 1.96cqw; color: ${txt(v.mut)};`)}>{v.certLine}</span>
-                          <span style={S(`font-family: TD, serif; font-size: 7.3cqw; line-height: 1.35; ${txt(v.glow)}`)}>{v.nameAr}</span>
+                          <span style={S(`font-family: TD, TDx, serif; font-size: 7.3cqw; line-height: 1.35; ${txt(v.glow)}`)}>{v.nameAr}</span>
                           <span style={S(`width: 57cqw; font-size: 1.87cqw; line-height: 1.95; color: ${txt(v.body)}; text-align: justify; text-align-last: center;`)}>{v.para}</span>
                           {v.extraShow ? (
                             <span style={S(`font-size: 1.5cqw; color: ${txt(v.mut)}; margin-top: .4cqw;`)}>{v.extraLine}</span>
@@ -101,7 +102,7 @@ export default function CertSheetView({ v }) {
                       <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) .1cqw minmax(0,1fr)", gap: "3.6cqw", width: "80cqw", marginTop: "6.2cqw", alignItems: "start" }}>
                           <div style={{ direction: "rtl", textAlign: "right", display: "flex", flexDirection: "column", gap: ".3cqw" }}>
                             <span style={S(`font-size: 1.6cqw; color: ${txt(v.mut)};`)}>{v.certLine}</span>
-                            <span style={S(`font-family: TD, serif; font-size: 4.2cqw; line-height: 1.5; white-space: nowrap; ${txt(v.glow)}`)}>{v.nameAr}</span>
+                            <span style={S(`font-family: TD, TDx, serif; font-size: 4.2cqw; line-height: 1.5; white-space: nowrap; ${txt(v.glow)}`)}>{v.nameAr}</span>
                             <span style={S(`font-size: 1.6cqw; line-height: 1.9; color: ${txt(v.body)};`)}>{v.para}</span>
                             {v.extraShow ? (
                               <span style={S(`font-size: 1.4cqw; color: ${txt(v.mut)};`)}>{v.extraLine}</span>
@@ -110,7 +111,7 @@ export default function CertSheetView({ v }) {
                           <span style={S(`width: .1cqw; height: 100%; background: ${txt(v.fg)}; opacity: .15;`)} />
                           <div style={{ direction: "ltr", textAlign: "left", display: "flex", flexDirection: "column", gap: ".3cqw" }}>
                             <span style={S(`font-size: 1.6cqw; color: ${txt(v.mut)};`)}>{v.enLine}</span>
-                            <span style={S(`font-family: TS, sans-serif; font-weight: 700; font-size: 3.4cqw; line-height: 1.85; white-space: nowrap; ${txt(v.glow)}`)}>{v.nameEn}</span>
+                            <span style={S(`font-family: TS, 'IBM Plex Sans Arabic', sans-serif; font-weight: 700; font-size: 3.4cqw; line-height: 1.85; white-space: nowrap; ${txt(v.glow)}`)}>{v.nameEn}</span>
                             <span style={S(`font-size: 1.6cqw; line-height: 1.9; color: ${txt(v.body)};`)}>{v.enPara}</span>
                           </div>
                         </div>
@@ -119,7 +120,7 @@ export default function CertSheetView({ v }) {
                   <div style={{ marginTop: "auto", width: "100%", display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
                     <span style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: ".36cqw", width: "25cqw" }}>
                       <span style={S(`font-size: 1.34cqw; color: ${txt(v.mut)};`)}>{v.role}</span>
-                      <span style={{ fontFamily: "TD, serif", fontSize: "2.3cqw", lineHeight: "1.3" }}>{v.signer}</span>
+                      <span style={{ fontFamily: "TD, TDx, serif", fontSize: "2.3cqw", lineHeight: "1.3" }}>{v.signer}</span>
                       <span style={{ height: "3cqw", marginBottom: "-1.1cqw", display: "flex", alignItems: "flex-end" }}>
                         {v.hasSig ? (
                           <img src={v.sigImg} alt="" style={{ height: "3.4cqw", maxWidth: "14cqw", objectFit: "contain" }} />
@@ -134,7 +135,7 @@ export default function CertSheetView({ v }) {
                     </span>
                     <span style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: ".36cqw", width: "25cqw" }}>
                       <span style={S(`font-size: 1.34cqw; color: ${txt(v.mut)};`)}>تاريخ الإصدار</span>
-                      <span style={{ fontFamily: "TD, serif", fontSize: "2.3cqw", lineHeight: "1.3" }}>{v.issueDate}</span>
+                      <span style={{ fontFamily: "TD, TDx, serif", fontSize: "2.3cqw", lineHeight: "1.3" }}>{v.issueDate}</span>
                       <span style={{ height: "3cqw", marginBottom: "-1.1cqw" }} />
                       <span style={S(`width: 25cqw; height: .1cqw; background: ${txt(v.fg)}; opacity: .35;`)} />
                     </span>
@@ -161,7 +162,7 @@ export default function CertSheetView({ v }) {
                 {" "}
                 <div style={S(`${txt(v.ovSt)}`)}>
                   {" "}
-                  <span style={S(`font-family: TD, serif; font-size: ${txt(v.ovName)}; line-height: 1.3;`)}>{v.nameAr}</span>
+                  <span style={S(`font-family: TD, TDx, serif; font-size: ${txt(v.ovName)}; line-height: 1.3;`)}>{v.nameAr}</span>
                   {" "}
                   {(v.ovLines || []).map((l, $i2) => (
                     <span key={l?.key ?? $i2} style={S(`font-size: ${txt(v.ovInfo)}; line-height: 1.8; opacity: .85;`)}>{l}</span>
@@ -170,10 +171,7 @@ export default function CertSheetView({ v }) {
                 </div>
                 {" "}
                 <span style={{ position: "absolute", left: "2cqw", bottom: "1.6cqw", display: "inline-flex", alignItems: "center", gap: ".5cqw", padding: ".4cqw .9cqw", borderRadius: "99px", background: "rgba(255,255,255,.75)", fontSize: "1cqw", color: "#4A5B68" }}>
-                  <svg viewBox="0 0 100 100" aria-hidden="true" style={{ width: "1.6cqw", height: "1.6cqw" }}>
-                    <path d={v.wax} fill="url(#dWax)" />
-                    <text x="50" y="64" textAnchor="middle" fontFamily="TD" fontSize="48" fill="#FFFFFF">{"ح"}</text>
-                  </svg>
+                  <Mark size={0} style={{width: "1.6cqw", height: "1.6cqw"}} />
                   بواسطة حيّــاك
                 </span>
                 {" "}

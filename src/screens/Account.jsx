@@ -40,7 +40,7 @@ export default class Account extends Screen {
     const tot = d.hours.reduce((a, h) => a + h.h, 0);
     const num = (n) => String(n).replace('.', '٫');
     const certs = d.certs.filter((c) => s.org === 0 || c.o === orgs[s.org]);
-    const big = (c) => `font-family:TD,serif;font-size:36px;line-height:1.1;color:${c}`;
+    const big = (c) => `font-family:TD, TDx, serif;font-size:36px;line-height:1.1;color:${c}`;
     return {
       ...base('حسابي', shell), name: d.me.name, init: d.me.name.charAt(0), emailLine: d.me.email,
       kpis: [{ key: 1, l: 'فعاليات حضرتها', v: d.hours.length, s: `${d.hours.filter((h) => h.term).length} هالفصل`, st: big('#0A2A43') }, { key: 2, l: 'شهاداتي', v: d.certs.length, s: 'جاهزة للتحميل', st: big('#0E97AE') }, { key: 3, l: 'ساعاتي', v: num(tot), s: 'ساعة حضور', st: big('#B8892A') }, { key: 4, l: 'دعوات جاية', v: d.upcoming.length, s: d.upcoming.some((u) => u.st === 'pending') ? 'فيها اللي ينتظر ردّك' : 'كلها رديت عليها', st: big('#0A2A43') }],

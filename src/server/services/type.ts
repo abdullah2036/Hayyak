@@ -1,5 +1,5 @@
 import 'server-only';
-import { randomInt } from 'node:crypto';
+import { createHash, randomInt } from 'node:crypto';
 import { eq } from 'drizzle-orm';
 import { pack, type Face } from '@/lib/typepack';
 import { db, settings } from '../db';
@@ -15,20 +15,34 @@ const NEED: { re: RegExp; family: Face['family']; weight: number; name: string }
 const MAX = 500_000;
 type Saved = { pack: string; names: string[]; size: number };
 
-let cache: { at: number; bytes: Uint8Array<ArrayBuffer> | null } | null = null;
+let cache: { at: number; bytes: Uint8Array<ArrayBuffer> | null; v: string } | null = null;
 
 async function saved() {
   const [row] = await (await db()).select().from(settings).where(eq(settings.key, 'type'));
   return row ? { value: row.value as unknown as Saved, by: row.updatedBy, at: row.updatedAt } : null;
 }
 
-/** What visitors download. Kept in memory for a minute: it is large and almost never changes. */
-export async function typePack() {
-  if (!cache || Date.now() - cache.at > 60_000) {
+/** What visitors download, and its version. Kept in memory for a minute: it is large and almost never changes. */
+async function current() {
+  if (!cache || Date.now() - cache.at > Number(process.env.TYPE_CACHE_MS ?? 60_000)) {
     const s = await saved();
-    cache = { at: Date.now(), bytes: s ? new Uint8Array(Buffer.from(s.value.pack, 'base64')) : null };
+    const bytes = s ? new Uint8Array(Buffer.from(s.value.pack, 'base64')) : null;
+    cache = { at: Date.now(), bytes, v: bytes ? createHash('sha256').update(bytes).digest('base64url').slice(0, 12) : '' };
   }
-  return cache.bytes;
+  return cache;
+}
+export const typePack = async () => (await current()).bytes;
+export const typeVersion = async () => (await current()).v;
+
+/** For every page: where the typeface is, or null. A page must never fail because of it. */
+export async function typeUrl() {
+  try {
+    const v = await typeVersion();
+    return v ? `/api/type/${v}` : null;
+  } catch (e) {
+    console.error('[type]', (e as Error).message);
+    return null;
+  }
 }
 
 export async function typeStatus() {

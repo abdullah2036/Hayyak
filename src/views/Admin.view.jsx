@@ -10,7 +10,7 @@ body{margin:0;background:#061C2E}
 .kpi{transition:transform .3s ease,background .3s ease}.kpi:hover{transform:translateY(-4px);background:rgba(255,255,255,.1) !important}
 .card2{transition:transform .25s ease}
 a{color:#086577}
-input,button,select,textarea{font-family:'IBM Plex Sans Arabic',sans-serif}
+input,button,select,textarea{font-family:TS, 'IBM Plex Sans Arabic', sans-serif}
 .fld{height:50px;border-radius:999px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);padding:0 18px;font-size:15px;color:#EAF4F7;width:100%;box-sizing:border-box}
 .fld:focus,select:focus,textarea:focus{outline:none;border-color:#0E97AE;box-shadow:0 0 0 4px rgba(14,151,174,.14)}
 .tg{position:relative;width:52px;height:30px;border-radius:999px;border:0;cursor:pointer;transition:background .25s ease;flex:none}
@@ -34,13 +34,13 @@ select option{color:#0A2A43}
 @keyframes bob{0%,100%{translate:0 0}50%{translate:0 -8px}}
 .tw{animation:twk 2.4s ease-in-out infinite}@keyframes twk{0%,100%{opacity:.2}50%{opacity:1}}
 @media (max-width: 900px){.bld{padding:18px !important;border-radius:26px !important}}
-h2,h3{font-family:TS,'IBM Plex Sans Arabic',sans-serif;font-weight:700}`;
+h2,h3{font-family:TS, 'IBM Plex Sans Arabic', sans-serif;font-weight:700}`;
 
 export default function AdminView({ v }) {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
-      <div dir="rtl" style={{ position: "relative", overflow: "hidden", minHeight: "100vh", fontFamily: "'IBM Plex Sans Arabic', TS, sans-serif", color: "#EAF4F7", background: "radial-gradient(50% 40% at 85% 0%, rgba(14,151,174,.45), rgba(14,151,174,0) 70%), radial-gradient(45% 40% at 10% 100%, rgba(134,220,234,.18), rgba(134,220,234,0) 70%), linear-gradient(180deg, #0B3550, #061C2E)" }}>
+      <div dir="rtl" style={{ position: "relative", overflow: "hidden", minHeight: "100vh", fontFamily: "TS, 'IBM Plex Sans Arabic', sans-serif", color: "#EAF4F7", background: "radial-gradient(50% 40% at 85% 0%, rgba(14,151,174,.45), rgba(14,151,174,0) 70%), radial-gradient(45% 40% at 10% 100%, rgba(134,220,234,.18), rgba(134,220,234,0) 70%), linear-gradient(180deg, #0B3550, #061C2E)" }}>
         <span aria-hidden="true" className="orb" style={{ right: "20%", top: "-120px" }} />
         <span aria-hidden="true" className="orb" style={{ left: "-10%", bottom: "10%", animationDuration: "26s", animationDirection: "reverse" }} />
         {" "}
@@ -61,11 +61,11 @@ export default function AdminView({ v }) {
                 <circle cx="50" cy="50" r="31.5" fill="none" stroke="#05505E" strokeOpacity=".55" strokeWidth="2.6" />
                 <circle cx="50" cy="50.9" r="31.5" fill="none" stroke="#C9F4FA" strokeOpacity=".55" strokeWidth="1.1" />
                 <ellipse cx="34" cy="24" rx="16" ry="6" transform="rotate(-30 34 24)" fill="#FFFFFF" fillOpacity=".35" />
-                <text x="50" y="60.4" textAnchor="middle" fontFamily="TD" fontSize="42" fill="#033A44" fillOpacity=".7">{"ح"}</text>
-                <text x="50" y="58.8" textAnchor="middle" fontFamily="TD" fontSize="42" fill="#FFFFFF">{"ح"}</text>
+                <text x="50" y="60.4" textAnchor="middle" fontFamily="TD, TDx, serif" fontSize="42" fill="#033A44" fillOpacity=".7">{"ح"}</text>
+                <text x="50" y="58.8" textAnchor="middle" fontFamily="TD, TDx, serif" fontSize="42" fill="#FFFFFF">{"ح"}</text>
               </svg>
               <span style={{ display: "inline-flex", flexDirection: "column", alignItems: "stretch" }}>
-                <span style={{ fontFamily: "TD, serif", fontSize: "28px", lineHeight: "1.1" }}>حيّــاك</span>
+                <span style={{ fontFamily: "TD, TDx, serif", fontSize: "28px", lineHeight: "1.1" }}>حيّــاك</span>
                 <span style={{ display: "flex", justifyContent: "space-between", direction: "ltr", fontWeight: "700", fontSize: "11px", color: "#86DCEA" }}><span>{"S"}</span><span>{"T"}</span><span>{"U"}</span><span>{"D"}</span><span>{"I"}</span><span>{"O"}</span></span>
               </span>
             </span>
@@ -86,7 +86,7 @@ export default function AdminView({ v }) {
                 دلّني
               </button>
               <span style={{ display: "flex", alignItems: "center", gap: "10px", padding: "12px", borderRadius: "20px", background: "rgba(255,255,255,.08)" }}>
-                <span style={{ width: "40px", height: "40px", borderRadius: "50%", background: "#86DCEA", color: "#04121F", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "TD, serif", fontSize: "17px" }}>{v.meI}</span>
+                <span style={{ width: "40px", height: "40px", borderRadius: "50%", background: "#86DCEA", color: "#04121F", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "TD, TDx, serif", fontSize: "17px" }}>{v.meI}</span>
                 <span style={{ display: "flex", flexDirection: "column" }}>
                   <b style={{ fontSize: "14px" }}>{v.meN}</b>
                   <span style={{ fontSize: "12px", color: "#B8D4DE" }}>{v.meR}</span>
@@ -101,7 +101,7 @@ export default function AdminView({ v }) {
             ) : null}
             <header className="in" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: "16px", flexWrap: "wrap" }}>
               <span style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                <h1 className="h1m" style={{ margin: "0", fontFamily: "TS, sans-serif", fontWeight: "700", fontSize: "42px", lineHeight: "1.15" }}>{v.vt}</h1>
+                <h1 className="h1m" style={{ margin: "0", fontFamily: "TS, 'IBM Plex Sans Arabic', sans-serif", fontWeight: "700", fontSize: "42px", lineHeight: "1.15" }}>{v.vt}</h1>
                 <span style={{ fontSize: "15px", color: "#B8CCD6" }}>{v.vs}</span>
               </span>
             </header>
@@ -110,7 +110,7 @@ export default function AdminView({ v }) {
                   <span aria-hidden="true" className="sweep" />
                   <span style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                     <span style={{ fontSize: "15px", color: "#86DCEA", fontWeight: "700" }}>{v.greet}</span>
-                    <b style={{ fontFamily: "TD, serif", fontSize: "44px", lineHeight: "1.2" }}>{v.openTx}</b>
+                    <b style={{ fontFamily: "TD, TDx, serif", fontSize: "44px", lineHeight: "1.2" }}>{v.openTx}</b>
                     <span style={{ fontSize: "15px", color: "#B8CCD6" }}>{v.sendTx}</span>
                     <span style={{ display: "flex", gap: "10px", marginTop: "8px", flexWrap: "wrap" }}>
                       <button type="button" onClick={v.goReq} className="glow" style={{ height: "50px", padding: "0 24px", border: "0", borderRadius: "999px", background: "#86DCEA", color: "#04121F", fontWeight: "700", fontSize: "15px", cursor: "pointer" }}>افتح الطلبات</button>
@@ -132,8 +132,8 @@ export default function AdminView({ v }) {
                       <circle cx="50" cy="50" r="31.5" fill="none" stroke="#05505E" strokeOpacity=".55" strokeWidth="2.6" />
                       <circle cx="50" cy="50.9" r="31.5" fill="none" stroke="#C9F4FA" strokeOpacity=".55" strokeWidth="1.1" />
                       <ellipse cx="34" cy="24" rx="16" ry="6" transform="rotate(-30 34 24)" fill="#FFFFFF" fillOpacity=".35" />
-                      <text x="50" y="60.4" textAnchor="middle" fontFamily="TD" fontSize="42" fill="#033A44" fillOpacity=".7">{"ح"}</text>
-                      <text x="50" y="58.8" textAnchor="middle" fontFamily="TD" fontSize="42" fill="#FFFFFF">{"ح"}</text>
+                      <text x="50" y="60.4" textAnchor="middle" fontFamily="TD, TDx, serif" fontSize="42" fill="#033A44" fillOpacity=".7">{"ح"}</text>
+                      <text x="50" y="58.8" textAnchor="middle" fontFamily="TD, TDx, serif" fontSize="42" fill="#FFFFFF">{"ح"}</text>
                     </svg>
                   </span>
                 </section>
@@ -149,7 +149,7 @@ export default function AdminView({ v }) {
                               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#86DCEA" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={k?.ic} /></svg>
                             </span>
                           </span>
-                          <b style={{ fontFamily: "TD, serif", fontSize: "38px", lineHeight: "1.1" }}>{k?.v}</b>
+                          <b style={{ fontFamily: "TD, TDx, serif", fontSize: "38px", lineHeight: "1.1" }}>{k?.v}</b>
                           <span style={{ fontSize: "13px", color: "#86DCEA", fontWeight: "700" }}>{k?.d}</span>
                         </div>
                     ))}
@@ -265,7 +265,7 @@ export default function AdminView({ v }) {
                     {v.hasSel ? (
                       <section className="in" style={{ borderRadius: "30px", padding: "24px", display: "flex", flexDirection: "column", gap: "16px", background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.12)", boxShadow: "0 24px 60px rgba(0,0,0,.25)" }}>
                           <span style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                            <b style={{ fontFamily: "TD, serif", fontSize: "28px", lineHeight: "1.3" }}>{v.sel?.what}</b>
+                            <b style={{ fontFamily: "TD, TDx, serif", fontSize: "28px", lineHeight: "1.3" }}>{v.sel?.what}</b>
                             <span style={{ fontSize: "14px", color: "#9FB8C6" }}>{v.sel?.who}{" · رصيد "}{v.sel?.plan}{" · "}{v.sel?.when}</span>
                           </span>
                           <span style={{ fontSize: "15px", lineHeight: "1.8", padding: "14px 16px", borderRadius: "20px", background: "rgba(255,255,255,.07)" }}>{v.sel?.note}</span>
@@ -363,7 +363,7 @@ export default function AdminView({ v }) {
                   {(v.ents || []).map((e, $i12) => (
                     <div key={e?.key ?? $i12} className="gt" style={{ display: "grid", gridTemplateColumns: "minmax(0,1.3fr) minmax(0,1.4fr) minmax(0,.8fr)", gap: "14px", alignItems: "center", padding: "14px", borderRadius: "22px", background: "rgba(255,255,255,.07)" }}>
                         <span style={{ display: "flex", alignItems: "center", gap: "12px", minWidth: "0" }}>
-                          <span style={{ width: "44px", height: "44px", borderRadius: "50%", background: "rgba(134,220,234,.15)", color: "#86DCEA", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "TD, serif", fontSize: "18px", flex: "none" }}>{e?.i}</span>
+                          <span style={{ width: "44px", height: "44px", borderRadius: "50%", background: "rgba(134,220,234,.15)", color: "#86DCEA", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "TD, TDx, serif", fontSize: "18px", flex: "none" }}>{e?.i}</span>
                           <span style={{ display: "flex", flexDirection: "column", minWidth: "0" }}>
                             <b style={{ fontSize: "15px" }}>{e?.n}</b>
                             <span style={{ fontSize: "12px", color: "#9FB8C6" }}>{"رصيد "}{e?.plan}{" · "}{e?.kind}</span>
@@ -426,7 +426,7 @@ export default function AdminView({ v }) {
                             <span style={{ fontSize: "13px", color: "#9FB8C6" }}>{o?.d}</span>
                             <span style={{ fontSize: "13px", color: "#B8CCD6", direction: "ltr", textAlign: "right" }}>{o?.c}</span>
                           </span>
-                          <b style={{ fontFamily: "TD, serif", fontSize: "24px" }}>{o?.p}</b>
+                          <b style={{ fontFamily: "TD, TDx, serif", fontSize: "24px" }}>{o?.p}</b>
                           <button type="button" onClick={o?.ok} style={{ height: "44px", padding: "0 22px", border: "0", borderRadius: "999px", background: "#0E97AE", color: "#fff", fontFamily: "inherit", fontWeight: "700", cursor: "pointer" }}>انقبض المبلغ · نزّل الرصيد</button>
                           <button type="button" onClick={o?.no} style={{ height: "40px", padding: "0 16px", borderRadius: "999px", border: "1px solid rgba(134,220,234,.4)", background: "transparent", color: "#86DCEA", fontFamily: "inherit", fontSize: "13px", fontWeight: "700", cursor: "pointer" }}>إلغاء</button>
                         </div>
@@ -439,7 +439,7 @@ export default function AdminView({ v }) {
                     {(v.plansFull || []).map((p, $i15) => (
                       <div key={p?.key ?? $i15} className="in" style={{ borderRadius: "28px", padding: "22px", display: "flex", flexDirection: "column", gap: "10px", background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.12)", boxShadow: "0 24px 60px rgba(0,0,0,.25)" }}>
                           <b style={{ fontSize: "20px" }}>{p?.n}</b>
-                          <span style={{ fontFamily: "TD, serif", fontSize: "36px", lineHeight: "1.1" }}>{p?.price}</span>
+                          <span style={{ fontFamily: "TD, TDx, serif", fontSize: "36px", lineHeight: "1.1" }}>{p?.price}</span>
                           <span style={{ fontSize: "14px", color: "#B8CCD6", lineHeight: "1.7" }}>{p?.lim}</span>
                           <span style={{ height: "1px" }} />
                           <span style={{ display: "flex", justifyContent: "space-between", fontSize: "14px" }}><span>انباعت</span><b>{p?.c}</b></span>
@@ -581,7 +581,7 @@ export default function AdminView({ v }) {
                       {v.peHasLogo ? (
                         <img src={v.peLogo} alt="" style={{ position: "absolute", left: "50%", top: "150px", width: "70px", marginLeft: "-35px", opacity: ".9", animation: "bob 5s ease-in-out infinite" }} />
                       ) : null}
-                      <span style={S(`position: absolute; left: 12px; right: 12px; top: 78px; text-align: center; font-family: TD, serif; font-size: 28px; line-height: 1.3; color: ${txt(v.peTx)}; text-shadow: 0 2px 16px rgba(0,0,0,.4);`)}>{v.peTitleShow}</span>
+                      <span style={S(`position: absolute; left: 12px; right: 12px; top: 78px; text-align: center; font-family: TD, TDx, serif; font-size: 28px; line-height: 1.3; color: ${txt(v.peTx)}; text-shadow: 0 2px 16px rgba(0,0,0,.4);`)}>{v.peTitleShow}</span>
                       <span style={{ position: "absolute", left: "14px", right: "14px", bottom: "14px", height: "220px", borderRadius: "22px", background: "#FAFBFC" }} />
                     </div>
                     <span style={{ fontSize: "12px", color: "#9FB8C6", textAlign: "center", lineHeight: "1.7" }}>المعاينة تقريبية، والنمط النهائي يطلع بنفس جودة الأنماط الحالية</span>
@@ -625,7 +625,7 @@ export default function AdminView({ v }) {
                   ) : null}
                   {(v.team || []).map((m, $i22) => (
                     <div key={m?.key ?? $i22} style={{ display: "flex", alignItems: "center", gap: "14px", padding: "14px", borderRadius: "22px", background: "rgba(255,255,255,.07)" }}>
-                        <span style={{ width: "46px", height: "46px", borderRadius: "50%", background: "#0A2A43", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "TD, serif", fontSize: "18px" }}>{m?.i}</span>
+                        <span style={{ width: "46px", height: "46px", borderRadius: "50%", background: "#0A2A43", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "TD, TDx, serif", fontSize: "18px" }}>{m?.i}</span>
                         <span style={{ flex: "1", display: "flex", flexDirection: "column" }}>
                           <b style={{ fontSize: "15px" }}>{m?.n}</b>
                           <span style={{ fontSize: "13px", color: "#9FB8C6", direction: "ltr", textAlign: "right" }}>{m?.mail}</span>
@@ -645,7 +645,7 @@ export default function AdminView({ v }) {
                   <div className="bld" style={{ width: "100%", maxWidth: "1080px", maxHeight: "94vh", overflow: "auto", boxSizing: "border-box", borderRadius: "34px", padding: "26px", background: "linear-gradient(160deg, #0B3550, #061C2E)", border: "1px solid rgba(134,220,234,.25)", boxShadow: "0 40px 90px rgba(0,0,0,.5)", display: "flex", flexDirection: "column", gap: "18px", color: "#EAF4F7" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "12px" }}>
                       <span style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                        <b style={{ fontFamily: "TD, serif", fontSize: "30px", lineHeight: "1.3" }}>{v.bHead}</b>
+                        <b style={{ fontFamily: "TD, TDx, serif", fontSize: "30px", lineHeight: "1.3" }}>{v.bHead}</b>
                         <span style={{ fontSize: "14px", color: "#9FB8C6" }}>{v.bSub}</span>
                       </span>
                       <button type="button" onClick={v.closeB} aria-label="إغلاق" style={{ width: "42px", height: "42px", borderRadius: "50%", border: "0", background: "rgba(255,255,255,.1)", color: "#FFFFFF", fontSize: "18px", cursor: "pointer" }}>{"×"}</button>
@@ -769,7 +769,7 @@ export default function AdminView({ v }) {
                                 <circle cx="50" cy="50" r="31" fill="none" stroke="rgba(0,0,0,.28)" strokeWidth="2.5" />
                                 <ellipse cx="36" cy="28" rx="14" ry="6" transform="rotate(-28 36 28)" fill="#FFFFFF" fillOpacity=".3" />
                                 <foreignObject x="18" y="30" width="64" height="40" opacity={v.bTxtOp}>
-                                  <div xmlns="http://www.w3.org/1999/xhtml" style={S(`width: 64px; height: 40px; display: flex; align-items: center; justify-content: center; font-family: TD, serif; font-weight: 700; font-size: ${txt(v.bTextFs)}px; line-height: 1; color: #FFFFFF; text-shadow: 0 1px 2px rgba(0,0,0,.3); white-space: nowrap;`)}>{v.bText}</div>
+                                  <div xmlns="http://www.w3.org/1999/xhtml" style={S(`width: 64px; height: 40px; display: flex; align-items: center; justify-content: center; font-family: TD, TDx, serif; font-weight: 700; font-size: ${txt(v.bTextFs)}px; line-height: 1; color: #FFFFFF; text-shadow: 0 1px 2px rgba(0,0,0,.3); white-space: nowrap;`)}>{v.bText}</div>
                                 </foreignObject>
                                 <image href={v.bLogoH} x="23" y="23" width="54" height="54" preserveAspectRatio="xMidYMid meet" clipPath="url(#bClip)" opacity={v.bLogoOp} />
                               </svg>
@@ -790,20 +790,20 @@ export default function AdminView({ v }) {
                                   <circle cx="50" cy="50" r="31" fill="none" stroke="rgba(0,0,0,.28)" strokeWidth="2.5" />
                                   <ellipse cx="36" cy="28" rx="14" ry="6" transform="rotate(-28 36 28)" fill="#FFFFFF" fillOpacity=".3" />
                                   <foreignObject x="18" y="30" width="64" height="40" opacity={v.bTxtOp}>
-                                    <div xmlns="http://www.w3.org/1999/xhtml" style={S(`width: 64px; height: 40px; display: flex; align-items: center; justify-content: center; font-family: TD, serif; font-weight: 700; font-size: ${txt(v.bTextFs)}px; line-height: 1; color: #FFFFFF; text-shadow: 0 1px 2px rgba(0,0,0,.3); white-space: nowrap;`)}>{v.bText}</div>
+                                    <div xmlns="http://www.w3.org/1999/xhtml" style={S(`width: 64px; height: 40px; display: flex; align-items: center; justify-content: center; font-family: TD, TDx, serif; font-weight: 700; font-size: ${txt(v.bTextFs)}px; line-height: 1; color: #FFFFFF; text-shadow: 0 1px 2px rgba(0,0,0,.3); white-space: nowrap;`)}>{v.bText}</div>
                                   </foreignObject>
                                   <image href={v.bLogoH} x="23" y="23" width="54" height="54" preserveAspectRatio="xMidYMid meet" clipPath="url(#bClip2)" opacity={v.bLogoOp} />
                                 </svg>
                               </span>
                               <span style={{ fontSize: "11px", color: "#4A5B68" }}>نتشرّف بدعوة</span>
-                              <b style={{ display: "block", fontFamily: "TD, serif", fontSize: "22px" }}>سارة أحمد</b>
+                              <b style={{ display: "block", fontFamily: "TD, TDx, serif", fontSize: "22px" }}>سارة أحمد</b>
                               <span style={{ fontSize: "11px", color: "#4A5B68" }}>كذا يطلع الختم على بطاقة المدعو</span>
                             </div></>
                         ) : null}
                         {v.bT1 ? (
                           <div style={{ position: "relative", width: "230px", height: "470px", borderRadius: "38px", background: "#04121F", boxShadow: "0 0 0 6px #0b2233, 0 30px 60px rgba(0,0,0,.45)", overflow: "hidden", flex: "none" }}>
                               <span style={S(`${txt(v.bPhoneBg)}`)} />
-                              <span style={S(`position: absolute; left: 0; right: 0; top: 70px; text-align: center; font-family: TD, serif; font-size: 30px; color: ${txt(v.bC3)}; text-shadow: 0 0 18px ${txt(v.bC3)};`)}>الحفل الختامي</span>
+                              <span style={S(`position: absolute; left: 0; right: 0; top: 70px; text-align: center; font-family: TD, TDx, serif; font-size: 30px; color: ${txt(v.bC3)}; text-shadow: 0 0 18px ${txt(v.bC3)};`)}>الحفل الختامي</span>
                               <span style={{ position: "absolute", left: "0", right: "0", top: "116px", textAlign: "center", fontSize: "11px", letterSpacing: "3px", color: "rgba(255,255,255,.7)" }}>{v.bPatName}</span>
                               <span className="tw" style={S(`position: absolute; left: 30px; top: 40px; width: 4px; height: 4px; border-radius: 50%; background: ${txt(v.bC3)};`)} />
                               <span className="tw" style={S(`position: absolute; left: 180px; top: 150px; width: 3px; height: 3px; border-radius: 50%; background: ${txt(v.bC3)}; animation-delay: .7s;`)} />
@@ -854,9 +854,9 @@ export default function AdminView({ v }) {
                     <path d={v.wax} fill="rgba(2,24,32,.5)" transform="translate(0 2.6)" />
                     <path d={v.wax} fill="url(#taS)" />
                     <circle cx="50" cy="50" r="31" fill="none" stroke="#05505E" strokeOpacity=".45" strokeWidth="2.5" />
-                    <text x="50" y="58.8" textAnchor="middle" fontFamily="TD" fontSize="42" fill="#FFFFFF">{"ح"}</text>
+                    <text x="50" y="58.8" textAnchor="middle" fontFamily="TD, TDx, serif" fontSize="42" fill="#FFFFFF">{"ح"}</text>
                   </svg>
-                  <b style={{ fontFamily: "TD, serif", fontSize: "30px", lineHeight: "1.3" }}>أهلًا في الاستوديو 👋</b>
+                  <b style={{ fontFamily: "TD, TDx, serif", fontSize: "30px", lineHeight: "1.3" }}>أهلًا في الاستوديو 👋</b>
                   <span style={{ fontSize: "15px", color: "#3A4B58", lineHeight: "1.8" }}>نعرّفك على أقسامه خطوة بخطوة، ولا تستكشفه بنفسك؟</span>
                   <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%", marginTop: "6px" }}>
                     <button type="button" onClick={v.tourGo} style={{ height: "54px", border: "0", borderRadius: "999px", background: "#0A2A43", color: "#FFFFFF", fontFamily: "inherit", fontSize: "16px", fontWeight: "700", cursor: "pointer" }}>عرّفني عليه</button>
