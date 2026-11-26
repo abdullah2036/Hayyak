@@ -216,7 +216,7 @@ export default function DashboardView({ v }) {
                     <span style={{ position: "relative", width: "112px", height: "220px", borderRadius: "22px", background: "#04121F", boxShadow: "0 0 0 4px #0b2233, 0 20px 40px rgba(0,0,0,.4)", overflow: "hidden", transform: "rotate(-5deg)" }}>
                       <span style={{ position: "absolute", left: "4px", top: "4px", width: "390px", height: "844px", transform: "scale(.267)", transformOrigin: "0 0", pointerEvents: "none" }}>
                         {v.nx?.look ? (
-                          <Thumb look={v.nx?.look} />
+                          <Thumb look={v.nx?.look} live={1} />
                         ) : null}
                       </span>
                     </span>

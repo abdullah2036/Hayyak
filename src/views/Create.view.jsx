@@ -133,7 +133,7 @@ export default function CreateView({ v }) {
                             {(v.pats || []).map((p, $i2) => (
                               <button key={p?.key ?? $i2} type="button" className="tile" onClick={p?.pick} aria-pressed={p?.on} style={S(`${txt(p?.st)}`)}>
                                   <span style={S(`${txt(p?.bg)}`)}>
-                                    <span style={{ position: "absolute", left: "50%", top: "0", width: "390px", height: "844px", marginLeft: "-195px", transform: "translateY(-58px) scale(.42)", transformOrigin: "50% 0", pointerEvents: "none" }}><Thumb look={p?.look} pattern={p?.n} seal={p?.seal} title={p?.tt} latin="" /></span>
+                                    <span style={{ position: "absolute", left: "50%", top: "0", width: "390px", height: "844px", marginLeft: "-195px", transform: "translateY(-58px) scale(.42)", transformOrigin: "50% 0", pointerEvents: "none" }}><Thumb look={p?.look} pattern={p?.n} seal={p?.seal} title={p?.tt} latin="" live={p?.on === 'true' ? 1 : 0} /></span>
                                     {p?.photo ? (
                                       <span style={{ position: "absolute", inset: "0", display: "flex", alignItems: "center", justifyContent: "center" }}>
                                           <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">

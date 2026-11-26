@@ -396,7 +396,7 @@ export default function AdminView({ v }) {
                         <b style={{ fontSize: "17px" }}>{v.gTitle}</b>
                         {v.gCredit ? (
                           <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                              <input className="fld" type="number" min="1" max="1000" value={v.gCount ?? ''} onChange={v.onGCount} aria-label="عدد الدعوات" style={{ width: "140px" }} />
+                              <input className="fld" type="number" min="1" max="100000" value={v.gCount ?? ''} onChange={v.onGCount} aria-label="عدد الدعوات" style={{ width: "140px" }} />
                               {(v.gChans || []).map((c, $i13) => (
                                 <button key={c?.key ?? $i13} type="button" onClick={c?.pick} style={S(`${txt(c?.st)}`)}>{c?.n}</button>
                               ))}
