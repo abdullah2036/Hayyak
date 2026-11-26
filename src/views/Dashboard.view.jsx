@@ -349,7 +349,7 @@ export default function DashboardView({ v }) {
               </section>
               <section className="lift in glass card" style={{ borderRadius: "30px", padding: "22px", boxSizing: "border-box", display: "flex", flexDirection: "column", gap: "12px" }}>
                 <h3 style={{ margin: "0", fontSize: "17px", fontWeight: "700" }}>مجموعات الدعوات</h3>
-                <span style={{ fontSize: "12px", color: "#4A5B68", lineHeight: "1.7", marginTop: "-6px" }}>الدعوات اللي لنفس المناسبة تنعرض مع بعض</span>
+                <span style={{ fontSize: "12px", color: "#4A5B68", lineHeight: "1.7", marginTop: "-6px" }}>الدعوات اللي لنفس المناسبة تظهر مع بعض</span>
                 {(v.events || []).map((e, $i12) => (
                   <div key={e?.key ?? $i12} className="row" style={{ padding: "14px", borderRadius: "20px", background: "rgba(255,255,255,.6)", display: "flex", flexDirection: "column", gap: "10px" }}>
                       <span style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>

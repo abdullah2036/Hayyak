@@ -121,9 +121,9 @@ export default function TermsView({ v }) {
                 <span style={{ width: "60px", height: "60px", flex: "none", borderRadius: "50%", background: "linear-gradient(155deg,#4FC9DC,#0E97AE 55%,#086577)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 12px 26px rgba(14,151,174,.3)" }}>
                   <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 7v5l3 2" /></svg>
                 </span>
-                <h2 style={{ margin: "0", fontFamily: "TD, TDx, serif", fontWeight: "700", fontSize: "27px", lineHeight: "1.3" }}>متى تنحسب الدعوة</h2>
+                <h2 style={{ margin: "0", fontFamily: "TD, TDx, serif", fontWeight: "700", fontSize: "27px", lineHeight: "1.3" }}>متى تتحسب الدعوة</h2>
               </span>
-              <p style={{ margin: "0", fontSize: "17px", lineHeight: "1.85", color: "#2C4A5C", textAlign: "right" }}>تنحسب الدعوة من رصيدك أول ما ترسلها أو يجهز رابطها لمدعو</p>
+              <p style={{ margin: "0", fontSize: "17px", lineHeight: "1.85", color: "#2C4A5C", textAlign: "right" }}>تتحسب الدعوة من رصيدك أول ما ترسلها أو يجهز رابطها لمدعو</p>
             </article>
             <article className="sec glass2" style={{ borderRadius: "30px", padding: "26px", display: "flex", flexDirection: "column", gap: "14px", animationDelay: "0.45s" }}>
               <span style={{ display: "flex", alignItems: "center", gap: "14px" }}>

@@ -250,7 +250,7 @@ export default function SettingsView({ v }) {
             {v.t1 ? (
               <section className="in glass card" style={{ borderRadius: "30px", padding: "26px", display: "flex", flexDirection: "column", gap: "12px" }}>
                   <h3 style={{ margin: "0", fontSize: "18px" }}>سجل الاطلاع</h3>
-                  <span style={{ fontSize: "13px", color: "#4A5B68" }}>كل مرة فريق حيّــاك يفتح أو يغيّر شي في حسابك تنسجل هنا</span>
+                  <span style={{ fontSize: "13px", color: "#4A5B68" }}>كل مرة فريق حيّــاك يفتح أو يغيّر شي في حسابك تتسجل هنا</span>
                   {(v.access || []).map((a, $i6) => (
                     <div key={a?.key ?? $i6} style={{ display: "flex", flexDirection: "column", gap: "2px", padding: "12px 14px", borderRadius: "18px", background: "rgba(255,255,255,.65)" }}><b style={{ fontSize: "14px" }}>{a?.t}</b><span style={{ fontSize: "12px", color: "#4A5B68" }}>{a?.d}</span></div>
                   ))}

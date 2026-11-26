@@ -102,7 +102,7 @@ export default function SubscribeView({ v }) {
                     <span style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
                       <b style={{ fontSize: "15px" }}>رصيدك صالح 30 يوم من يوم الشراء</b>
                       <span style={{ fontSize: "13px", color: "#3A4B58", lineHeight: "1.7" }}>
-                        كل دعوة ترسلها أو رابط يجهز لمدعو ينحسب من رصيدك، واللي ما تستخدمه ينتهي بعد 30 يوم. فاشترِ الرصيد لما تكون جاهز ترسل
+                        كل دعوة ترسلها أو رابط يجهز لمدعو يتحسب من رصيدك، واللي ما تستخدمه ينتهي بعد 30 يوم. فاشترِ الرصيد لما تكون جاهز ترسل
                       </span>
                     </span>
                   </div>
@@ -193,7 +193,7 @@ export default function SubscribeView({ v }) {
                     <b style={{ fontFamily: "TD, TDx, serif", fontSize: "34px" }}>{v.total}</b>
                   </span>
                   {v.hasReq ? (
-                    <span style={{ fontSize: "12px", color: "#B8D4DE", lineHeight: "1.7", padding: "10px 12px", borderRadius: "14px", background: "rgba(255,255,255,.08)" }}>الطلبات اللي «حسب الطلب» ما تنحسب الحين. بنتواصل معك ونتفق على السعر قبل ما نبدأ</span>
+                    <span style={{ fontSize: "12px", color: "#B8D4DE", lineHeight: "1.7", padding: "10px 12px", borderRadius: "14px", background: "rgba(255,255,255,.08)" }}>الطلبات اللي «حسب الطلب» ما تتحسب الحين. بنتواصل معك ونتفق على السعر قبل ما نبدأ</span>
                   ) : null}
                   {v.err ? (
                     <span role="alert" style={{ fontSize: "13px", fontWeight: "700", color: "#FFC2C2" }}>{v.err}</span>

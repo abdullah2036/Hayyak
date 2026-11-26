@@ -260,7 +260,7 @@ export default function AttendanceView({ v }) {
               </section>
               <section data-t="3" className="in glass card" style={{ borderRadius: "30px", padding: "24px", display: "flex", flexDirection: "column", gap: "14px" }}>
                 <h2 style={{ margin: "0", fontSize: "18px" }}>إضافة حضور يدوي</h2>
-                <span className="sub">لأحد حضر بدون دعوة أو جواله فاضي. ينضاف للكشف وتطلع له شهادة مثل الباقي</span>
+                <span className="sub">لأحد حضر بدون دعوة أو جواله فاضي. يتضاف للكشف وتطلع له شهادة مثل الباقي</span>
                 <label className="lbl">
                   اسمه مثل ما يبيه في الشهادة
                   <input className="fld" value={v.walk ?? ''} onChange={v.onWalk} onKeyDown={v.walkKey} placeholder="مثال: لمى سعد الحربي" />

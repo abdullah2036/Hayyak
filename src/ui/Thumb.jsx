@@ -7,6 +7,20 @@
  */
 import { memo, useEffect, useState } from 'react';
 import Invite from '@/screens/Invite';
+import SHOTS from './shots.json';
+
+/**
+ * A fixed preview (one of our own templates, not a customer's invitation) has a picture of its settled frame,
+ * taken from the live preview itself. The name of the picture comes from exactly what it shows.
+ */
+function shotOf(props) {
+  if (props.look) return '';
+  const k = JSON.stringify(Object.keys(props).filter((x) => x !== 'live').sort().map((x) => [x, props[x]]));
+  let h = 2166136261;
+  for (let i = 0; i < k.length; i++) h = Math.imul(h ^ k.charCodeAt(i), 16777619);
+  return (h >>> 0).toString(36);
+}
+const HAVE = new Set(SHOTS);
 
 /** True on phones and touch screens. It starts true, so a phone never builds the live previews even for a moment. */
 function useLite() {
@@ -53,8 +67,12 @@ function Poster(props) {
 
 function Thumb({ live, ...props }) {
   const lite = useLite();
-  if (lite && !live) return <Poster {...props} />;
-  return <Invite {...props} thumb="نعم" />;
+  const shot = shotOf(props);
+  if (lite && !live) {
+    if (HAVE.has(shot)) return <img src={`/tpl/${shot}.webp`} alt="" width={390} height={844} loading="lazy" decoding="async" style={{ position: 'absolute', inset: 0, width: 390, height: 844 }} />;
+    return <Poster {...props} />;
+  }
+  return <span data-shot={shot || undefined} style={{ display: 'contents' }}><Invite {...props} thumb="نعم" /></span>;
 }
 
 const same = (a, b) => {

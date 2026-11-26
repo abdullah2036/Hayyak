@@ -30,6 +30,8 @@ const config = {
         ],
       },
       { source: '/(app|studio)/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] },
+      // template pictures for phones (src/ui/Thumb.jsx): kept a day, then checked again in the background
+      { source: '/tpl/:path*', headers: [{ key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' }] },
     ];
   },
 };

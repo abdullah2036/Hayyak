@@ -213,7 +213,7 @@ export default function GuestsView({ v }) {
               ) : null}
               <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "14px 16px", borderRadius: "20px", background: "rgba(14,151,174,.08)", fontSize: "13px", color: "#3A4B58", lineHeight: "1.7" }}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#086577" strokeWidth="2" strokeLinecap="round" aria-hidden="true" style={{ flex: "none" }}><path d="M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4" /></svg>
-                بيانات المدعوين تنتقل لأرشيف مشفّر بعد 90 يوم من المناسبة، وتنحذف بعد 90 يوم ثانية
+                بيانات المدعوين تنتقل لأرشيف مشفّر بعد 90 يوم من المناسبة، وتتحذف بعد 90 يوم ثانية
               </div>
             </section>
           </main>

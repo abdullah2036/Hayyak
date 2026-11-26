@@ -578,7 +578,7 @@ export default function CreateView({ v }) {
                                     </button>
                                     {v.withMsg ? (
                                       <><textarea className="fld" rows="3" value={v.msg ?? ''} onChange={v.onMsg} aria-label="نص الرسالة" style={{ height: "auto", minHeight: "96px", borderRadius: "22px", padding: "12px 16px", lineHeight: "1.8", resize: "vertical" }} />
-                                      <span style={{ fontSize: "12px", color: "#4A5B68" }}>{"عدّلها مثل ما تبي أو امسحها، والرابط ينضاف تحتها تلقائيًا"}{v.msgNote}</span></>
+                                      <span style={{ fontSize: "12px", color: "#4A5B68" }}>{"عدّلها مثل ما تبي أو امسحها، والرابط يتضاف تحتها تلقائيًا"}{v.msgNote}</span></>
                                     ) : null}
                                     <button type="button" onClick={v.copyShare} style={S(`${txt(v.copySt)}`)}>{v.copyTx}</button>
                                   </div>
@@ -607,7 +607,7 @@ export default function CreateView({ v }) {
                                 </button>
                                 {v.withMsg ? (
                                   <><textarea className="fld" rows="3" value={v.msg ?? ''} onChange={v.onMsg} aria-label="نص الرسالة" style={{ height: "auto", minHeight: "96px", borderRadius: "22px", padding: "12px 16px", lineHeight: "1.8", resize: "vertical" }} />
-                                  <span style={{ fontSize: "12px", color: "#4A5B68" }}>{"عدّلها مثل ما تبي أو امسحها، والرابط ينضاف تحتها تلقائيًا"}{v.msgNote}</span></>
+                                  <span style={{ fontSize: "12px", color: "#4A5B68" }}>{"عدّلها مثل ما تبي أو امسحها، والرابط يتضاف تحتها تلقائيًا"}{v.msgNote}</span></>
                                 ) : null}
                                 <button type="button" onClick={v.copyShare} style={S(`${txt(v.copySt)}`)}>{v.copyTx}</button>
                               </div>
@@ -618,7 +618,7 @@ export default function CreateView({ v }) {
                             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5" /></svg>
                           </span>
                           <span style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                            <b style={{ fontSize: "15px" }}>كل دعوة ترسلها تنحسب من رصيدك</b>
+                            <b style={{ fontSize: "15px" }}>كل دعوة ترسلها تتحسب من رصيدك</b>
                             <span style={{ fontSize: "13px", color: "#3A4B58", lineHeight: "1.7" }}>والرصيد صالح 30 يوم من يوم الشراء، واللي ما تستخدمه ينتهي معه</span>
                           </span>
                         </section>

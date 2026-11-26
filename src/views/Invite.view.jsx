@@ -547,7 +547,7 @@ export default function InviteView({ v }) {
                         </span>
                         <span style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
                           <b style={{ fontSize: "15px" }}>احفظها بحركتها</b>
-                          <span style={{ fontSize: "12px", color: "#4A5B68" }}>تنحفظ في الصور مع الحركة والختم، وتشاركها بالواتساب</span>
+                          <span style={{ fontSize: "12px", color: "#4A5B68" }}>تتحفظ في الصور مع الحركة والختم، وتشاركها بالواتساب</span>
                         </span>
                       </Btn>
                     </div>

@@ -486,7 +486,7 @@ export default function AdminView({ v }) {
                     <div style={{ borderRadius: "26px", padding: "18px", display: "flex", flexDirection: "column", gap: "12px", background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.12)" }}>
                       <span style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
                         <b style={{ fontSize: "16px" }}>1. اختر المحرك</b>
-                        <span style={{ fontSize: "13px", color: "#9FB8C6" }}>النمط الجديد يتبني على حركة موجودة</span>
+                        <span style={{ fontSize: "13px", color: "#9FB8C6" }}>النمط الجديد يُبنى على حركة موجودة</span>
                       </span>
                       <div className="g3" style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0,1fr))", gap: "10px" }}>
                         {(v.peEng || []).map((e, $i18) => (
@@ -734,7 +734,7 @@ export default function AdminView({ v }) {
                             </div>
                         ) : null}
                         <div style={{ borderRadius: "26px", padding: "18px", display: "flex", flexDirection: "column", gap: "12px", background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.12)" }}>
-                          <b style={{ fontSize: "15px" }}>وين ينحفظ؟</b>
+                          <b style={{ fontSize: "15px" }}>وين يتحفظ؟</b>
                           <div className="g2" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
                             {(v.bScopes || []).map((o, $i26) => (
                               <button key={o?.key ?? $i26} type="button" onClick={o?.pick} style={S(`${txt(o?.st)}`)}><b style={{ fontSize: "14px" }}>{o?.n}</b><span style={{ fontSize: "12px", color: "#9FB8C6" }}>{o?.d}</span></button>

@@ -124,11 +124,11 @@ export function StudioAnalytics() {
           <div className="split" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0,1fr))', gap: 18, alignItems: 'start' }}>
             <Bars title="من التسجيل للحضور" note="اللي سجّلوا في هذي الفترة، ووين وصلوا" rows={d.funnel.map(([k, v], i) => [k, v, i ? `${pct(v, d.funnel[0][1])}%` : ''])} />
             <Bars title="الأنماط الأكثر استخدام" rows={d.patterns.map((x) => [x.k, x.n])} />
-            <Bars title="كيف تنرسل الدعوات" rows={d.audience.map((x) => [x.k, x.n])} />
+            <Bars title="كيف تترسل الدعوات" rows={d.audience.map((x) => [x.k, x.n])} />
             <Bars title="أكثر الحسابات استخدام" note="حسب عدد المدعوين" rows={d.top.map((x) => [x.k, x.n])} />
             {d.money ? <Bars title="أكواد الخصم" note="مرات الاستخدام من البداية" rows={d.codes.map((x) => [x.k, x.n])} empty="ما استُخدم أي كود" /> : null}
           </div>
-          <span style={{ fontSize: 13, color: C.mute }}>الأرقام إجمالية وبتوقيت الرياض، وحسابات التجربة ما تنحسب</span>
+          <span style={{ fontSize: 13, color: C.mute }}>الأرقام إجمالية وبتوقيت الرياض، وحسابات التجربة ما تتحسب</span>
           <DeviceProblems />
         </>
       )}
@@ -157,7 +157,7 @@ export function StudioPricing({ pricing, discounts, customers, run }) {
         <span style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
           <span style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
             <h3 style={{ margin: 0, fontSize: 19 }}>أكواد الخصم</h3>
-            <span style={{ fontSize: 13, color: C.mute }}>كود 100% يخلي الطلب مجاني والرصيد ينزل على طول بدون تأكيد منكم. حددوا كم مرة ينستخدم ومتى ينتهي، أو خلّوه لحساب واحد</span>
+            <span style={{ fontSize: 13, color: C.mute }}>كود 100% يخلي الطلب مجاني والرصيد ينزل على طول بدون تأكيد منكم. حددوا كم مرة يُستخدم ومتى ينتهي، أو خلّوه لحساب واحد</span>
           </span>
           <button type="button" style={main} onClick={() => setOpen(!open)}>+ كود جديد</button>
         </span>
@@ -281,7 +281,7 @@ export function StudioType({ run }) {
     <section className="in" style={{ ...card, marginTop: 18 }}>
       <span style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
         <h3 style={{ margin: 0, fontSize: 19 }}>خط الهوية</h3>
-        <span style={{ fontSize: 13, color: C.mute, lineHeight: 1.7 }}>خط ثمانية. اختاروا الملفات الأربعة مع بعض وبأسمائها الأصلية: {(t?.need || []).join('، ')}. تنحفظ عندكم فقط، وما تطلع للزوار كملفات خط</span>
+        <span style={{ fontSize: 13, color: C.mute, lineHeight: 1.7 }}>خط ثمانية. اختاروا الملفات الأربعة مع بعض وبأسمائها الأصلية: {(t?.need || []).join('، ')}. تتحفظ عندكم فقط، وما تطلع للزوار كملفات خط</span>
       </span>
       <span style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
         <label style={{ ...main, display: 'inline-flex', alignItems: 'center', position: 'relative', opacity: busy ? 0.6 : 1 }}>
@@ -301,12 +301,12 @@ function DeviceProblems() {
   const [d, setD] = useState(null);
   useEffect(() => { let live = true; api.get('/studio/reports').then((r) => live && setD(r), () => {}); return () => { live = false; }; }, []);
   if (!d) return null;
-  const KIND = { crash: 'الصفحة انغلقت', error: 'خطأ في الصفحة' };
+  const KIND = { crash: 'الصفحة قفلت', error: 'خطأ في الصفحة' };
   return (
     <section style={card} aria-label="مشاكل على أجهزة الزوار">
       <span style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <h3 style={{ margin: 0, fontSize: 19 }}>مشاكل على أجهزة الزوار</h3>
-        <span style={{ fontSize: 13, color: C.mute }}>آخر 7 أيام. «الصفحة انغلقت» يعني المتصفح قفلها، غالبًا لأن الجهاز ما تحمّلها</span>
+        <span style={{ fontSize: 13, color: C.mute }}>آخر 7 أيام. «الصفحة قفلت» يعني المتصفح قفلها، غالبًا لأن الجهاز ما تحمّلها</span>
       </span>
       {d.byPage.length ? d.byPage.map((r) => (
         <div key={r.path + r.kind} style={{ ...row, justifyContent: 'space-between' }}>

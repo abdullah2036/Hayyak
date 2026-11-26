@@ -121,7 +121,7 @@ export default function PrivacyView({ v }) {
                 <div style={{ borderRadius: "28px", padding: "24px", background: "rgba(14,151,174,.1)", color: "#0A2A43", display: "flex", flexDirection: "column", gap: "8px", boxShadow: "0 12px 30px rgba(10,42,67,.08)" }}>
                   <span style={{ fontFamily: "TD, TDx, serif", fontSize: "44px", lineHeight: "1.1", color: "#0E97AE" }}>180 يوم</span>
                   <b style={{ fontSize: "19px" }}>حذف نهائي</b>
-                  <span style={{ fontSize: "15px", lineHeight: "1.7", opacity: ".8" }}>تنحذف بالكامل من أنظمتنا</span>
+                  <span style={{ fontSize: "15px", lineHeight: "1.7", opacity: ".8" }}>تتحذف بالكامل من أنظمتنا</span>
                 </div>
               </div>
               <p style={{ margin: "0", fontSize: "18px", lineHeight: "1.9", color: "#2C4A5C", textAlign: "right" }}>وتقدر تطلب الحذف قبل هذي المدة في أي وقت</p>

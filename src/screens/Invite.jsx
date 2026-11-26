@@ -48,7 +48,8 @@ watch() {
     var on = es[es.length - 1].isIntersecting;
     if (on === self.vis) return;
     self.vis = on;
-    if (!on) self.stopFx(); else if (self.state.phase === 'open' && !self.fxDone) self.startFx();
+    // fxWait: the card opened while hidden; state.phase can still read the old value here, since React applies it later
+    if (!on) self.stopFx(); else if ((self.fxWait || self.state.phase === 'open') && !self.fxDone) self.startFx();
   }, { rootMargin: '120px' });
   this.io.observe(this.root);
 }
@@ -91,7 +92,8 @@ clearCanvas() { var c = this.cv; if (!c) return; var x = c.getContext('2d'); x.s
 stopFx() { if (this.raf) cancelAnimationFrame(this.raf); this.raf = 0; if (this.root) { this.root.style.removeProperty('--tiltX'); this.root.style.removeProperty('--tiltY'); } }
 startFx() {
   var self = this; this.stopFx();
-  var thumb = this.px().thumb; if (thumb && (!this.vis || this.fxDone)) return;
+  var thumb = this.px().thumb; if (thumb && (!this.vis || this.fxDone)) { if (!this.fxDone) this.fxWait = true; return; }
+  this.fxWait = false;
   var c = this.cv; if (!c) return; c.style.transition = 'none'; c.style.opacity = '';
   var W = 390, H = 844, dpr = thumb ? 1 : Math.min(2, window.devicePixelRatio || 1);
   c.width = W * dpr; c.height = H * dpr;

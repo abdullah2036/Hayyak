@@ -373,7 +373,7 @@ export default function CertificateView({ v }) {
                 <section data-t="7" className="in glass card" style={{ borderRadius: "30px", padding: "22px 24px", display: "flex", flexDirection: "column", gap: "14px" }}>
                   <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                     <h2 style={{ margin: "0", fontSize: "18px" }}>متى تطلع؟</h2>
-                    <span className="sub">الشهادة داخلة مع الدعوة، ما تنحسب من رصيدك</span>
+                    <span className="sub">الشهادة داخلة مع الدعوة، ما تتحسب من رصيدك</span>
                   </div>
                   <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                     {(v.whens || []).map((w, $i11) => (

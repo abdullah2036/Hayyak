@@ -152,7 +152,7 @@ export default function AdminLoginView({ v }) {
             ) : null}
             <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", fontSize: "13px", color: "#4A5B68" }}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#086577" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4" /></svg>
-              5 محاولات غلط تقفل الدخول ساعة، وكل دخول ينسجل
+              5 محاولات غلط تقفل الدخول ساعة، وكل دخول يتسجل
             </span>
           </div>
         </div>
