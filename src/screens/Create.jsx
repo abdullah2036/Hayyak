@@ -102,7 +102,7 @@ export default class Create extends Screen {
         } else await api.patch(`/invitations/${this.id}`, this.payload());
         this.setState({ save: 'محفوظة ✓' });
       } catch (e) {
-        this.setState({ save: 'ما انحفظت: ' + e.message });
+        this.setState({ save: 'ما تم الحفظ: ' + e.message });
         throw e;
       }
     });
@@ -115,7 +115,7 @@ export default class Create extends Screen {
     try {
       if (!this.id) await this.flush();
       const r = await api.post(`/invitations/${this.id}/guests`, { items, source });
-      this.setState((st) => ({ man: st.man.concat(r.rows), guestErr: r.skipped ? `${r.skipped} مكرر ما انضاف` : '' }));
+      this.setState((st) => ({ man: st.man.concat(r.rows), guestErr: r.skipped ? `${r.skipped} مكرر ما أُضيف` : '' }));
     } catch (e) {
       this.setState({ guestErr: e.message });
     }
@@ -173,7 +173,7 @@ export default class Create extends Screen {
     this.setState({ photoMsg: 'نرفع الصورة…' });
     try {
       const a = await api.upload('/assets', f, { kind: 'photo' });
-      this.set({ photo: a.url, photoId: a.id, photoMsg: `انرفعت الصورة، المقاس ${a.width}×${a.height}${a.height / a.width < 1.5 ? ' · الأفضل صورة بالطول 9:16' : ' مناسب'}` });
+      this.set({ photo: a.url, photoId: a.id, photoMsg: `رُفعت الصورة، المقاس ${a.width}×${a.height}${a.height / a.width < 1.5 ? ' · الأفضل صورة بالطول 9:16' : ' مناسب'}` });
     } catch (er) {
       this.setState({ photoMsg: '', err: er.message });
     }
@@ -199,7 +199,7 @@ export default class Create extends Screen {
     const s = this.state;
     if (s.busy) return;
     const err = this.check(s.step);
-    if (err) return this.setState({ err });
+    if (err) return this.showErr({ err });
     if (s.step < 3) {
       this.setState({ step: s.step + 1, err: '' });
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -208,9 +208,9 @@ export default class Create extends Screen {
     }
     for (let i = 0; i < 3; i++) {
       const m = this.check(i);
-      if (m) return this.setState({ step: i, err: m });
+      if (m) return this.showErr({ step: i, err: m });
     }
-    if (s.when === 1 && !s.schedDate) return this.setState({ err: 'حدد وقت الإرسال' });
+    if (s.when === 1 && !s.schedDate) return this.showErr({ err: 'حدد وقت الإرسال' });
     this.setState({ busy: true, err: '' });
     try {
       await this.flush();
@@ -219,8 +219,13 @@ export default class Create extends Screen {
       this.props.router.refresh();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (e) {
-      this.setState({ err: e.message, busy: false });
+      this.showErr({ err: e.message, busy: false });
     }
+  }
+
+  /** On phones the buttons stay at the bottom of the screen and the message is below the form: bring it into view. */
+  showErr(o) {
+    this.setState(o, () => requestAnimationFrame(() => document.querySelector('[role="alert"]')?.scrollIntoView({ block: 'center', behavior: 'smooth' })));
   }
 
   async sendCust() {
@@ -266,7 +271,7 @@ export default class Create extends Screen {
       ...base('الدعوات', shell), saveState: s.save || 'تنحفظ مسودة تلقائي', today: inputDate(new Date()), err: s.err, busy: s.busy,
       steps: ST.map((l, i) => { const on = s.step === i; const past = s.step > i; return { key: l, n: past ? '✓' : String(i + 1), label: l, go: () => { if (i <= s.step) ui({ step: i, err: '' }); else this.next(); }, st: `width:100%;height:46px;border:0;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:14px;cursor:pointer;${on ? 'background:#0A2A43;color:#FFFFFF;font-weight:700' : 'background:transparent;color:#0A2A43'}`, num: `width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;${on || past ? 'background:#0E97AE;color:#FFFFFF' : 'background:rgba(10,42,67,.08);color:#0A2A43'}` }; }),
       s0: s.step === 0, s1: s.step === 1, s2: s.step === 2, s3: s.step === 3, done: Boolean(done), notDone: !done, doneHref: this.id ? `/app/invitations/${this.id}` : '/app',
-      doneTitle: done ? (done.request ? 'وصلنا طلب الإرسال' : done.status === 'scheduled' ? 'انجدولت الدعوات' : personal ? `تجهزت ${done.count} دعوة` : 'صار رابط دعوتك شغال') : '',
+      doneTitle: done ? (done.request ? 'وصلنا طلب الإرسال' : done.status === 'scheduled' ? 'تمت جدولة الدعوات' : personal ? `تجهزت ${done.count} دعوة` : 'صار رابط دعوتك شغال') : '',
       doneSub: done ? (done.request ? 'بنرسلها باسمك ونبلّغك أول ما تنرسل، وتتابع الردود من صفحة الدعوة' : personal ? 'انسخ رابط كل مدعو مع رسالته من صفحة الدعوة، وتابع مين فتح ومين أكّد. ولو عدّلت الموعد أو المكان يتحدث عند الكل' : 'انشر الرابط، وكل شخص يسجّل توصله دعوته باسمه. تابع التسجيل من صفحة الدعوة') : '',
       restart: () => window.location.assign('/app/create'),
       pats: this.pats.map((p, i) => { const on = s.pat === i; const k = p.c[0][1]; return { key: p.id || p.n, n: p.n, d: p.d, tap: Boolean(p.tap), photo: Boolean(p.photo), look: p.engine ? { pattern: 'لمّة نجوم', color: 0, seal: p.seal, title: p.tt, latin: '', eventLabel: '', engine: p.engine } : undefined, on: on ? 'true' : 'false', pick: () => set({ pat: i, col: 0, colorsId: null }), st: `display:flex;flex-direction:column;padding:6px;border-radius:20px;cursor:pointer;color:#0A2A43;background:#FFFFFF;${on ? 'border:2px solid #0E97AE;box-shadow:0 0 0 4px rgba(14,151,174,.15)' : 'border:2px solid transparent'}`, bg: `position:relative;display:block;height:150px;border-radius:15px;overflow:hidden;background:${grad(k)}`, seal: p.seal, tt: p.tt, ac: k[3] }; }),
@@ -297,7 +302,12 @@ export default class Create extends Screen {
         let skipped = 0;
         for (const l of s.pt.split(/\n+/)) {
           if (!l.trim()) continue;
-          const p = l.split(/[،,\t;]+/).map((y) => y.trim());
+          let p = l.split(/[،,\t;]+/).map((y) => y.trim()).filter(Boolean);
+          // People paste "سارة أحمد 0551234567" without a comma: the number or email at the end tells the two apart.
+          if (p.length === 1) {
+            const m = p[0].match(/^(.*?)[\s:–-]+((?:\+|00)?[\d٠-٩][\d٠-٩\s-]{6,}|\S+@\S+)$/);
+            if (m) p = [m[1].trim(), m[2].replace(/[\s-]/g, '')];
+          }
           const em = p.slice(1).find((y) => okEmail(y)) || '';
           const ph = p.slice(1).find((y) => okPhone(y)) || '';
           if (p[0] && (em || ph)) items.push({ name: p[0], phone: ph, email: em });

@@ -1,4 +1,5 @@
 import 'server-only';
+import { pruneReports } from './reports';
 import { and, eq, inArray, isNotNull, isNull, lt, lte, ne, sql } from 'drizzle-orm';
 import { ARCHIVE_DAYS, PURGE_DAYS } from '@/lib/constants';
 import { inputDate, partsOf, time, weekdayDate } from '@/lib/dates';
@@ -166,6 +167,7 @@ async function cleanup() {
   await d.delete(otps).where(lt(otps.expiresAt, new Date(now.getTime() - 864e5)));
   await d.delete(rateLimits).where(and(lt(rateLimits.resetAt, now), ne(rateLimits.key, `lock:${LOCK}`)));
   await d.delete(orgInvites).where(lt(orgInvites.expiresAt, now));
+  await pruneReports();
   await d.delete(outbox).where(and(eq(outbox.status, 'sent'), lt(outbox.createdAt, new Date(now.getTime() - 30 * 864e5))));
   await d.delete(auditLog).where(lt(auditLog.at, new Date(now.getTime() - 730 * 864e5)));
 }

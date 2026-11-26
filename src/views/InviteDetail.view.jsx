@@ -1,6 +1,6 @@
 import { S, txt, A } from '@/ui/dc';
 import Mark from '@/ui/Mark';
-import Invite from '@/screens/Invite';
+import Thumb from '@/ui/Thumb';
 import FAQ from '@/screens/FAQ';
 
 const CSS = `body{margin:0;background:#EDF1F3}
@@ -159,7 +159,7 @@ export default function InviteDetailView({ v }) {
                     <span style={{ display: "inline-flex", alignItems: "center", gap: "6px", padding: "6px 12px", borderRadius: "999px", background: "rgba(255,255,255,.12)", border: "1px solid rgba(255,255,255,.22)", fontSize: "12px" }}><span style={{ width: "7px", height: "7px", borderRadius: "50%", background: "#86DCEA" }} />{v.badge}</span>
                   </span>
                   <span className="hidem" style={{ position: "absolute", left: "26px", top: "22px", width: "150px", height: "300px", borderRadius: "28px", background: "#04121F", boxShadow: "0 0 0 5px #0b2233, 0 20px 40px rgba(0,0,0,.4)", overflow: "hidden", transform: "rotate(-4deg)" }}>
-                    <span style={{ position: "absolute", left: "6px", top: "6px", width: "390px", height: "844px", transform: "scale(.354)", transformOrigin: "0 0", pointerEvents: "none" }}><Invite look={v.look} thumb="نعم" /></span>
+                    <span style={{ position: "absolute", left: "6px", top: "6px", width: "390px", height: "844px", transform: "scale(.354)", transformOrigin: "0 0", pointerEvents: "none" }}><Thumb look={v.look} /></span>
                   </span>
                   <span style={{ position: "relative", display: "flex", flexDirection: "column", gap: "8px" }}>
                     <h1 className="h1m" style={{ margin: "0", fontFamily: "TS, 'IBM Plex Sans Arabic', sans-serif", fontWeight: "700", fontSize: "42px", lineHeight: "1.2" }}>{v.title}</h1>

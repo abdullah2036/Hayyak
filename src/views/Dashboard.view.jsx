@@ -1,6 +1,6 @@
 import { S, txt, A } from '@/ui/dc';
 import Mark from '@/ui/Mark';
-import Invite from '@/screens/Invite';
+import Thumb from '@/ui/Thumb';
 import FAQ from '@/screens/FAQ';
 
 const CSS = `body{margin:0;background:#EDF1F3}
@@ -216,7 +216,7 @@ export default function DashboardView({ v }) {
                     <span style={{ position: "relative", width: "112px", height: "220px", borderRadius: "22px", background: "#04121F", boxShadow: "0 0 0 4px #0b2233, 0 20px 40px rgba(0,0,0,.4)", overflow: "hidden", transform: "rotate(-5deg)" }}>
                       <span style={{ position: "absolute", left: "4px", top: "4px", width: "390px", height: "844px", transform: "scale(.267)", transformOrigin: "0 0", pointerEvents: "none" }}>
                         {v.nx?.look ? (
-                          <Invite look={v.nx?.look} thumb="نعم" />
+                          <Thumb look={v.nx?.look} />
                         ) : null}
                       </span>
                     </span>
@@ -318,7 +318,7 @@ export default function DashboardView({ v }) {
                       {" "}
                       <div style={{ position: "absolute", inset: "0", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
                         <span style={{ fontFamily: "TD, TDx, serif", fontSize: "34px", lineHeight: "1" }}>{v.total}</span>
-                        <span style={{ fontSize: "12px", color: "#4A5B68" }}>دعوة انرسلت</span>
+                        <span style={{ fontSize: "12px", color: "#4A5B68" }}>دعوة مُرسلة</span>
                       </div>
                       {" "}
                     </div>

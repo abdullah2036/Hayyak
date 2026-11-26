@@ -530,3 +530,17 @@ export const thankNotes = pgTable(
   },
   (t) => [uniqueIndex('thanks_once').on(t.invitationId, t.group)],
 );
+
+/* ---------- problems seen on visitors' devices (no personal data) ---------- */
+export const clientEvents = pgTable(
+  'client_events',
+  {
+    id: id(),
+    kind: text('kind').$type<'error' | 'crash'>().notNull(),
+    path: text('path').notNull().default(''),
+    message: text('message').notNull().default(''),
+    device: text('device').notNull().default(''),
+    createdAt: created(),
+  },
+  (t) => [index('client_events_created').on(t.createdAt)],
+);

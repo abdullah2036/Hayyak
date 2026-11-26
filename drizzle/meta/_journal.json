@@ -15,6 +15,13 @@
       "when": 1795593263638,
       "tag": "0001_beta_admin",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795689153863,
+      "tag": "0002_client_events",
+      "breakpoints": true
     }
   ]
 }

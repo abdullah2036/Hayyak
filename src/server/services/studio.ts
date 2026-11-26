@@ -85,7 +85,7 @@ export async function advanceSend(me: StaffCtx, id: string, ip: string) {
     await d.update(guests).set({ sentAt: new Date() }).where(and(eq(guests.invitationId, i.id), eq(guests.charged, true), isNull(guests.sentAt)));
     await log(d, i.id, `حيّــاك أرسلتها باسمك لـ ${r.count} مدعو`, `${dayMonth(new Date())} · ${time(new Date())} · ${r.channels.map((c) => CHANNEL_SHORT[c]).join(' و')}`, 'main');
     const own = await d.select({ email: users.email }).from(memberships).innerJoin(users, eq(users.id, memberships.userId)).where(and(eq(memberships.orgId, o.id), eq(memberships.role, 'owner')));
-    for (const u of own) await send({ to: u.email, subject: `انرسلت دعوات «${i.title}»`, title: 'انرسلت دعواتك', lines: [`أرسلنا ${r.count} دعوة باسم ${o.name}. تابع الردود من لوحتك.`], button: { label: 'تابع الردود', url: `${appUrl()}/app/invitations/${i.id}` } });
+    for (const u of own) await send({ to: u.email, subject: `أُرسلت دعوات «${i.title}»`, title: 'أُرسلت دعواتك', lines: [`أرسلنا ${r.count} دعوة باسم ${o.name}. تابع الردود من لوحتك.`], button: { label: 'تابع الردود', url: `${appUrl()}/app/invitations/${i.id}` } });
   }
   await audit(actor(me, ip), r.status === 0 ? 'بدأ إرسال دعوات' : 'أنهى إرسال دعوات', { detail: `«${i.title}» · ${r.count} مدعو`, reason: 'طلب إرسال من المستخدم', orgId: o.id });
   return { status: r.status + 1 };
@@ -223,7 +223,7 @@ export async function decideOrder(me: StaffCtx, id: string, ok: boolean, ip: str
   });
   await audit(actor(me, ip), ok ? 'أكّد طلب شراء' : 'ألغى طلب شراء', { detail: `HY-${o.number} · ${o.total} ر.س`, orgId: o.orgId });
   const [u] = await d.select().from(users).where(eq(users.id, o.userId));
-  if (u) await send({ to: u.email, subject: `طلبك HY-${o.number}`, title: ok ? 'نزل رصيدك' : 'انلغى طلبك', lines: [ok ? `نزل في حسابك رصيد ${o.count} دعوة صالح 30 يوم.` : 'انلغى طلب الشراء. لو فيه خطأ راسلنا على hayyakinfo@gmail.com'], button: { label: 'ادخل لوحتك', url: `${appUrl()}/app` } });
+  if (u) await send({ to: u.email, subject: `طلبك HY-${o.number}`, title: ok ? 'نزل رصيدك' : 'أُلغي طلبك', lines: [ok ? `نزل في حسابك رصيد ${o.count} دعوة صالح 30 يوم.` : 'أُلغي طلب الشراء. لو فيه خطأ راسلنا على hayyakinfo@gmail.com'], button: { label: 'ادخل لوحتك', url: `${appUrl()}/app` } });
 }
 
 /* ---------- privacy log and team ---------- */

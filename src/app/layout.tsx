@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { headers } from 'next/headers';
 import { staging } from '@/lib/hosts';
 import { boot } from '@/lib/typepack';
+import ClientWatch from '@/ui/ClientWatch';
 import { typeUrl } from '@/server/services/type';
 import './globals.css';
 
@@ -26,10 +27,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <body>
         {/* Not in the head: Netlify writes a comment there, and React would no longer recognise the page as its own. */}
-        {/* Written here, it is always there, even when the top of the page was sent before the address was known. */}
-        {type ? <link rel="preload" href={type} as="fetch" crossOrigin="anonymous" /> : null}
         <script nonce={nonce} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: boot(type) }} />
         {children}
+        <ClientWatch />
         {staging() ? (
           <div className="noprint" style={{ position: 'fixed', top: 0, left: '50%', transform: 'translateX(-50%)', zIndex: 200, padding: '3px 14px', borderRadius: '0 0 12px 12px', background: '#E7C873', color: '#0A2A43', fontSize: 12, fontWeight: 700, pointerEvents: 'none' }}>
             نسخة اختبار

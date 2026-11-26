@@ -14,6 +14,7 @@ import * as att from '../services/attendance';
 import * as guest from '../services/guest';
 import * as st from '../services/studio';
 import * as type from '../services/type';
+import * as reports from '../services/reports';
 import * as assets from '../services/assets';
 import { balance } from '../services/credit';
 import * as price from '../services/pricing';
@@ -318,6 +319,11 @@ pub('GET', '/cron/tick', {}, async (c) => {
   if (want.length < 16 || !safeEqual(want, got)) throw notFound();
   return tick();
 });
+/* problems on visitors' devices, shown in the Studio */
+pub('POST', '/report', { body: z.object({ kind: z.enum(['error', 'crash']), path: str(200), message: str(500), screen: str(40) }), rate: [10, 600] }, async (c) => {
+  await reports.saveReport(c.body, c.req.headers.get('user-agent') || '');
+});
+studio('GET', '/studio/reports', 'analytics', {}, async () => reports.reportList());
 pub('GET', '/health', {}, async () => {
   await (await db()).execute(sql`select 1`);
   return { ok: true };

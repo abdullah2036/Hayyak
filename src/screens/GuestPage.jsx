@@ -84,7 +84,7 @@ export function PublicInvite({ inv, state }) {
     return (
       <Shell title={inv.look.title} sub={[inv.org.name, weekdayDate(inv.startsAt)].filter(Boolean).join(' · ')}>
         <div className="gp-card" style={{ textAlign: 'center' }}>
-          <b style={{ fontSize: 20 }}>{state.closed ? 'انقفل التسجيل' : 'اكتمل العدد'}</b>
+          <b style={{ fontSize: 20 }}>{state.closed ? 'أُغلق التسجيل' : 'اكتمل العدد'}</b>
           <span style={{ fontSize: 14, lineHeight: 1.8, color: '#3A4B58' }}>لو سجّلت من قبل، افتح دعوتك من الرابط اللي وصلك على إيميلك</span>
         </div>
       </Shell>
@@ -159,7 +159,7 @@ export default function GuestPage({ view }) {
 
   const sub = [inv.org.name, weekdayDate(inv.startsAt), time(inv.startsAt)].filter(Boolean).join(' · ');
   if (show === 'invite') {
-    const chip = { attend: 'سجّل حضورك الحين', done: 'انسجل حضورك ✓', cert: 'شهادتك جاهزة' }[view.stage];
+    const chip = { attend: 'سجّل حضورك الحين', done: 'سُجّل حضورك ✓', cert: 'شهادتك جاهزة' }[view.stage];
     return (
       <div className="gp" dir="rtl">
         <style dangerouslySetInnerHTML={{ __html: CSS }} />
@@ -300,7 +300,7 @@ function Done({ view }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14, alignItems: 'center', textAlign: 'center', paddingTop: 10 }}>
       <span style={{ width: 92, height: 92, borderRadius: '50%', background: '#0E97AE', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 16px 40px rgba(14,151,174,.35)', animation: 'gpPop .55s cubic-bezier(.2,.8,.2,1) both' }}><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10" /></svg></span>
       <b style={{ fontFamily: 'TD, TDx, serif', fontSize: 30, lineHeight: 1.3 }}>حيّاك يا {first}</b>
-      {view.attendedAt ? <span style={{ fontSize: 14, color: '#3A4B58' }}>انسجل حضورك الساعة {time(view.attendedAt)}</span> : view.partial ? <span style={{ fontSize: 14, color: '#3A4B58' }}>انسجل كود البداية، وباقي كود النهاية</span> : null}
+      {view.attendedAt ? <span style={{ fontSize: 14, color: '#3A4B58' }}>سُجّل حضورك الساعة {time(view.attendedAt)}</span> : view.partial ? <span style={{ fontSize: 14, color: '#3A4B58' }}>سُجّل كود البداية، وباقي كود النهاية</span> : null}
       {view.attendedAt ? <div className="gp-card" style={{ width: '100%', textAlign: 'right', gap: 2 }}><b style={{ fontSize: 15 }}>شهادتك جاية</b><span style={{ fontSize: 13, color: '#3A4B58' }}>تطلع لك هنا في نفس الرابط أول ما تجهز</span></div> : null}
     </div>
   );

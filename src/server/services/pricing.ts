@@ -49,7 +49,7 @@ export async function savePricing(who: Actor, next: Pricing) {
     else if (CHANNELS.some((c) => o[c] !== p[c])) diff.push(`${p.count}: ${CHANNELS.map((c) => o[c]).join('/')} ← ${CHANNELS.map((c) => p[c]).join('/')}`);
     else if (o.on !== p.on) diff.push(`${p.count}: ${p.on ? 'شغّال' : 'موقّف'}`);
   }
-  for (const o of old.packs) if (!value.packs.some((p) => p.count === o.count)) diff.push(`انحذفت حزمة ${o.count}`);
+  for (const o of old.packs) if (!value.packs.some((p) => p.count === o.count)) diff.push(`حُذفت حزمة ${o.count}`);
   if (old.free !== value.free) diff.push(`المجاني ${old.free} ← ${value.free}`);
   if (JSON.stringify(old.beta) !== JSON.stringify(value.beta)) diff.push(value.beta.on ? `البيتا شغّالة · ${value.beta.quota} دعوة` : 'البيتا متوقفة');
   await audit(who, 'عدّل الأسعار', { detail: diff.join(' · ').slice(0, 400) || 'بدون تغيير' });

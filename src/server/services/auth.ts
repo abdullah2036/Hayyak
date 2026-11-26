@@ -213,7 +213,7 @@ export async function studioVerify(emailRaw: string, code: string, m: Meta) {
   const lockKey = `studio:lock:${email}:${m.ip}`;
   const d = await db();
   const [lock] = await d.select().from(rateLimits).where(and(eq(rateLimits.key, lockKey), gt(rateLimits.resetAt, new Date())));
-  if (lock && lock.count >= 5) throw new AppError(429, 'انقفل الدخول ساعة بسبب محاولات غلط كثيرة', 'locked');
+  if (lock && lock.count >= 5) throw new AppError(429, 'أُوقف الدخول ساعة بسبب محاولات غلط كثيرة', 'locked');
   const ok = await consume('studio', email, code);
   const staffId = ok?.payload.staffId as string | undefined;
   if (!staffId) {
@@ -240,7 +240,7 @@ export async function studioMfa(code: string, m: Meta) {
   const d = await db();
   const key = `studio:mfa:${me.staff.id}`;
   const [lock] = await d.select().from(rateLimits).where(and(eq(rateLimits.key, key), gt(rateLimits.resetAt, new Date())));
-  if (lock && lock.count >= 5) throw new AppError(429, 'انقفل الدخول ساعة بسبب محاولات غلط كثيرة', 'locked');
+  if (lock && lock.count >= 5) throw new AppError(429, 'أُوقف الدخول ساعة بسبب محاولات غلط كثيرة', 'locked');
   const r = await d.transaction(async (tx) => {
     const [s] = await tx.select().from(staff).where(eq(staff.id, me.staff.id)).for('update');
     if (!s || s.status === 'disabled' || !s.totpSecret) return null;

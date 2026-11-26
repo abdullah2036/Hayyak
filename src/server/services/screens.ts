@@ -119,7 +119,7 @@ export async function detail(me: UserCtx, id: string) {
     reminders: { ...i.reminders, dayText: day ? `${weekdayDate(day)} · ${time(day)} · للي ما ردّوا واللي أكّدوا` : '', hoursText: h3 ? `${weekdayDate(h3)} · ${time(h3)} · للي أكّدوا` : '' },
     cert: { tpl: ['قالب فاتح', 'قالب غامق', 'تصميمكم'][config.tpl]!, lang: config.lang === 'bi' ? 'عربي وإنجليزي' : 'عربي' },
     log: [
-      ...logRows.map((l) => ({ t: l.text, d: [weekdayDate(l.at), time(l.at), l.detail].filter(Boolean).join(' · ') + (l.text === 'انشأت الدعوة' && i.createdBy && names.get(i.createdBy) ? ` · ${names.get(i.createdBy)}` : ''), c: l.tone === 'main' ? '#0E97AE' : l.tone === 'mute' ? '#B8C4CC' : '#86DCEA' })),
+      ...logRows.map((l) => ({ t: l.text, d: [weekdayDate(l.at), time(l.at), l.detail].filter(Boolean).join(' · ') + (['أُنشئت الدعوة', 'انشأت الدعوة'].includes(l.text) && i.createdBy && names.get(i.createdBy) ? ` · ${names.get(i.createdBy)}` : ''), c: l.tone === 'main' ? '#0E97AE' : l.tone === 'mute' ? '#B8C4CC' : '#86DCEA' })),
       ...(liveStatus(i) === 'sent' && i.reminders.by !== 'none' && i.reminders.day && !i.reminders.dayDone && day && day > new Date() ? [{ t: 'التذكير الجاي', d: `${weekdayDate(day)} · ${time(day)}`, c: '#E7C873' }] : []),
     ],
   };

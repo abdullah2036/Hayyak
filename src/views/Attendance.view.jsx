@@ -243,7 +243,7 @@ export default function AttendanceView({ v }) {
                           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10" /></svg>
                         </span>
                         <span style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                          <b style={{ fontSize: "16px" }}>{"انسكّر التسجيل · "}{v.attended}{" حضروا"}</b>
+                          <b style={{ fontSize: "16px" }}>{"أُغلق التسجيل · "}{v.attended}{" حضروا"}</b>
                           <span style={{ fontSize: "13px", color: "#3A4B58" }}>{v.certLine}</span>
                         </span>
                       </div>

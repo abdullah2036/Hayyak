@@ -142,7 +142,7 @@ export async function register(inv: Inv, p: { name: string; email: string }, ip:
   await limit(`reg:${ip}`, 60, 600);
   await limit(`reg:${inv.id}`, 600, 600);
   const st = await publicState(inv);
-  if (st.closed) throw new AppError(409, 'انقفل التسجيل', 'closed');
+  if (st.closed) throw new AppError(409, 'أُغلق التسجيل', 'closed');
   const d = await db();
   const [org] = await d.select().from(orgs).where(eq(orgs.id, inv.orgId));
   const mail = (g: Guest) => send({ to: p.email, guestId: g.id, fromName: org!.name, subject: `دعوتك إلى «${inv.title}»`, title: `حيّاك يا ${g.name.split(' ')[0]}`, lines: [`يسعدنا حضورك «${inv.title}». هذي دعوتك باسمك:`], button: { label: 'افتح دعوتك', url: linkOf(inv, g) }, note: `من ${org!.name} عبر حيّــاك` });

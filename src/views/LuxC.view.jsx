@@ -49,7 +49,7 @@ button{font-family:TS, 'IBM Plex Sans Arabic', sans-serif}
 @keyframes growX{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 @keyframes bloomSoft{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:none}}
 @keyframes markIn{0%{clip-path:inset(0 0 0 100%);transform:scale(.9)}100%{clip-path:inset(0 0 0 0);transform:none}}
-@keyframes settleW{from{letter-spacing:.04em;transform:scale(1.05)}to{letter-spacing:0;transform:none}}
+@keyframes settleW{from{transform:scale(1.05)}to{transform:none}}
 .rst .rv,.rst.rv{animation:none !important}
 .rv{animation-play-state:paused !important}.seen .rv,.seen.rv{animation-play-state:running !important}
 @keyframes sheetUp{from{transform:translateY(100%)}to{transform:none}}
@@ -61,7 +61,7 @@ button{font-family:TS, 'IBM Plex Sans Arabic', sans-serif}
 section > *:not(.drift){position:relative;z-index:1}
 .drift{position:absolute;border-radius:50%;pointer-events:none;animation:driftO 20s ease-in-out infinite}
 @keyframes driftO{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(80px,-50px) scale(1.12)}66%{transform:translate(-60px,40px) scale(.94)}}
-.kick{font-size:20px;letter-spacing:6px;color:#86DCEA;font-weight:500}
+.kick{font-size:20px;color:#86DCEA;font-weight:500}
 html{scroll-behavior:smooth}
 .btn{position:relative;overflow:hidden;transition:transform .3s ease,box-shadow .3s ease}.btn:hover{transform:translateY(-2px)}.btn::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.7) 50%,transparent 70%);transform:translateX(120%);transition:transform .8s ease}.btn:hover::after{transform:translateX(-120%)}
 .vis{animation:bob 7s ease-in-out infinite}
@@ -100,7 +100,7 @@ span,b,a{text-wrap:pretty}
 .eflap{bottom:auto;top:38%;height:34%;border-radius:0;background:linear-gradient(180deg,#EEF2F4,#D3DEE3);clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:50% 0;z-index:4}
 .epaper{position:absolute;left:7%;right:7%;bottom:4%;height:74%;z-index:2;border-radius:18px;background:linear-gradient(165deg,#FFFFFF,#EEF3F5);box-shadow:0 18px 40px rgba(4,18,31,.25);display:flex;flex-direction:column;align-items:center;gap:9px;padding-top:9%;overflow:visible;transform-origin:50% 100%}
 .epaper > .rv:first-of-type{}
-.epaper .pk{font-family:TD, TDx, serif;font-size:clamp(13px,1.1vw,16px);color:#0E97AE;letter-spacing:1px}
+.epaper .pk{font-family:TD, TDx, serif;font-size:clamp(13px,1.1vw,16px);color:#0E97AE}
 .epaper .pt{font-family:TD, TDx, serif;font-size:clamp(34px,3.3vw,46px);line-height:1.1;color:#0A2A43}
 .epaper .pn{font-size:clamp(13px,1.1vw,15px);color:#4A5B68;font-weight:700}
 .ml{display:block;height:7px;border-radius:6px;background:#0A2A43;opacity:.12}
@@ -167,7 +167,7 @@ span,b,a{text-wrap:pretty}
 
 .cue{display:inline-flex;flex-direction:column;align-items:center;gap:12px;border:0;background:transparent;color:#DCE4E8;font-family:inherit;font-size:15px;font-weight:500;cursor:pointer;padding:6px 14px;transition:color .4s ease}
 .cue:hover{color:#FFFFFF}.cue:hover .cuem{border-color:#86DCEA}
-.cuet{letter-spacing:.5px}
+.cuet{letter-spacing:normal}
 .cuem{position:relative;width:26px;height:42px;border-radius:999px;border:1.5px solid rgba(220,228,232,.55);box-sizing:border-box;transition:border-color .4s ease}
 .cuem i{position:absolute;left:50%;top:8px;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:#86DCEA;box-shadow:0 0 10px #86DCEA;animation:cueD 2.6s cubic-bezier(.45,0,.25,1) infinite}
 @keyframes cueD{0%{transform:translateY(0);opacity:0}18%{opacity:1}70%{transform:translateY(16px);opacity:1}100%{transform:translateY(20px);opacity:0}}
@@ -217,7 +217,7 @@ span,b,a{text-wrap:pretty}
 .msc.m2{animation-delay:-8s}.msc.m3{animation-delay:-4s}
 .msc{box-sizing:border-box;position:absolute;inset:0;opacity:0;animation:mscIn 12s ease-in-out infinite;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:40px 22px 24px;text-align:center;color:#B9CCD6;font-size:15px}
 .msc.m2{padding-left:12px;padding-right:12px}
-.msc .ck{font-size:13px;letter-spacing:2px;color:#86DCEA}
+.msc .ck{font-size:13px;color:#86DCEA}
 .msc .ct{font-family:TD, TDx, serif;font-size:28px;color:#FAFBFC;line-height:1.3}
 .ccode{display:flex;gap:8px;direction:ltr}
 .ccode i{font-style:normal;width:42px;height:54px;border-radius:14px;background:rgba(134,220,234,.12);border:1px solid rgba(134,220,234,.25);display:grid;place-items:center;font-family:TS, 'IBM Plex Sans Arabic', sans-serif;font-weight:700;font-size:26px;color:#FAFBFC;animation:cdig 12s ease-out infinite both}
@@ -644,7 +644,7 @@ export default function LuxCView({ v }) {
                   <div style={{ position: "relative", height: "250px" }}>
                     {(v.xc || []).map((c, $i3) => (
                       <div key={c?.key ?? $i3} style={S(`${txt(c?.st)}`)}>
-                          <span style={{ fontSize: "9px", color: "#4A5B68", letterSpacing: "1px" }}>نتشرّف بدعوة</span>
+                          <span style={{ fontSize: "9px", color: "#4A5B68" }}>نتشرّف بدعوة</span>
                           <b style={{ fontFamily: "TD, TDx, serif", fontSize: "18px", fontWeight: "700", color: "#0A2A43" }}>{c?.n}</b>
                           <span style={{ height: "4px", width: "60%", borderRadius: "3px", background: "#DCE4E8" }} />
                           <svg width="40" height="40" viewBox="0 0 100 100" aria-hidden="true" style={{ position: "absolute", left: "-12px", bottom: "-12px" }}>
@@ -755,7 +755,7 @@ export default function LuxCView({ v }) {
                     {" "}
                     <div className="sprog">
                       <span className="sbar"><i /></span>
-                      <span className="sdone"><span className="sd1">جاري الإرسال…</span><span className="sd2">انرسلت لكل الضيوف ✓</span></span>
+                      <span className="sdone"><span className="sd1">جاري الإرسال…</span><span className="sd2">أُرسلت لكل الضيوف ✓</span></span>
                     </div>
                     {" "}
                   </div>
@@ -1077,7 +1077,7 @@ export default function LuxCView({ v }) {
                         <b style={{ fontSize: "20px", color: "#0A2A43" }}>29</b>
                       </span>
                       <span style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-                        <b style={{ fontSize: "17px", color: "#0A2A43" }}>انضافت لتقويمه</b>
+                        <b style={{ fontSize: "17px", color: "#0A2A43" }}>أُضيفت لتقويمه</b>
                         <span style={{ fontSize: "14px", color: "#4A5B68" }}>مع تذكير قبل بيوم</span>
                       </span>
                     </div>

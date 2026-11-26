@@ -1,6 +1,6 @@
 import { S, txt, A } from '@/ui/dc';
 import Mark from '@/ui/Mark';
-import Invite from '@/screens/Invite';
+import Thumb from '@/ui/Thumb';
 import FAQ from '@/screens/FAQ';
 
 const CSS = `body{margin:0;background:#EDF1F3}
@@ -169,7 +169,7 @@ export default function DesignsView({ v }) {
                   <div key={p?.key ?? $i3} className="lift" style={{ borderRadius: "30px", background: "rgba(255,255,255,.75)", padding: "16px", display: "flex", flexDirection: "column", alignItems: "center", gap: "14px" }}>
                       <button type="button" onClick={p?.open} className="ph" aria-label={p?.n} style={{ position: "relative", display: "block", width: "214px", height: "440px", borderRadius: "38px", background: "#04121F", boxShadow: "0 0 0 6px #0b2233, 0 24px 50px rgba(10,42,67,.25)", overflow: "hidden", textDecoration: "none" }}>
                         <span className="phi" style={{ position: "absolute", left: "9px", top: "9px", width: "390px", height: "844px", transform: "scale(.5026)", transformOrigin: "0 0", borderRadius: "60px", overflow: "hidden", pointerEvents: "none" }}>
-                          <Invite pattern={p?.n} color={p?.col} seal={p?.seal} title={p?.title} latin={p?.latin} look={p?.look} thumb="نعم" />
+                          <Thumb pattern={p?.n} color={p?.col} seal={p?.seal} title={p?.title} latin={p?.latin} look={p?.look} />
                         </span>
                       </button>
                       <b style={{ fontFamily: "TD, TDx, serif", fontSize: "24px" }}>{p?.n}</b>

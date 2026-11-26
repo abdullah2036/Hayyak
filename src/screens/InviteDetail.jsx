@@ -6,7 +6,7 @@ import { fromInputs } from '@/lib/dates';
 
 const STEPS = [
   ['1', 'الدعوة', 'شكل دعوتك وموعدها. تقدر تعاينها، تعدّل الموعد والمكان، أو تكررها لمناسبة ثانية'], ['2', 'رابط الدعوة', 'انسخ الرابط مع رسالة جاهزة، أو خلهم يمسحون الباركود'], ['3', 'التذكير', 'شغّل أو وقّف التذكير التلقائي، أو أرسل تذكير الحين للي ما ردّوا'],
-  ['4', 'الأرقام', 'كم انرسلت، كم فتحوها، كم أكّد واعتذر، وكم ما ردّ'], ['5', 'الحضور والشهادات', 'يوم المناسبة تفتح كود الحضور، وبعدها تطلع الشهادات والإحصائيات لحالها'], ['6', 'المدعوين', 'فلتر حسب الرد، وحمّل القائمة Excel'], ['7', 'سجل الدعوة', 'كل اللي صار للدعوة بالترتيب، ومتى التذكير الجاي'],
+  ['4', 'الأرقام', 'كم أُرسلت، كم فتحوها، كم أكّد واعتذر، وكم ما ردّ'], ['5', 'الحضور والشهادات', 'يوم المناسبة تفتح كود الحضور، وبعدها تطلع الشهادات والإحصائيات لحالها'], ['6', 'المدعوين', 'فلتر حسب الرد، وحمّل القائمة Excel'], ['7', 'سجل الدعوة', 'كل اللي صار للدعوة بالترتيب، ومتى التذكير الجاي'],
 ];
 
 export default class InviteDetail extends Screen {
@@ -54,7 +54,7 @@ export default class InviteDetail extends Screen {
         if (!startsAt) return set({ saved: 'حدد التاريخ والوقت' });
         try {
           const r = await api.post(`/invitations/${d.id}/event`, { startsAt: startsAt.toISOString(), placeName: s.ePlace });
-          set({ editing: false, saved: r.notified ? `انحفظ التعديل، ووصل إيميل لـ ${r.notified} مدعو` : 'انحفظ التعديل، ويطلع للكل على نفس الرابط' });
+          set({ editing: false, saved: r.notified ? `تم حفظ التعديل، ووصل إيميل لـ ${r.notified} مدعو` : 'تم حفظ التعديل، ويطلع للكل على نفس الرابط' });
           router.refresh();
         } catch (e) { set({ saved: e.message }); }
       },
@@ -77,7 +77,7 @@ export default class InviteDetail extends Screen {
         try {
           const r = await api.post(`/invitations/${d.id}/remind`);
           if (r.mode === 'copy') copyText(r.text);
-          set({ remindTx: r.mode === 'none' ? 'كلهم ردّوا ✓' : r.mode === 'copy' ? `تم نسخ رسالة التذكير لـ ${r.count} مدعو ✓` : `انرسل التذكير لـ ${r.count} مدعو ✓` });
+          set({ remindTx: r.mode === 'none' ? 'كلهم ردّوا ✓' : r.mode === 'copy' ? `تم نسخ رسالة التذكير لـ ${r.count} مدعو ✓` : `أُرسل التذكير لـ ${r.count} مدعو ✓` });
           router.refresh();
         } catch (e) { set({ remindTx: e.message }); }
         set({ busy: false });

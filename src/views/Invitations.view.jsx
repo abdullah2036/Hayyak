@@ -1,6 +1,6 @@
 import { S, txt, A } from '@/ui/dc';
 import Mark from '@/ui/Mark';
-import Invite from '@/screens/Invite';
+import Thumb from '@/ui/Thumb';
 import FAQ from '@/screens/FAQ';
 
 const CSS = `body{margin:0;background:#EDF1F3}
@@ -189,7 +189,7 @@ export default function InvitationsView({ v }) {
                 <article key={c?.key ?? $i4} className="lift in glass" style={S(`border-radius: 30px; padding: 10px; display: flex; flex-direction: column; gap: 0; animation-delay: ${txt(c?.dl)};`)}>
                     <A href={c?.href} aria-label={c?.t} style={{ position: "relative", display: "block", height: "230px", borderRadius: "22px", overflow: "hidden", background: "#04121F", textDecoration: "none" }}>
                       {" "}
-                      <span style={{ position: "absolute", left: "50%", top: "0", width: "390px", height: "844px", marginLeft: "-195px", transform: "translateY(-120px) scale(.92)", transformOrigin: "50% 0", pointerEvents: "none" }}><Invite look={c?.look} thumb="نعم" /></span>
+                      <span style={{ position: "absolute", left: "50%", top: "0", width: "390px", height: "844px", marginLeft: "-195px", transform: "translateY(-120px) scale(.92)", transformOrigin: "50% 0", pointerEvents: "none" }}><Thumb look={c?.look} /></span>
                       {" "}
                       <span style={{ position: "absolute", right: "14px", top: "14px", display: "flex", gap: "6px" }}>
                         <span style={{ fontSize: "12px", fontWeight: "700", padding: "6px 12px", borderRadius: "999px", color: "#0A2A43", background: "rgba(255,255,255,.88)" }}>{c?.st}</span>

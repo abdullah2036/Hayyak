@@ -18,8 +18,31 @@ export default class Landing extends Screen {
   static View = LuxCView;
 
   constructor(p) { super(p); this.state = { si: -1, n: 0, pat: 5, rn: 0, fi: 0, fr: 0 }; }
-  componentDidMount() { var self = this; this.io = null; this.wv = 0; if (!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) { var wan = function () { var r = self.root; if (r) { var pr = self.ptr; if (!pr || performance.now() - pr.t > 2200) { var hs = r.querySelector('section'), H = hs ? hs.clientHeight : 800; self.wv += 0.005; r.style.setProperty('--px', (50 + Math.cos(self.wv) * 32).toFixed(1) + '%'); r.style.setProperty('--py', (H * 0.42 + Math.sin(self.wv * 1.7) * H * 0.26).toFixed(0) + 'px'); } } self.wraf = requestAnimationFrame(wan); }; this.wraf = requestAnimationFrame(wan); } setTimeout(function () { self.heroFx(); }, 80); if (false) { var k = 0; this.rp = setInterval(function () { var root = self.root; if (!root) return; var els = root.querySelectorAll('[data-rv]'); if (!els.length) return; var el = els[k % els.length]; k++; el.classList.add('rst'); void el.offsetWidth; el.classList.remove('rst'); el.classList.add('seen'); }, 2600); } setTimeout(function () { var root = self.root; if (!root) return; var els = root.querySelectorAll('[data-rv]'); if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('seen'); }); return; } self.io = new IntersectionObserver(function (en) { en.forEach(function (x) { if (x.isIntersecting) { x.target.classList.add('seen'); self.io.unobserve(x.target); } }); }, { threshold: .25 }); els.forEach(function (e) { self.io.observe(e); }); }, 50); }
-  componentWillUnmount() { cancelAnimationFrame(this.hraf); cancelAnimationFrame(this.wraf); clearInterval(this.rp); if (this.io) this.io.disconnect(); clearTimeout(this.t1); clearInterval(this.iv1); clearInterval(this.iv2); }
+  componentDidMount() { var self = this; this.io = null; this.wv = 0; if (!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)) { var wan = function () { var r = self.root; if (!self.heroVis) { self.wraf = 0; return; } if (r) { var pr = self.ptr; if (!pr || performance.now() - pr.t > 2200) { var hs = r.querySelector('section'), H = hs ? hs.clientHeight : 800; self.wv += 0.005; if (hs) { hs.style.setProperty('--px', (50 + Math.cos(self.wv) * 32).toFixed(1) + '%'); hs.style.setProperty('--py', (H * 0.42 + Math.sin(self.wv * 1.7) * H * 0.26).toFixed(0) + 'px'); } } } self.wraf = requestAnimationFrame(wan); }; this.wan = wan; this.wraf = requestAnimationFrame(wan); } this.watchSections(); setTimeout(function () { self.heroFx(); }, 80); if (false) { var k = 0; this.rp = setInterval(function () { var root = self.root; if (!root) return; var els = root.querySelectorAll('[data-rv]'); if (!els.length) return; var el = els[k % els.length]; k++; el.classList.add('rst'); void el.offsetWidth; el.classList.remove('rst'); el.classList.add('seen'); }, 2600); } setTimeout(function () { var root = self.root; if (!root) return; var els = root.querySelectorAll('[data-rv]'); if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('seen'); }); return; } self.io = new IntersectionObserver(function (en) { en.forEach(function (x) { if (x.isIntersecting) { x.target.classList.add('seen'); self.io.unobserve(x.target); } }); }, { threshold: .25 }); els.forEach(function (e) { self.io.observe(e); }); }, 50); }
+  /** Phones: only what is on screen moves. The hero's light and particles stop when it is scrolled away. */
+  watchSections() {
+    var self = this, root = this.root;
+    this.heroVis = true;
+    if (!root || !('IntersectionObserver' in window)) return;
+    var secs = root.querySelectorAll('section');
+    // the long features section has a demo in every row: each row pauses on its own
+    var rows = root.querySelectorAll('section [data-rv]');
+    this.so = new IntersectionObserver(function (es) {
+      es.forEach(function (x) {
+        x.target.classList.toggle('hy-off', !x.isIntersecting);
+        if (x.target === secs[0]) {
+          self.heroVis = x.isIntersecting;
+          if (x.isIntersecting) {
+            if (!self.hraf && self.heroFrame) self.hraf = requestAnimationFrame(self.heroFrame);
+            if (!self.wraf && self.wan) self.wraf = requestAnimationFrame(self.wan);
+          }
+        }
+      });
+    }, { rootMargin: '300px 0px' });
+    secs.forEach(function (sec) { self.so.observe(sec); });
+    rows.forEach(function (row) { self.so.observe(row); });
+  }
+  componentWillUnmount() { if (this.so) this.so.disconnect(); cancelAnimationFrame(this.hraf); cancelAnimationFrame(this.wraf); clearInterval(this.rp); if (this.io) this.io.disconnect(); clearTimeout(this.t1); clearInterval(this.iv1); clearInterval(this.iv2); }
   heroFx() {
     var self = this, c = this.hc; if (!c || !this.root) return;
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -58,8 +81,9 @@ export default class Landing extends Screen {
         if (fadeOut > 0) for (var i = 0; i < P.length; i++) { var p = P[i], t = Math.min(1, Math.max(0, (el - 200 - p.dl) / 1700)), e = ease(t); p.x = p.sx + (p.tx - p.sx) * e; p.y = p.sy + (p.ty - p.sy) * e; x.globalAlpha = (0.35 + 0.65 * e) * fadeOut; x.fillStyle = p.c; x.beginPath(); x.arc(p.x, p.y, p.r * (1.6 - e * .6), 0, 6.283); x.fill(); if (i % 7 === 0) { x.globalAlpha = 0.18 * fadeOut; x.beginPath(); x.arc(p.x, p.y, p.r * 5, 0, 6.283); x.fill(); } }
         for (var i2 = 0; i2 < P2.length; i2++) { var p2 = P2[i2], t2 = Math.min(1, Math.max(0, (el - p2.dl) / 1050)), e2 = ease(t2), fo2 = el < p2.dl + 1300 ? 1 : Math.max(0, 1 - (el - p2.dl - 1300) / 700); if (t2 <= 0 || fo2 <= 0) continue; p2.x = p2.sx + (p2.tx - p2.sx) * e2; p2.y = p2.sy + (p2.ty - p2.sy) * e2; x.globalAlpha = (0.3 + 0.7 * e2) * fo2; x.fillStyle = p2.c; x.beginPath(); x.arc(p2.x, p2.y, p2.r * (1.5 - e2 * .5), 0, 6.283); x.fill(); if (i2 % 6 === 0) { x.globalAlpha = 0.16 * fo2; x.beginPath(); x.arc(p2.x, p2.y, p2.r * 4.5, 0, 6.283); x.fill(); } }
         x.globalAlpha = 1; x.globalCompositeOperation = 'source-over';
-        self.hraf = requestAnimationFrame(frame);
+        self.hraf = self.heroVis ? requestAnimationFrame(frame) : 0;
       }
+      self.heroFrame = frame;
       self.hraf = requestAnimationFrame(frame);
     };
     var started = false; function st() { if (started) return; started = true; go(); }
@@ -87,7 +111,7 @@ export default class Landing extends Screen {
       goDown: function (e) { if (e) e.preventDefault(); var t = self.root && self.root.querySelector('[data-next]'); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); },
       goDownF: function (e) { if (e) e.preventDefault(); var t = self.root && self.root.querySelector('#features'); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); },
       setRoot: function (el) { self.root = el; }, setHC: function (el) { self.hc = el; },
-      onMove: function (e) { var r = self.root; if (!r) return; if (self.hc) { var hb = self.hc.getBoundingClientRect(); self.ptr = { x: e.clientX - hb.left, y: e.clientY - hb.top, t: performance.now() }; } var b = r.getBoundingClientRect(), x = (e.clientX - b.left) / b.width, y = (e.clientY - b.top) / Math.min(b.height, 900); r.style.setProperty('--mx', (x - 0.5).toFixed(3)); r.style.setProperty('--my', (Math.min(1, y) - 0.5).toFixed(3)); r.style.setProperty('--px', (x * 100).toFixed(1) + '%'); r.style.setProperty('--py', (e.clientY - b.top).toFixed(0) + 'px'); },
+      onMove: function (e) { if (e.pointerType === 'touch') return; var r = self.root && self.root.querySelector('section'); if (!r) return; if (self.hc) { var hb = self.hc.getBoundingClientRect(); self.ptr = { x: e.clientX - hb.left, y: e.clientY - hb.top, t: performance.now() }; } var b = r.getBoundingClientRect(), x = (e.clientX - b.left) / b.width, y = (e.clientY - b.top) / Math.min(b.height, 900); r.style.setProperty('--mx', (x - 0.5).toFixed(3)); r.style.setProperty('--my', (Math.min(1, y) - 0.5).toFixed(3)); r.style.setProperty('--px', (x * 100).toFixed(1) + '%'); r.style.setProperty('--py', (e.clientY - b.top).toFixed(0) + 'px'); },
       dots: SD.map(function (g, i) { return { st: 'width:9px;height:9px;border-radius:50%;background:' + g[1] + ';animation:breathe 4s ease-in-out ' + (i * 0.3).toFixed(1) + 's infinite' }; }),
       xr: XN.map(function (x, i) { return { n: x[0], p: '05X XXX ' + (2210 + i * 1311), s: x[2], c: x[1], st: 'display:grid;grid-template-columns:1.3fr 1fr .7fr;gap:6px;align-items:center;font-size:14px;color:#0A2A43;padding:10px 8px;border-radius:10px;background:' + (i % 2 ? 'transparent' : '#F4F7F8') }; }),
       xc: XN.slice(0, 3).map(function (x, i) { return { n: x[0], c: x[1], s: x[2], fs: x[2].length > 3 ? '19' : '24', st: 'position:absolute;left:' + (i * 14) + 'px;top:' + (i * 62) + 'px;width:190px;height:118px;border-radius:16px;background:#FAFBFC;border:1px solid #DCE4E8;box-shadow:0 16px 30px rgba(10,42,67,.14);padding:14px 16px;box-sizing:border-box;display:flex;flex-direction:column;gap:6px;transform:rotate(' + ((i - 1) * 3) + 'deg)' }; }),

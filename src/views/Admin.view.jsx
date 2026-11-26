@@ -224,7 +224,7 @@ export default function AdminView({ v }) {
                   {v.waOpen ? (
                     <div style={{ display: "flex", flexDirection: "column", gap: "10px", padding: "18px", borderRadius: "24px", background: "rgba(255,255,255,.06)" }}>
                         <span style={{ display: "flex", justifyContent: "space-between", gap: "10px", alignItems: "center" }}>
-                          <b style={{ fontSize: "16px" }}>أرسل من واتساب حيّــاك · فتح هذي القائمة انسجل في سجل المستخدم</b>
+                          <b style={{ fontSize: "16px" }}>أرسل من واتساب حيّــاك · فتح هذي القائمة يُسجَّل في سجل المستخدم</b>
                           <button type="button" onClick={v.waClose} aria-label="إغلاق" style={{ height: "40px", padding: "0 16px", borderRadius: "999px", border: "1px solid rgba(134,220,234,.4)", background: "transparent", color: "#86DCEA", fontFamily: "inherit", fontSize: "13px", fontWeight: "700", cursor: "pointer" }}>{"×"}</button>
                         </span>
                         <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", maxHeight: "340px", overflow: "auto" }}>
@@ -442,7 +442,7 @@ export default function AdminView({ v }) {
                           <span style={{ fontFamily: "TD, TDx, serif", fontSize: "36px", lineHeight: "1.1" }}>{p?.price}</span>
                           <span style={{ fontSize: "14px", color: "#B8CCD6", lineHeight: "1.7" }}>{p?.lim}</span>
                           <span style={{ height: "1px" }} />
-                          <span style={{ display: "flex", justifyContent: "space-between", fontSize: "14px" }}><span>انباعت</span><b>{p?.c}</b></span>
+                          <span style={{ display: "flex", justifyContent: "space-between", fontSize: "14px" }}><span>مُباعة</span><b>{p?.c}</b></span>
                           <span style={{ display: "flex", justifyContent: "space-between", fontSize: "14px" }}><span>الإيراد</span><b>{p?.r}</b></span>
                         </div>
                     ))}
@@ -804,7 +804,7 @@ export default function AdminView({ v }) {
                           <div style={{ position: "relative", width: "230px", height: "470px", borderRadius: "38px", background: "#04121F", boxShadow: "0 0 0 6px #0b2233, 0 30px 60px rgba(0,0,0,.45)", overflow: "hidden", flex: "none" }}>
                               <span style={S(`${txt(v.bPhoneBg)}`)} />
                               <span style={S(`position: absolute; left: 0; right: 0; top: 70px; text-align: center; font-family: TD, TDx, serif; font-size: 30px; color: ${txt(v.bC3)}; text-shadow: 0 0 18px ${txt(v.bC3)};`)}>الحفل الختامي</span>
-                              <span style={{ position: "absolute", left: "0", right: "0", top: "116px", textAlign: "center", fontSize: "11px", letterSpacing: "3px", color: "rgba(255,255,255,.7)" }}>{v.bPatName}</span>
+                              <span style={{ position: "absolute", left: "0", right: "0", top: "116px", textAlign: "center", fontSize: "11px", color: "rgba(255,255,255,.7)" }}>{v.bPatName}</span>
                               <span className="tw" style={S(`position: absolute; left: 30px; top: 40px; width: 4px; height: 4px; border-radius: 50%; background: ${txt(v.bC3)};`)} />
                               <span className="tw" style={S(`position: absolute; left: 180px; top: 150px; width: 3px; height: 3px; border-radius: 50%; background: ${txt(v.bC3)}; animation-delay: .7s;`)} />
                               <span className="tw" style={{ position: "absolute", left: "120px", top: "30px", width: "3px", height: "3px", borderRadius: "50%", background: "#FFFFFF", animationDelay: "1.4s" }} />

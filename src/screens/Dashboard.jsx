@@ -106,7 +106,7 @@ export default class Dashboard extends Screen {
       hello: shell.org.name, headline: `${d.today} · ${d.active ? (d.active === 1 ? 'عندك دعوة نشطة' : d.active === 2 ? 'عندك دعوتين نشطة' : `عندك ${d.active} دعوات نشطة`) : 'ما عندك دعوات نشطة'}${d.pendingCount ? ` و ${d.pendingCount} مدعو ما ردّوا` : ''}`,
       creditTop: c.paid || c.bought ? `رصيد ${c.total} دعوة${c.bought ? ' · اشتريته ' + c.bought : ''}` : 'رصيدك المجاني للتجربة', creditTotal: c.total, creditUntil: c.days !== null ? `صالح لين ${c.expires} · باقي ${c.days} يوم` : 'للتجربة مرة وحدة', creditNote: c.days !== null ? 'اللي ما تستخدمه ينتهي مع الرصيد · ' : 'تحتاج أكثر؟ · ', left: n(c.left), days: c.days ?? '', ringDa: `${(c.total ? (106.8 * c.left * s.p) / c.total : 0).toFixed(1)} 200`,
       tiles: [
-        { key: 1, l: 'دعوات انرسلت', v: n(c.used), d: 'من رصيدك الحالي', pct: pc(c.used, c.total) + '%', ic: 'M22 2L11 13M22 2l-7 20-4-9-9-4z', fg: '#0A2A43', bg: 'rgba(10,42,67,.08)' },
+        { key: 1, l: 'دعوات مُرسلة', v: n(c.used), d: 'من رصيدك الحالي', pct: pc(c.used, c.total) + '%', ic: 'M22 2L11 13M22 2l-7 20-4-9-9-4z', fg: '#0A2A43', bg: 'rgba(10,42,67,.08)' },
         { key: 2, l: 'نسبة التأكيد', v: n(pc(t.yes, tot)) + '%', d: `${t.yes} أكّدوا حضورهم`, pct: pc(t.yes, tot) + '%', ic: 'M5 12.5l4.5 4.5L19 7.5', fg: '#0E97AE', bg: 'rgba(14,151,174,.12)' },
         { key: 3, l: 'نسبة الفتح', v: n(pc(t.open, tot)) + '%', d: 'فتحوا الدعوة', pct: pc(t.open, tot) + '%', ic: 'M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z', fg: '#086577', bg: 'rgba(8,101,119,.1)' },
       ],

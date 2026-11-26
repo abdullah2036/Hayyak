@@ -436,7 +436,7 @@ async function main() {
   const top = (await v.get('/')).t;
   const at = top.match(/fetch\("(\/api\/type\/[\w-]{12})"\)/)?.[1];
   const hints = [...top.matchAll(/<link\b[^>]*>/g)].map((m) => m[0]).filter((l) => l.includes(`href="${at}"`));
-  check('pages hint and load it under their nonce, from a versioned address', hints.length >= 1 && hints.length <= 2 && /rel="preload"/.test(hints[0]) && /as="fetch"/.test(hints[0]) && /<body>.*<script nonce="[^"]+"[^>]*>\(function\(w,d\)/s.test(top) && Boolean(at) && top.includes(`fetch("${at}")`), `${at} ${JSON.stringify(hints)}`);
+  check('pages load it under their nonce from a versioned address, with no preload Safari would fetch twice', hints.length === 0 && /<body>.*<script nonce="[^"]+"[^>]*>\(function\(w,d\)/s.test(top) && Boolean(at) && top.includes(`fetch("${at}")`), `${at} ${JSON.stringify(hints)}`);
   const fixed = await fetch(BASE + at);
   check('the versioned address is kept by browsers for good', fixed.status === 200 && /immutable/.test(fixed.headers.get('cache-control')) && /max-age=31536000/.test(fixed.headers.get('cache-control')) && Buffer.from(await fixed.arrayBuffer()).equals(raw));
   check('asking again with its tag costs nothing', (await fetch(BASE + at, { headers: { 'if-none-match': fixed.headers.get('etag') } })).status === 304);
@@ -445,6 +445,19 @@ async function main() {
   check('the head holds no script of ours: hosts write into it', !/<script(?![^>]*\bsrc=)[^>]*>/.test(top.split('</head>')[0]));
   check('the upload is in the log', (await st.get('/studio')).t.includes('رفع خط الهوية'));
   check('founder takes it off again', (await st.del('/studio/type')).j?.on === false && (await grab()).s === 204);
+
+  section('problems on visitors\' devices');
+  const iphone = { 'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Mobile/15E148 Safari/604.1' };
+  const reporter = new Client();
+  check('a page reports a problem', (await reporter.post('/report', { kind: 'crash', path: '/app/create', message: '', screen: '390x844@3' }, { headers: iphone })).s === 200);
+  check('a report of an unknown kind is refused', (await reporter.post('/report', { kind: 'other', path: '/', message: '', screen: '' })).s === 400);
+  check('another site cannot send reports', (await reporter.post('/report', { kind: 'error', path: '/', message: 'x', screen: '' }, { origin: 'https://evil.example' })).s === 403);
+  const spam = new Client();
+  let lastReport = 0; for (let i = 0; i < 11; i++) lastReport = (await spam.post('/report', { kind: 'error', path: '/x', message: 'spam', screen: '' })).s;
+  check('reports are limited per visitor', lastReport === 429);
+  const seen = await st.get('/api/studio/reports');
+  check('the Studio lists them by page, with the kind of device only', seen.s === 200 && seen.j.byPage.some((r) => r.path === '/app/create' && r.kind === 'crash') && seen.j.recent.some((r) => /^iPhone · iOS 17\.4 · 390x844@3$/.test(r.device)), JSON.stringify(seen.j?.recent?.[0]));
+  check('only staff who see analytics read them', (await ds.get('/api/studio/reports')).s === 403 && (await v.get('/api/studio/reports')).s === 404);
 
   section('attack: leaked files and path traversal');
   const secretish = /APP_SECRET|DATA_KEY|DATABASE_URL=|e2e-only|root:x:0|BEGIN [A-Z ]*PRIVATE KEY|"dependencies"|\[core\]|create table/i;

@@ -201,7 +201,7 @@ export default function GuestJourneyView({ v }) {
                         <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10" /></svg>
                       </span>
                       <b style={{ fontFamily: "TD, TDx, serif", fontSize: "30px", lineHeight: "1.3" }}>{"حيّاك يا "}{v.first}</b>
-                      <span style={{ fontSize: "14px", color: "#3A4B58" }}>انسجل حضورك الساعة 7:43 م</span>
+                      <span style={{ fontSize: "14px", color: "#3A4B58" }}>سُجّل حضورك الساعة 7:43 م</span>
                       <div style={{ width: "100%", boxSizing: "border-box", padding: "16px", borderRadius: "24px", background: "#FFFFFF", boxShadow: "0 8px 24px rgba(10,42,67,.06)", display: "flex", gap: "12px", alignItems: "center", textAlign: "right" }}>
                         <span style={{ width: "44px", height: "44px", borderRadius: "14px", background: "rgba(231,200,115,.35)", display: "flex", alignItems: "center", justifyContent: "center", flex: "none" }}>
                           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8A5A00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 5h16v11H4zM8 20l4-3 4 3M8 9h8M8 12h5" /></svg>

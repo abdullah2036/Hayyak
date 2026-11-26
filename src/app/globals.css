@@ -16,6 +16,21 @@ html.hyw body{visibility:hidden}
 body{margin:0;font-family:TS,'IBM Plex Sans Arabic',system-ui,sans-serif}
 button,input,select,textarea{font-family:inherit}
 button,a{-webkit-tap-highlight-color:transparent}
+/*
+ * Safari on phones keeps every blurred or moving layer as a separate image and closes the page when they add up.
+ * The background circle is already a soft gradient, so its blur showed nothing; the chat dots stop after a while;
+ * sections of the landing page that are off screen pause (lib: Landing.jsx).
+ */
+.orb{filter:none !important}
+.fqd1,.fqd2,.fqd3{animation-iteration-count:6 !important}
+.hy-off,.hy-off *{animation-play-state:paused !important}
+/* Touch screens: the decoration stays, but nothing large keeps moving, and cards are solid instead of frosted. */
+@media (hover:none){
+  .orb,.drift{animation:none !important}
+  .glass{-webkit-backdrop-filter:none !important;backdrop-filter:none !important;background-color:rgba(255,255,255,.88) !important}
+  /* the bottom bar sits over the page: solid, so the text scrolling under it never shows through */
+  .bnav{background-color:#FAFBFC !important}
+}
 :focus-visible{outline:3px solid #0E97AE;outline-offset:2px}
 button[disabled]{cursor:not-allowed;opacity:.65}
 @media print{@page{margin:10mm}.side,.bnav,.tourb,.fqbw,.fqw,.noprint{display:none !important}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}

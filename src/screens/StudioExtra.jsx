@@ -25,7 +25,7 @@ function Toggle({ on, set, text }) {
 
 /* ---------- analytics ---------- */
 
-const TITLES = { signups: 'حسابات جديدة', published: 'دعوات انرسلت', invited: 'مدعوين', opened: 'فتحوا الدعوة', replied: 'ردّوا', attended: 'سجّلوا حضور' };
+const TITLES = { signups: 'حسابات جديدة', published: 'دعوات مُرسلة', invited: 'مدعوين', opened: 'فتحوا الدعوة', replied: 'ردّوا', attended: 'سجّلوا حضور' };
 
 /** One measure over time. The bar under the pointer (or the keyboard) shows its day and value. */
 function Days({ labels, s }) {
@@ -126,9 +126,10 @@ export function StudioAnalytics() {
             <Bars title="الأنماط الأكثر استخدام" rows={d.patterns.map((x) => [x.k, x.n])} />
             <Bars title="كيف تنرسل الدعوات" rows={d.audience.map((x) => [x.k, x.n])} />
             <Bars title="أكثر الحسابات استخدام" note="حسب عدد المدعوين" rows={d.top.map((x) => [x.k, x.n])} />
-            {d.money ? <Bars title="أكواد الخصم" note="مرات الاستخدام من البداية" rows={d.codes.map((x) => [x.k, x.n])} empty="ما انستخدم أي كود" /> : null}
+            {d.money ? <Bars title="أكواد الخصم" note="مرات الاستخدام من البداية" rows={d.codes.map((x) => [x.k, x.n])} empty="ما استُخدم أي كود" /> : null}
           </div>
           <span style={{ fontSize: 13, color: C.mute }}>الأرقام إجمالية وبتوقيت الرياض، وحسابات التجربة ما تنحسب</span>
+          <DeviceProblems />
         </>
       )}
     </div>
@@ -147,8 +148,8 @@ export function StudioPricing({ pricing, discounts, customers, run }) {
   const [open, setOpen] = useState(false);
   const edit = (o) => { setP({ ...p, ...o }); setDirty(true); };
   const pack = (i, o) => edit({ packs: p.packs.map((x, k) => (k === i ? { ...x, ...o } : x)) });
-  const save = () => run(() => api.post('/studio/pricing', p), 'انحفظت الأسعار، وتطلع للكل الحين ✓').then((r) => r && setDirty(false));
-  const add = () => run(() => api.post('/studio/discounts', { code: n.code, kind: n.kind, value: num(n.value), maxUses: n.maxUses ? num(n.maxUses) : null, perOrg: num(n.perOrg) || 1, orgId: n.orgId || null, expiresAt: n.until ? new Date(`${n.until}T23:59:59+03:00`).toISOString() : null, note: n.note }), 'انضاف الكود ✓').then((r) => { if (r) { setN(blank); setOpen(false); } });
+  const save = () => run(() => api.post('/studio/pricing', p), 'تم حفظ الأسعار، وتطلع للكل الحين ✓').then((r) => r && setDirty(false));
+  const add = () => run(() => api.post('/studio/discounts', { code: n.code, kind: n.kind, value: num(n.value), maxUses: n.maxUses ? num(n.maxUses) : null, perOrg: num(n.perOrg) || 1, orgId: n.orgId || null, expiresAt: n.until ? new Date(`${n.until}T23:59:59+03:00`).toISOString() : null, note: n.note }), 'أُضيف الكود ✓').then((r) => { if (r) { setN(blank); setOpen(false); } });
   const beta = (o) => edit({ beta: { ...p.beta, ...o } });
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
@@ -177,7 +178,7 @@ export function StudioPricing({ pricing, discounts, customers, run }) {
           <div key={c.id} style={{ ...row, opacity: c.active && !c.ended ? 1 : 0.6 }}>
             <b style={{ direction: 'ltr', fontSize: 16, minWidth: 110, textAlign: 'right' }}>{c.code}</b>
             <span style={{ fontSize: 14, color: C.ink }}>{c.off}</span>
-            <span style={{ flex: '1 1 220px', fontSize: 13, color: C.mute }}>{[`انستخدم ${c.uses}${c.max ? ` من ${c.max}` : ''}`, `${c.perOrg} لكل حساب`, c.org && `لـ ${c.org}`, c.until && (c.ended ? 'انتهى' : `لين ${c.until}`), c.note].filter(Boolean).join(' · ')}</span>
+            <span style={{ flex: '1 1 220px', fontSize: 13, color: C.mute }}>{[`استُخدم ${c.uses}${c.max ? ` من ${c.max}` : ''}`, `${c.perOrg} لكل حساب`, c.org && `لـ ${c.org}`, c.until && (c.ended ? 'انتهى' : `لين ${c.until}`), c.note].filter(Boolean).join(' · ')}</span>
             <Toggle on={c.active} set={(v) => run(() => api.patch(`/studio/discounts/${c.id}`, { active: v }), 'تم ✓')} text={c.active ? 'شغّال' : 'متوقف'} />
           </div>
         ))}
@@ -242,7 +243,7 @@ export function StudioDesigns({ designs, founder, run, onNew, onPattern }) {
         <div key={x.id} style={{ ...row, opacity: x.on ? 1 : 0.6 }}>
           <span style={{ display: 'flex', gap: 4 }}>{swatch(x).filter((c) => /^#[0-9a-f]{6}$/i.test(c || '')).map((c, i) => <span key={i} style={{ width: 26, height: 26, borderRadius: '50%', background: c, border: '2px solid rgba(255,255,255,.2)' }} />)}</span>
           <span style={{ flex: '1 1 200px', display: 'flex', flexDirection: 'column', gap: 2 }}><b style={{ fontSize: 15 }}>{x.name}</b><span style={{ fontSize: 13, color: C.mute }}>{[KIND[x.kind], x.org ? `خاص بـ ${x.org}` : 'عام للكل', x.when].join(' · ')}</span></span>
-          {founder || x.org ? <Toggle on={x.on} set={(v) => run(() => api.patch(`/studio/designs/${x.id}`, { on: v }), v ? 'ظاهر ✓' : 'انخفى. الدعوات اللي تستخدمه ما تتأثر ✓')} text={x.on ? 'ظاهر' : 'مخفي'} /> : null}
+          {founder || x.org ? <Toggle on={x.on} set={(v) => run(() => api.patch(`/studio/designs/${x.id}`, { on: v }), v ? 'ظاهر ✓' : 'تم إخفاؤه. الدعوات اللي تستخدمه ما تتأثر ✓')} text={x.on ? 'ظاهر' : 'مخفي'} /> : null}
         </div>
       ))}
       {!designs.length ? <span style={{ fontSize: 14, color: C.mute }}>ما فيه تصاميم خاصة للحين</span> : null}
@@ -266,7 +267,7 @@ export function StudioType({ run }) {
     const f = new FormData();
     for (const x of files) f.append('file', x);
     setBusy(true);
-    const r = await run(() => api.form('/studio/type', f), 'انحفظ الخط، ويطلع في الموقع خلال دقايق ✓');
+    const r = await run(() => api.form('/studio/type', f), 'تم حفظ الخط، ويطلع في الموقع خلال دقايق ✓');
     if (r) setT(r);
     setBusy(false);
   };
@@ -288,8 +289,43 @@ export function StudioType({ run }) {
           <input type="file" multiple accept=".woff2,.otf" disabled={busy} onChange={(e) => { send([...e.target.files]); e.target.value = ''; }} style={{ position: 'absolute', inset: 0, width: '100%', opacity: 0, cursor: 'pointer' }} />
         </label>
         {t?.on ? <button type="button" style={line} onClick={drop}>{sure ? 'أكيد؟ اضغط مرة ثانية' : 'شيل الخط'}</button> : null}
-        <span role="status" style={{ fontSize: 14, color: C.soft }}>{!t ? '' : t.on ? `مرفوع ✓ ${Math.round(t.size / 1024)} كيلوبايت` : 'ما انرفع للحين، والموقع يستخدم خط بديل'}</span>
+        <span role="status" style={{ fontSize: 14, color: C.soft }}>{!t ? '' : t.on ? `مرفوع ✓ ${Math.round(t.size / 1024)} كيلوبايت` : 'ما تم الرفع للحين، والموقع يستخدم خط بديل'}</span>
       </span>
+    </section>
+  );
+}
+
+/* ---------- problems on visitors' devices ---------- */
+
+function DeviceProblems() {
+  const [d, setD] = useState(null);
+  useEffect(() => { let live = true; api.get('/studio/reports').then((r) => live && setD(r), () => {}); return () => { live = false; }; }, []);
+  if (!d) return null;
+  const KIND = { crash: 'الصفحة انغلقت', error: 'خطأ في الصفحة' };
+  return (
+    <section style={card} aria-label="مشاكل على أجهزة الزوار">
+      <span style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <h3 style={{ margin: 0, fontSize: 19 }}>مشاكل على أجهزة الزوار</h3>
+        <span style={{ fontSize: 13, color: C.mute }}>آخر 7 أيام. «الصفحة انغلقت» يعني المتصفح قفلها، غالبًا لأن الجهاز ما تحمّلها</span>
+      </span>
+      {d.byPage.length ? d.byPage.map((r) => (
+        <div key={r.path + r.kind} style={{ ...row, justifyContent: 'space-between' }}>
+          <bdi dir="ltr" style={{ fontSize: 14 }}>{r.path || '/'}</bdi>
+          <span style={{ fontSize: 13, color: C.soft }}>{KIND[r.kind]} · <b style={{ color: C.ink }}>{fmt(r.n)}</b></span>
+        </div>
+      )) : <span style={{ fontSize: 14, color: C.mute }}>ما فيه مشاكل مسجّلة ✓</span>}
+      {d.recent.length ? (
+        <details>
+          <summary style={{ cursor: 'pointer', fontSize: 14, color: C.soft }}>آخر {d.recent.length} بلاغ</summary>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 10 }}>
+            {d.recent.map((r) => (
+              <span key={r.id} style={{ fontSize: 12, color: C.mute, lineHeight: 1.6 }}>
+                {dayMonth(r.at)} · {KIND[r.kind]} · <bdi dir="ltr">{r.path}</bdi> · <bdi dir="ltr">{r.device}</bdi>{r.message ? <> · <bdi dir="ltr">{r.message}</bdi></> : null}
+              </span>
+            ))}
+          </div>
+        </details>
+      ) : null}
     </section>
   );
 }

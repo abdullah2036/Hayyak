@@ -69,7 +69,7 @@ export async function createDraft(orgId: string, userId: string, patch: Partial<
   await limit(`draft:${orgId}`, 60, 3600);
   const d = await db();
   const [r] = await d.insert(invitations).values({ ...patch, orgId, createdBy: userId, slug: token(7) }).returning();
-  await log(d, r!.id, 'انشأت الدعوة', '', 'mute');
+  await log(d, r!.id, 'أُنشئت الدعوة', '', 'mute');
   return r!;
 }
 
@@ -92,7 +92,7 @@ export type DraftPatch = Partial<
 
 export async function saveDraft(orgId: string, id: string, p: DraftPatch) {
   const inv = await own(orgId, id);
-  if (inv.status !== 'draft') throw bad('الدعوة انرسلت، عدّلها من صفحة الدعوة');
+  if (inv.status !== 'draft') throw bad('الدعوة أُرسلت، عدّلها من صفحة الدعوة');
   const d = await db();
   if (p.photoAssetId) {
     const [a] = await d.select({ id: assets.id }).from(assets).where(and(eq(assets.id, p.photoAssetId), eq(assets.orgId, orgId)));
@@ -108,7 +108,7 @@ export async function saveDraft(orgId: string, id: string, p: DraftPatch) {
 
 export async function removeDraft(orgId: string, id: string) {
   const inv = await own(orgId, id);
-  if (inv.status !== 'draft') throw bad('ما تقدر تحذف دعوة انرسلت');
+  if (inv.status !== 'draft') throw bad('ما تقدر تحذف دعوة مُرسلة');
   const d = await db();
   await d.delete(invitations).where(and(eq(invitations.id, id), eq(invitations.orgId, orgId)));
 }
@@ -166,7 +166,7 @@ export async function addGuests(orgId: string, invitationId: string, items: Gues
       )
       .returning();
     if (charge) {
-      await log(tx, invitationId, `انضاف ${rows.length} مدعو`, '', 'info');
+      await log(tx, invitationId, `أُضيف ${rows.length} مدعو`, '', 'info');
       if (inv.status === 'sent' && inv.sendBy === 'hayyak') await openSendRequest(tx, inv, rows, 'invite');
     }
     return { added: rows.length, skipped: items.length - rows.length, rows };
@@ -194,7 +194,7 @@ async function openSendRequest(tx: DB, inv: Inv, rows: Guest[], kind: 'invite' |
 
 export async function publish(orgId: string, id: string) {
   const inv = await own(orgId, id);
-  if (inv.status !== 'draft') throw bad('الدعوة انرسلت من قبل');
+  if (inv.status !== 'draft') throw bad('الدعوة أُرسلت من قبل');
   const now = new Date();
   if (!inv.title) throw bad('اكتب عنوان المناسبة');
   if (!inv.startsAt) throw bad('حدد تاريخ المناسبة ووقتها');
@@ -213,8 +213,8 @@ export async function publish(orgId: string, id: string) {
     await d.transaction(async (t) => {
       const tx = t as unknown as DB;
       const r = await tx.update(invitations).set({ status: when ? 'scheduled' : 'sent', sentAt: when ? null : now, updatedAt: now }).where(and(eq(invitations.id, id), eq(invitations.status, 'draft'))).returning({ id: invitations.id });
-      if (!r.length) throw bad('الدعوة انرسلت من قبل');
-      await log(tx, id, when ? 'انجدول نشر الدعوة العامة' : 'انتشر رابط الدعوة العامة', when ? `${weekdayDate(when)} · ${time(when)}` : '', 'main');
+      if (!r.length) throw bad('الدعوة أُرسلت من قبل');
+      await log(tx, id, when ? 'تمت جدولة نشر الدعوة العامة' : 'انتشر رابط الدعوة العامة', when ? `${weekdayDate(when)} · ${time(when)}` : '', 'main');
     });
     return { status: when ? 'scheduled' : 'sent', count: 0, request: false };
   }
@@ -227,7 +227,7 @@ export async function publish(orgId: string, id: string) {
   return d.transaction(async (t) => {
     const tx = t as unknown as DB;
     const [locked] = await tx.select().from(invitations).where(and(eq(invitations.id, id), eq(invitations.orgId, orgId))).for('update');
-    if (!locked || locked.status !== 'draft') throw bad('الدعوة انرسلت من قبل');
+    if (!locked || locked.status !== 'draft') throw bad('الدعوة أُرسلت من قبل');
     const rows = await tx.select().from(guests).where(eq(guests.invitationId, id));
     if (!rows.length) throw bad('أضف مدعو واحد على الأقل');
     if (inv.sendBy === 'hayyak') {
@@ -242,7 +242,7 @@ export async function publish(orgId: string, id: string) {
     if (viaHayyak) {
       await openSendRequest(tx, inv, rows, 'invite');
       await log(tx, id, 'طلبت من حيّــاك ترسلها', `${rows.length} مدعو`, 'info');
-    } else await log(tx, id, when ? 'انجدولت الدعوات' : `تجهزت ${rows.length} دعوة ترسلها بنفسك`, when ? `${weekdayDate(when)} · ${time(when)}` : '', 'main');
+    } else await log(tx, id, when ? 'تمت جدولة الدعوات' : `تجهزت ${rows.length} دعوة ترسلها بنفسك`, when ? `${weekdayDate(when)} · ${time(when)}` : '', 'main');
     return { status, count: rows.length, request: viaHayyak };
   });
 }

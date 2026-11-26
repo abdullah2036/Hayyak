@@ -103,10 +103,10 @@ async function afterClose(s: Sess) {
   if (!inv) return;
   const [{ n } = { n: 0 }] = await d.select({ n: sql<number>`count(*) filter (where ${attendance.complete})::int` }).from(attendance).where(eq(attendance.invitationId, inv.id));
   if (s.phase === 'start') {
-    await log(d, inv.id, 'انسكّر كود البداية', '', 'info');
+    await log(d, inv.id, 'أُغلق كود البداية', '', 'info');
     return;
   }
-  await log(d, inv.id, 'انسكّر تسجيل الحضور', `${n} حضروا`, 'main');
+  await log(d, inv.id, 'أُغلق تسجيل الحضور', `${n} حضروا`, 'main');
   const { config, issuedAt } = await certFor(inv);
   if (s.autoCert && config.when === 0 && n > 0) {
     await issueCerts(inv);

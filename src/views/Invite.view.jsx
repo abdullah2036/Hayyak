@@ -1,7 +1,7 @@
 import { S, txt, A, Still } from '@/ui/dc';
 import Mark from '@/ui/Mark';
 
-const CSS = `[data-thumb],[data-thumb] *{-webkit-backdrop-filter:none !important;backdrop-filter:none !important;animation-duration:1ms !important;animation-delay:0s !important;animation-iteration-count:1 !important;transition:none !important}
+const CSS = `[data-thumb],[data-thumb] *{-webkit-backdrop-filter:none !important;backdrop-filter:none !important;filter:none !important;animation-duration:1ms !important;animation-delay:0s !important;animation-iteration-count:1 !important;transition:none !important}
 body{margin:0}
 input,button{font-family:TS, 'IBM Plex Sans Arabic', sans-serif,TS,sans-serif}
 .lat{font-family:TD, TDx, serif;font-weight:700;letter-spacing:4px;direction:ltr}
@@ -172,9 +172,9 @@ export default function InviteView({ v }) {
           {" "}
           {v.showBub ? (
             <>{" "}
-            <span style={{ position: "absolute", left: "-60px", top: "60px", width: "320px", height: "320px", borderRadius: "50%", background: "var(--c1)", filter: "blur(80px)", opacity: ".35", animation: "orb 10s ease-in-out infinite" }} />
+            <span style={{ position: "absolute", left: "-140px", top: "-20px", width: "480px", height: "480px", borderRadius: "50%", background: "radial-gradient(closest-side, var(--c1) 30%, transparent)", opacity: ".35", animation: "orb 10s ease-in-out infinite" }} />
             {" "}
-            <span style={{ position: "absolute", right: "-80px", top: "260px", width: "300px", height: "300px", borderRadius: "50%", background: "var(--c3)", filter: "blur(80px)", opacity: ".3", animation: "orb 12s ease-in-out infinite reverse" }} />
+            <span style={{ position: "absolute", right: "-160px", top: "180px", width: "460px", height: "460px", borderRadius: "50%", background: "radial-gradient(closest-side, var(--c3) 30%, transparent)", opacity: ".3", animation: "orb 12s ease-in-out infinite reverse" }} />
             {" "}</>
           ) : null}
           {" "}
@@ -496,7 +496,7 @@ export default function InviteView({ v }) {
                 ))}
               </div>
               {" "}
-              <span style={{ position: "absolute", top: "74px", left: "50%", transform: "translateX(-50%)", padding: "5px 14px", borderRadius: "999px", background: "rgba(10,42,67,.85)", color: "#FFFFFF", fontSize: "11px", fontWeight: "700", letterSpacing: ".5px" }}>معاينة · غير صالحة للإرسال</span>
+              <span style={{ position: "absolute", top: "74px", left: "50%", transform: "translateX(-50%)", padding: "5px 14px", borderRadius: "999px", background: "rgba(10,42,67,.85)", color: "#FFFFFF", fontSize: "11px", fontWeight: "700" }}>معاينة · غير صالحة للإرسال</span>
               {" "}
             </div>
           {" "}</>

@@ -58,7 +58,7 @@ export default class AdminLogin extends Screen {
       code: s.code, onCode: (e) => set({ code: digitsOf(e.target.value), err: '' }), codeKey: (e) => { if (e.key === 'Enter') verify(); }, verify, back: () => set({ step: 'email', code: '', app: '', err: '' }),
       qr: s.qr?.cells || [], qrBox: `0 0 ${s.qr?.n || 25} ${s.qr?.n || 25}`, secret: s.setup?.secret.replace(/(.{4})/g, '$1 ').trim() || '',
       app: s.app, onApp: (e) => set({ app: s.useRec ? e.target.value.slice(0, 14) : digitsOf(e.target.value), err: '' }), appKey: (e) => { if (e.key === 'Enter') confirm(); }, confirm, useRec: s.useRec, togRec: () => set({ useRec: !s.useRec, app: '', err: '' }), recL: s.useRec ? 'عندي تطبيق التحقق' : 'ضاع جوالي؟ استخدم رمز احتياطي', appPh: s.useRec ? 'xxxxx-xxxxx' : '••••••', appNote: s.useRec ? 'اكتب واحد من الرموز الاحتياطية اللي حفظتها. كل رمز يشتغل مرة وحدة' : 'افتح تطبيق التحقق في جوالك واكتب الرمز اللي يظهر لـ Hayyak Studio',
-      codes: s.codes, copyCodes: () => { copyText(s.codes.join('\n')); set({ saved: true }); }, copyL: s.saved ? 'انسخت ✓' : 'انسخها', done: () => set({ step: 'in', codes: [] }), enter: () => window.location.assign('/studio'),
+      codes: s.codes, copyCodes: () => { copyText(s.codes.join('\n')); set({ saved: true }); }, copyL: s.saved ? 'تم النسخ ✓' : 'انسخها', done: () => set({ step: 'in', codes: [] }), enter: () => window.location.assign('/studio'),
     };
   }
 }

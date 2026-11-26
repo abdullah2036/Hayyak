@@ -43,7 +43,7 @@ export default class Certificate extends Screen {
     this.setState({ saved: 'لحظة…' });
     try {
       await api.post(`/invitations/${this.props.data.id}/certificate`, this.state.c);
-      this.setState({ saved: 'انحفظ ✓', dirty: false });
+      this.setState({ saved: 'تم الحفظ ✓', dirty: false });
       this.props.router.refresh();
     } catch (e) {
       this.setState({ saved: e.message });
